@@ -1,0 +1,83 @@
+version: "3.7"
+
+services: 
+  app:
+    build: .
+    container_name: boca_api
+    ports: 
+      - 3333:3333
+      - 9229:9229 #Você pode inserir essa porta tbm pra poder usar o debug
+    volumes:
+      - .:/usr/app
+    links:
+      - boca-postgres
+    depends_on:
+      - boca-postgres
+
+  boca-web:
+      image: ghcr.io/joaofazolo/boca-docker/boca-web
+      privileged: true
+      restart: unless-stopped
+      depends_on:
+          - boca-postgres
+      environment:
+          # Database configuration
+          - DB_HOST=boca-postgres
+          - DB_PORT=5432
+          - DB_NAME=bocadb
+          # unprivileged boca user
+          - DB_USER=bocauser
+          - DB_PASSWORD=dAm0HAiC
+          # privileged boca user
+          - DB_SUPER_USER=bocauser
+          - DB_SUPER_PASSWORD=dAm0HAiC
+          # initial password that is used by the admin user (web app)
+          # If not set, the default value is 'boca'
+          - BOCA_PASSWORD=boca
+          # secret key to be used in HTTP headers
+          # MUST set it with any random large enough sequence
+          - BOCA_KEY=GG56KFJtNDBGjJprR6ex
+      ports: 
+          - 8000:80
+
+  boca-jail:
+      image: ghcr.io/joaofazolo/boca-docker/boca-jail
+      privileged: true
+      restart: unless-stopped
+      depends_on:
+          - boca-postgres
+      environment:
+          # Database configuration
+          - DB_HOST=boca-postgres
+          - DB_PORT=5432
+          - DB_NAME=bocadb
+          # unprivileged boca user
+          - DB_USER=bocauser
+          - DB_PASSWORD=dAm0HAiC
+          - PASSWD=dAm0HAiC
+
+  boca-postgres:
+      image: postgres
+      container_name: boca-postgres
+      restart: unless-stopped
+      ports:
+          - 5432:5432
+      environment:
+          # Database configuration
+          # privileged boca user
+          POSTGRES_USER: bocauser
+          POSTGRES_PASSWORD: dAm0HAiC
+          # To avoid the following error with recent versions (> 13) of PorgreSQL:
+          #
+          #   FATAL:  password authentication failed for user "bocauser"
+          #   
+          #   You may also use POSTGRES_HOST_AUTH_METHOD=trust to allow all
+          #   connections without a password. This is *not* recommended. See
+          #   PostgreSQL documentation about "trust"
+          POSTGRES_HOST_AUTH_METHOD: trust
+
+volumes:
+  pgdata:
+    driver: local
+  
+  
