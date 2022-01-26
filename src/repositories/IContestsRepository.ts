@@ -44,7 +44,7 @@ interface IContestRepository {
   create(contest: ICreateContestDTO): Promise<void>;
   count(): Promise<number>;
   getById(id: number): Promise<Contest | undefined>;
-  update(contest: ICreateContestDTO): Promise<Contest>;
+  update(contest: IUpdateContestDTO): Promise<Contest>;
   delete(contestnumber: number): Promise<void>;
 }
 
