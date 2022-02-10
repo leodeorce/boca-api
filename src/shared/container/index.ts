@@ -2,7 +2,9 @@
 
 import { container } from "tsyringe";
 
+import { IAnswersRepository } from "../../repositories/IAnswersRepository";
 import { IContestRepository } from "../../repositories/IContestsRepository";
+import { AnswersRepository } from "../../repositories/implementations/AnswersRepository";
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
 import { RunsRepository } from "../../repositories/implementations/RunsRepository";
@@ -20,3 +22,8 @@ container.registerSingleton<IProblemsRepository>(
 );
 
 container.registerSingleton<IRunsRepository>("RunsRepository", RunsRepository);
+
+container.registerSingleton<IAnswersRepository>(
+  "AnswersRepository",
+  AnswersRepository
+);

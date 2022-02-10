@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import "reflect-metadata";
 import { container } from "tsyringe";
 
 import { GetProblemUseCase } from "../Problem/GetProblemUseCase";

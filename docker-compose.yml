@@ -50,6 +50,8 @@ services:
       restart: unless-stopped
       ports:
           - 5432:5432
+      # networks:
+      #   - default
       environment:
           # Database configuration
           # privileged boca user
@@ -64,4 +66,6 @@ services:
           #   PostgreSQL documentation about "trust"
           POSTGRES_HOST_AUTH_METHOD: trust
 
-  
+# networks:
+#   default:
+#     driver: bridge
