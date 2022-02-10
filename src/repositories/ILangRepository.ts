@@ -16,10 +16,7 @@ interface ILangRepository {
   create(lang: ICreateLangDTO): Promise<void>;
   count(): Promise<number>;
   delete(langnumber: number, contestnumber: number): Promise<void>;
-  findByName(
-    langname: string,
-    contestnumber: number
-  ): Promise<Lang | undefined>;
+  findByName(langname: string): Promise<Lang | undefined>;
 }
 
 export { ILangRepository, ICountResult, ICreateLangDTO };

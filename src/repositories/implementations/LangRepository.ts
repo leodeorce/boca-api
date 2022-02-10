@@ -8,12 +8,9 @@ import {
 } from "../ILangRepository";
 
 class LangRepository implements ILangRepository {
-  async findByName(
-    langname: string,
-    contestnumber: number
-  ): Promise<Lang | undefined> {
+  async findByName(langname: string): Promise<Lang | undefined> {
     const lang: Lang[] = await this.repository.query(
-      `SELECT * FROM langtable WHERE langname = '${langname}' and contestnumber = ${contestnumber}`
+      `SELECT * FROM langtable WHERE langname = '${langname}'`
     );
     if (lang.length === 0) {
       return undefined;
