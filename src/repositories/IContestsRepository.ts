@@ -35,7 +35,7 @@ interface IUpdateContestDTO {
 }
 
 interface ICountResult {
-  count: number;
+  max: number;
 }
 
 interface IContestRepository {

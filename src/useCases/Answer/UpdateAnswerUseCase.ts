@@ -29,7 +29,9 @@ class UpdateAnswerUseCase {
     if (!answerExists) {
       throw new Error("Answer does not exist");
     }
+
     try {
+      console.log(answernumber);
       await this.answersRepository.update({
         answernumber,
         contestnumber,

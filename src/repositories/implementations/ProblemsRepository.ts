@@ -39,9 +39,12 @@ class ProblemsRepository implements IProblemsRepository {
 
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
-      `SELECT count(contestnumber) FROM problemtable`
+      `SELECT MAX(contestnumber) FROM problemtable`
     );
-    return count[0].count;
+    if (count[0].max === null) {
+      return -1;
+    }
+    return count[0].max;
   }
 
   async getById(id: number): Promise<Problem | undefined> {

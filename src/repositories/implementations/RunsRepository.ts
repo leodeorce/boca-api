@@ -39,9 +39,12 @@ class RunsRepository implements IRunsRepository {
 
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
-      `SELECT count(runnumber) FROM runtable`
+      `SELECT MAX(runnumber) FROM runtable`
     );
-    return parseInt(count[0].count, 10);
+    if (count[0].max === null) {
+      return -1;
+    }
+    return parseInt(count[0].max, 10);
   }
 
   async getById(id: number): Promise<Run | undefined> {

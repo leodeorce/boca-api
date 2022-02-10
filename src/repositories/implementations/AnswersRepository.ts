@@ -4,6 +4,7 @@ import { Answer } from "../../entities/Answer";
 import { Contest } from "../../entities/Contest";
 import {
   IAnswersRepository,
+  ICountResult,
   ICreateAnswerDTO,
   IUpdateAnswerDTO,
 } from "../IAnswersRepository";
@@ -13,9 +14,6 @@ class AnswersRepository implements IAnswersRepository {
 
   constructor() {
     this.repository = getRepository(Contest);
-  }
-  count(): Promise<number> {
-    throw new Error("Method not implemented.");
   }
 
   async list(contestNumber: number): Promise<Answer[]> {
@@ -33,6 +31,17 @@ class AnswersRepository implements IAnswersRepository {
       return undefined;
     }
     return answer[0];
+  }
+
+  async count(): Promise<number> {
+    const count: ICountResult[] = await this.repository.query(
+      `SELECT MAX(answernumber) FROM answertable`
+    );
+    if (count[0].max === null) {
+      return -1;
+    }
+
+    return count[0].max;
   }
 
   async create(createObject: ICreateAnswerDTO): Promise<void> {
@@ -95,7 +104,7 @@ class AnswersRepository implements IAnswersRepository {
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
     query = query.concat(
-      `\nWHERE answernumber = ${updateObject.contestnumber};`
+      `\nWHERE answernumber = ${updateObject.answernumber} ;`
     );
 
     const updatedContest: Answer[] = await this.repository.query(query);

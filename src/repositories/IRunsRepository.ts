@@ -60,7 +60,7 @@ interface IUpdateRunDTO {
 }
 
 interface ICountResult {
-  count: string;
+  max: string;
 }
 
 interface IRunsRepository {

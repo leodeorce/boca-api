@@ -13,7 +13,7 @@ router.use("/api/contests", contestsRoutes);
 router.use("/api", userRoutes);
 router.use("/api", problemsRoutes);
 router.use("/api", runsRoutes);
-router.use("/api/problem", langRoutes);
 router.use("/api", AnswersRoutes);
+router.use("/api", langRoutes);
 
 export { router };

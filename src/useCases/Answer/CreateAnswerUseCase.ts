@@ -22,8 +22,11 @@ class CreateAnswerUseCase {
     runanswer,
     yes,
   }: IRequest): Promise<void> {
+    const count = (await this.answersRepository.count()) + 1;
+
     await this.answersRepository.create({
       contestnumber,
+      answernumber: count,
       fake,
       runanswer,
       yes,

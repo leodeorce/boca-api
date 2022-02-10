@@ -30,7 +30,7 @@ interface IUpdateProblemDTO {
 }
 
 interface ICountResult {
-  count: number;
+  max: number;
 }
 
 interface IProblemsRepository {

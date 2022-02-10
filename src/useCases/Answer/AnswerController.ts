@@ -26,13 +26,13 @@ class AnswerController {
 
   async getOne(request: Request, response: Response): Promise<Response> {
     const getAnswerUseCase = container.resolve(GetAnswerUseCase);
-    const { id_run } = request.params;
+    const { id_answer } = request.params;
 
     try {
-      const run = await getAnswerUseCase.execute({
-        id: parseInt(id_run, 10),
+      const answer = await getAnswerUseCase.execute({
+        id: parseInt(id_answer, 10),
       });
-      return response.json(run);
+      return response.json(answer);
     } catch (error) {
       const err = error as Error;
       return response.status(400).json({ error: err.message });
@@ -73,7 +73,7 @@ class AnswerController {
     const { id_answer } = request.params;
 
     const { contestnumber, fake, runanswer, yes } = request.body;
-
+    console.log(parseInt(id_answer, 10));
     try {
       await updateAnswerUseCase.execute({
         answernumber: parseInt(id_answer, 10),
@@ -85,7 +85,7 @@ class AnswerController {
 
       return response.status(201).send();
     } catch (error) {
-      return response.status(400).json({ error: "Error creating Answer" });
+      return response.status(400).json({ error: "Error updating Answer" });
     }
   }
 

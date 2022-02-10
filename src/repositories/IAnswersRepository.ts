@@ -2,6 +2,7 @@ import { Answer } from "../entities/Answer";
 
 interface ICreateAnswerDTO {
   contestnumber: number;
+  answernumber: number;
   runanswer: string;
   yes: boolean;
   fake: boolean;
@@ -16,7 +17,7 @@ interface IUpdateAnswerDTO {
 }
 
 interface ICountResult {
-  count: number;
+  max: number;
 }
 
 interface IAnswersRepository {

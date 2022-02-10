@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --inspect=0.0.0.0:9229 --transpile-only src/server.ts",
-    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose-api.yml up -d",
+    "docker:up": "docker-compose -f docker-compose.yml -f docker-compose-api.yml up -d",
     "docker:apilogs": "docker logs boca_api -f",
     "docker:down": "docker-compose -f docker-compose.yml -f docker-compose-api.yml down",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli"

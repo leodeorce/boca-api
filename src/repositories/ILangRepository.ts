@@ -5,17 +5,21 @@ interface ICreateLangDTO {
   langnumber: number;
   langname: string;
   langextension: string;
-  updatetime: number;
 }
 
 interface ICountResult {
-  count: number;
+  max: number;
 }
 
 interface ILangRepository {
   list(problemNumber: number): Promise<Lang[]>;
-  create(problem: ICreateLangDTO): Promise<void>;
-  delete(langnumber: number): Promise<void>;
+  create(lang: ICreateLangDTO): Promise<void>;
+  count(): Promise<number>;
+  delete(langnumber: number, contestnumber: number): Promise<void>;
+  findByName(
+    langname: string,
+    contestnumber: number
+  ): Promise<Lang | undefined>;
 }
 
-export { ILangRepository, ICountResult };
+export { ILangRepository, ICountResult, ICreateLangDTO };
