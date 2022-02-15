@@ -1,36 +1,36 @@
 import { getRepository, Repository } from "typeorm";
 
-import { User } from "../../entities/User";
+import { Site } from "../../entities/Site";
 import {
   ICountResult,
-  ICreateUserDTO,
-  IUsersRepository,
-  IUpdateUserDTO,
-} from "../IUsersRepository";
+  ICreateSiteDTO,
+  ISitesRepository,
+  IUpdateSiteDTO,
+} from "../ISitesRepository";
 
-class UsersRepository implements IUsersRepository {
-  private repository: Repository<User>;
+class SitesRepository implements ISitesRepository {
+  private repository: Repository<Site>;
 
   constructor() {
-    this.repository = getRepository(User);
+    this.repository = getRepository(Site);
   }
 
-  async list(contestnumber?: number): Promise<User[]> {
+  async list(contestnumber?: number): Promise<Site[]> {
     if (contestnumber) {
       const problems = await this.repository.query(
-        `SELECT * FROM usertable WHERE contestnumber=${contestnumber}`
+        `SELECT * FROM sitetable WHERE contestnumber=${contestnumber}`
       );
       return problems;
     }
-    const users = await this.repository.query(`SELECT * FROM usertable`);
-    return users;
+    const sites = await this.repository.query(`SELECT * FROM sitetable`);
+    return sites;
   }
 
-  async findByName(name: string): Promise<User | undefined> {
+  async findByName(name: string): Promise<Site | undefined> {
     const query = `
-    SELECT * FROM usertable WHERE username = '${name}'
+    SELECT * FROM sitetable WHERE sitename = '${name}'
   `;
-    const contest: User[] = await this.repository.query(query);
+    const contest: Site[] = await this.repository.query(query);
     if (contest.length === 0) {
       return undefined;
     }
@@ -39,7 +39,7 @@ class UsersRepository implements IUsersRepository {
 
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(usernumber) FROM usertable`
+      `SELECT MAX(sitenumber) FROM sitetable`
     );
     if (count[0].max === null) {
       return -1;
@@ -47,9 +47,9 @@ class UsersRepository implements IUsersRepository {
     return parseInt(count[0].max, 10);
   }
 
-  async getById(id: number): Promise<User | undefined> {
-    const contest: User[] = await this.repository.query(
-      `SELECT * FROM usertable WHERE usernumber = ${id}`
+  async getById(id: number): Promise<Site | undefined> {
+    const contest: Site[] = await this.repository.query(
+      `SELECT * FROM sitetable WHERE sitenumber = ${id}`
     );
     if (contest.length === 0) {
       return undefined;
@@ -57,7 +57,7 @@ class UsersRepository implements IUsersRepository {
     return contest[0];
   }
 
-  async create(createObject: ICreateUserDTO): Promise<void> {
+  async create(createObject: ICreateSiteDTO): Promise<void> {
     let createColumns = "";
     let createValues = "";
 
@@ -86,7 +86,7 @@ class UsersRepository implements IUsersRepository {
     createValues = createValues.trim(); // Remove espaços em branco desnecessarios
     createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
 
-    const query = `INSERT INTO usertable 
+    const query = `INSERT INTO sitetable 
       (
         ${createColumns}
        ) VALUES (
@@ -102,14 +102,14 @@ class UsersRepository implements IUsersRepository {
     }
   }
 
-  async update(updateObject: IUpdateUserDTO): Promise<User> {
+  async update(updateObject: IUpdateSiteDTO): Promise<Site> {
     // Remover parâmetros vazios (string vazia ou nulos, etc)
     const filteredObject = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(updateObject).filter(([_, v]) => v != null)
     );
 
-    let query = `UPDATE usertable\n`;
+    let query = `UPDATE sitetable\n`;
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
@@ -123,17 +123,17 @@ class UsersRepository implements IUsersRepository {
     });
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
-    query = query.concat(`\nWHERE usernumber = ${updateObject.usernumber};`);
+    query = query.concat(`\nWHERE sitenumber = ${updateObject.sitenumber};`);
     try {
-      const updatedContest: User[] = await this.repository.query(query);
+      const updatedContest: Site[] = await this.repository.query(query);
       return updatedContest[0];
     } catch (err) {
       return Promise.reject(err);
     }
   }
 
-  async delete(userNumber: number): Promise<void> {
-    const query = `DELETE FROM usertable WHERE usernumber=${userNumber}`;
+  async delete(siteNumber: number): Promise<void> {
+    const query = `DELETE FROM sitetable WHERE sitenumber=${siteNumber}`;
     try {
       await this.repository.query(query);
       return Promise.resolve();
@@ -143,4 +143,4 @@ class UsersRepository implements IUsersRepository {
   }
 }
 
-export { UsersRepository };
+export { SitesRepository };

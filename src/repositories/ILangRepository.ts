@@ -13,9 +13,10 @@ interface ICountResult {
 
 interface ILangRepository {
   list(problemNumber: number): Promise<Lang[]>;
+  findById(id_lang: number): Promise<Lang>;
   create(lang: ICreateLangDTO): Promise<void>;
   count(): Promise<number>;
-  delete(langnumber: number, contestnumber: number): Promise<void>;
+  delete(langnumber: number): Promise<void>;
   findByName(langname: string): Promise<Lang | undefined>;
 }
 

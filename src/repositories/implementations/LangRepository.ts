@@ -17,6 +17,17 @@ class LangRepository implements ILangRepository {
     }
     return lang[0];
   }
+
+  async findById(id_lang: number): Promise<Lang | undefined> {
+    const lang: Lang[] = await this.repository.query(
+      `SELECT * FROM langtable WHERE id_lang = '${id_lang}'`
+    );
+    if (lang.length === 0) {
+      return undefined;
+    }
+    return lang[0];
+  }
+
   private repository: Repository<Lang>;
 
   constructor() {
@@ -81,8 +92,8 @@ class LangRepository implements ILangRepository {
     }
   }
 
-  async delete(langnumber: number, contestnumber: number): Promise<void> {
-    const query = `DELETE FROM langtable WHERE contestnumber=${contestnumber} and langnumber=${langnumber}`;
+  async delete(langnumber: number): Promise<void> {
+    const query = `DELETE FROM langtable WHERE langnumber=${langnumber}`;
     await this.repository.query(query);
   }
 }

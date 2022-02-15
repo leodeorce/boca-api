@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
-import { RunsRepository } from "../../repositories/implementations/RunsRepository";
+import { UsersRepository } from "../../repositories/implementations/UsersRepository";
 
 interface IRequest {
   contestnumber: number;
@@ -25,10 +25,10 @@ interface IRequest {
 }
 
 @injectable()
-class CreateRunUseCase {
+class UpdateUserUseCase {
   constructor(
-    @inject("RunsRepository")
-    private usersRepository: RunsRepository
+    @inject("UsersRepository")
+    private usersRepository: UsersRepository
   ) {}
 
   async execute({
@@ -52,7 +52,13 @@ class CreateRunUseCase {
     updatetime,
     usercpcid,
   }: IRequest): Promise<void> {
-    await this.usersRepository.create({
+    const userExists = await this.usersRepository.getById(usernumber);
+
+    if (!userExists) {
+      throw new Error("User does not exist");
+    }
+    try {
+      await this.usersRepository.update({
         contestnumber,
         usersitenumber,
         usernamber,
@@ -72,8 +78,13 @@ class CreateRunUseCase {
         userinfo,
         updatetime,
         usercpcid,
-    });
+      });
+      return Promise.resolve();
+    } catch (err) {
+      const error = err as Error;
+      return Promise.reject(error);
+    }
   }
 }
 
-export { CreateRunUseCase };
+export { UpdateUserUseCase };
