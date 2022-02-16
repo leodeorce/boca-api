@@ -12,10 +12,10 @@ import { ProblemsRepository } from "../../repositories/implementations/ProblemsR
 import { RunsRepository } from "../../repositories/implementations/RunsRepository";
 import { IProblemsRepository } from "../../repositories/IProblemsRepository";
 import { IRunsRepository } from "../../repositories/IRunsRepository";
-import { UserRepository } from "../../repositories/implementations/UserRepository";
-import { IUserRepository } from "../../repositories/IUserRepository";
-import { SiteRepository } from "../../repositories/implementations/SiteRepository";
-import { ISiteRepository } from "../../repositories/ISiteRepository";
+import { UsersRepository } from "../../repositories/implementations/UsersRepository";
+import { IUsersRepository } from "../../repositories/IUsersRepository";
+import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import { ISitesRepository } from "../../repositories/ISitesRepository";
 
 container.registerSingleton<IContestRepository>(
   "ContestsRepository",
@@ -36,6 +36,6 @@ container.registerSingleton<IAnswersRepository>(
 
 container.registerSingleton<ILangRepository>("LangRepository", LangRepository);
 
-container.registerSingleton<IUserRepository>("UserRepository", UserRepository);
+container.registerSingleton<IUsersRepository>("UsersRepository", UsersRepository);
 
-container.registerSingleton<ISiteRepository>("SiteRepository", SiteRepository);
+container.registerSingleton<ISitesRepository>("SitesRepository", SitesRepository);

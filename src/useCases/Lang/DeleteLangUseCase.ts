@@ -7,14 +7,14 @@ interface IRequest {
 }
 
 @injectable()
-class DeleteAnswerUseCase {
+class DeleteLangUseCase {
   constructor(
     @inject("LangRepository")
     private langRepository: LangRepository
   ) {}
 
   async execute({ id }: IRequest): Promise<void> {
-    const langAlreadyExists = await this.langRepository.getById(id);
+    const langAlreadyExists = await this.langRepository.findById(id);
 
     if (!langAlreadyExists) {
       throw new Error("Answer does not exists");
@@ -24,4 +24,4 @@ class DeleteAnswerUseCase {
   }
 }
 
-export { DeleteAnswerUseCase };
+export { DeleteLangUseCase };

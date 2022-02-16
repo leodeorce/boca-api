@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 
-import { GetProblemUseCase } from "../Problem/GetProblemUseCase";
 import { CreateSiteUseCase } from "./CreateSiteUseCase";
 import { DeleteSiteUseCase } from "./DeleteSiteUseCase";
 import { GetSiteUseCase } from "./GetSiteUseCase";
@@ -13,10 +13,9 @@ class SiteController {
   async listAll(request: Request, response: Response): Promise<Response> {
     const listSitesUseCase = container.resolve(ListSitesUseCase);
 
-    const { id_p } = request.params;
-
+    const { id_c } = request.params;
     try {
-      const all = await listSitesUseCase.execute(parseInt(id_p, 10));
+      const all = await listSitesUseCase.execute(parseInt(id_c, 10));
       return response.json(all);
     } catch (error) {
       const err = error as Error;
@@ -41,71 +40,64 @@ class SiteController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const createSiteUseCase = container.resolve(CreateSiteUseCase);
-    const getProblemUseCase = container.resolve(GetProblemUseCase);
+    const getContestUseCase = container.resolve(GetContestsUseCase);
 
-    const { id_p } = request.params;
+    const { id_c } = request.params;
 
     const {
-      sitesitenumber,
-      usernumber,
-      sitedate,
-      sitedatediff,
-      sitedatediffans,
-      sitefilename,
-      sitedata,
-      siteanswer,
-      sitestatus,
-      sitejudge,
-      sitejudgesite,
-      siteanswer1,
-      sitejudge1,
-      sitejudgesite1,
-      siteanswer2,
-      sitejudge2,
-      sitejudgesite2,
-      sitelangnumber,
-      autoip,
-      autobegindate,
-      autoenddate,
-      autoanswer,
-      autostdout,
-      autostderr,
+      siteip,
+      sitename,
+      siteactive,
+      sitepermitlogins,
+      sitelastmileanswer,
+      sitelastmilescore,
+      siteduration,
+      siteautoend,
+      sitejudging,
+      sitetasking,
+      siteglobalscore,
+      sitescorelevel,
+      sitenextuser,
+      sitenextclar,
+      sitenextrun,
+      sitenexttask,
+      sitemaxtask,
+      sitechiefname,
+      siteautojudge,
+      sitemaxruntime,
+      sitemaxjudgewaittime
     } = request.body;
 
-    const problem = await getProblemUseCase.execute({ id: parseInt(id_p, 10) });
+    const contest = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
 
-    if (!problem) {
-      throw new Error("Problem not found");
+    if (!contest) {
+      throw new Error("Contest not found");
     }
 
     try {
       await createSiteUseCase.execute({
-        contestnumber: problem.contestnumber,
-        sitesitenumber,
-        usernumber,
-        sitedate,
-        sitedatediff,
-        sitedatediffans,
-        siteproblem: parseInt(id_p, 10),
-        sitefilename,
-        sitedata,
-        siteanswer,
-        sitestatus,
-        sitejudge,
-        sitejudgesite,
-        siteanswer1,
-        sitejudge1,
-        sitejudgesite1,
-        siteanswer2,
-        sitejudge2,
-        sitejudgesite2,
-        sitelangnumber,
-        autoip,
-        autobegindate,
-        autoenddate,
-        autoanswer,
-        autostdout,
-        autostderr,
+        contestnumber: contest.contestnumber,
+        siteip,
+        sitename,
+        siteactive,
+        sitepermitlogins,
+        sitelastmileanswer,
+        sitelastmilescore,
+        siteduration,
+        siteautoend,
+        sitejudging,
+        sitetasking,
+        siteglobalscore,
+        sitescorelevel,
+        sitenextuser,
+        sitenextclar,
+        sitenextrun,
+        sitenexttask,
+        sitemaxtask,
+        sitechiefname,
+        siteautojudge,
+        sitemaxruntime,
+        sitemaxjudgewaittime
       });
 
       return response.status(201).send();
@@ -121,67 +113,59 @@ class SiteController {
 
     const {
       contestnumber,
-      sitesitenumber,
-      usernumber,
-      sitedate,
-      siteproblem,
-      sitedatediff,
-      sitedatediffans,
-      sitefilename,
-      sitedata,
-      siteanswer,
-      sitestatus,
-      sitejudge,
-      sitejudgesite,
-      siteanswer1,
-      sitejudge1,
-      sitejudgesite1,
-      siteanswer2,
-      sitejudge2,
-      sitejudgesite2,
-      sitelangnumber,
-      autoip,
-      autobegindate,
-      autoenddate,
-      autoanswer,
-      autostdout,
-      autostderr,
+      siteip,
+      sitename,
+      siteactive,
+      sitepermitlogins,
+      sitelastmileanswer,
+      sitelastmilescore,
+      siteduration,
+      siteautoend,
+      sitejudging,
+      sitetasking,
+      siteglobalscore,
+      sitescorelevel,
+      sitenextuser,
+      sitenextclar,
+      sitenextrun,
+      sitenexttask,
+      sitemaxtask,
+      sitechiefname,
+      siteautojudge,
+      sitemaxruntime,
+      sitemaxjudgewaittime
     } = request.body;
 
     try {
       await updateSiteUseCase.execute({
         sitenumber: parseInt(id_site, 10),
         contestnumber,
-        sitesitenumber,
-        usernumber,
-        sitedate,
-        sitedatediff,
-        sitedatediffans,
-        siteproblem,
-        sitefilename,
-        sitedata,
-        siteanswer,
-        sitestatus,
-        sitejudge,
-        sitejudgesite,
-        siteanswer1,
-        sitejudge1,
-        sitejudgesite1,
-        siteanswer2,
-        sitejudge2,
-        sitejudgesite2,
-        sitelangnumber,
-        autoip,
-        autobegindate,
-        autoenddate,
-        autoanswer,
-        autostdout,
-        autostderr,
+        siteip,
+        sitename,
+        siteactive,
+        sitepermitlogins,
+        sitelastmileanswer,
+        sitelastmilescore,
+        siteduration,
+        siteautoend,
+        sitejudging,
+        sitetasking,
+        siteglobalscore,
+        sitescorelevel,
+        sitenextuser,
+        sitenextclar,
+        sitenextrun,
+        sitenexttask,
+        sitemaxtask,
+        sitechiefname,
+        siteautojudge,
+        sitemaxruntime,
+        sitemaxjudgewaittime
       });
 
       return response.status(201).send();
     } catch (error) {
-      return response.status(400).json({ error: "Error creating Site" });
+      return response.status(400).json({ error: "Error Updating Site" });
     }
   }
 

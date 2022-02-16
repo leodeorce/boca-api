@@ -4,8 +4,6 @@ import { SitesRepository } from "../../repositories/implementations/SitesReposit
 
 interface IRequest {
   contestnumber: number;
-  usersitenumber: number;
-  usernamber: number;
   siteip: string;
   sitename: string;
   siteactive: boolean;
@@ -20,12 +18,12 @@ interface IRequest {
   sitescorelevel: number;
   sitenextuser: number;
   sitenextclar: number;
-  sitenextsite: number;
+  sitenextrun: number;
+  sitenexttask: number;
   sitemaxtask: number;
   sitechiefname: string;
-  updatetime: number;
-  siteautojudge: boolean = false;
-  sitemaxsitetime: number;
+  siteautojudge: boolean;
+  sitemaxruntime: number;
   sitemaxjudgewaittime: number;
 }
 
@@ -38,8 +36,6 @@ class CreateSiteUseCase {
 
   async execute({
     contestnumber,
-    usersitenumber,
-    usernamber,
     siteip,
     sitename,
     siteactive,
@@ -54,18 +50,20 @@ class CreateSiteUseCase {
     sitescorelevel,
     sitenextuser,
     sitenextclar,
-    sitenextsite,
+    sitenextrun,
+    sitenexttask,
     sitemaxtask,
     sitechiefname,
-    updatetime,
-    siteautojudge: boolean ,
-    sitemaxsitetime,
-    sitemaxjudgewaittime,
+    siteautojudge,
+    sitemaxruntime,
+    sitemaxjudgewaittime
   }: IRequest): Promise<void> {
+
+    const count = await this.sitesRepository.count() + 1;
+
     await this.sitesRepository.create({
       contestnumber,
-      usersitenumber,
-      usernamber,
+      sitenumber: count + 1,
       siteip,
       sitename,
       siteactive,
@@ -80,13 +78,13 @@ class CreateSiteUseCase {
       sitescorelevel,
       sitenextuser,
       sitenextclar,
-      sitenextsite,
+      sitenextrun,
+      sitenexttask,
       sitemaxtask,
       sitechiefname,
-      updatetime,
-      siteautojudge: boolean ,
-      sitemaxsitetime,
-      sitemaxjudgewaittime,
+      siteautojudge,
+      sitemaxruntime,
+      sitemaxjudgewaittime
     });
   }
 }

@@ -3,7 +3,7 @@ import { User } from "../entities/User";
 interface ICreateUserDTO {
     contestnumber: number;
     usersitenumber: number;
-    usernamber: number;
+    usernumber: number;
     username: string;
     userfullname: string;
     userdesc?: string;
@@ -25,7 +25,7 @@ interface ICreateUserDTO {
 interface IUpdateUserDTO {
     contestnumber?: number;
     usersitenumber?: number;
-    usernamber: number;
+    usernumber: number;
     username?: string;
     userfullname?: string;
     userdesc?: string;

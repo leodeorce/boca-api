@@ -10,8 +10,8 @@ class ListSitesUseCase {
     private sitesRepository: SitesRepository
   ) {}
 
-  async execute(problemNumber: number): Promise<Site[]> {
-    const sites = await this.sitesRepository.list(problemNumber);
+  async execute(contestNumber: number): Promise<Site[]> {
+    const sites = await this.sitesRepository.list(contestNumber);
 
     return sites;
   }

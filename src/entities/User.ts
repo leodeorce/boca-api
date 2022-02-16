@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("usertable")
-class Run {
+class User {
   @PrimaryColumn()
   contestnumber!: number;
 
@@ -9,7 +9,7 @@ class Run {
   usersitenumber!: number;
 
   @PrimaryColumn()
-  usernamber!: number;
+  usernumber!: number;
 
   @Column()
   username!: string;
@@ -60,4 +60,4 @@ class Run {
   usercpcid: string = "";
 }
 
-export { Run };
+export { User };

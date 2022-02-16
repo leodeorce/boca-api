@@ -6,10 +6,7 @@ class Site {
   contestnumber!: number;
 
   @PrimaryColumn()
-  usersitenumber!: number;
-
-  @Column()
-  usernamber!: number;
+  sitenumber!: number;
 
   @Column()
   siteip!: string;

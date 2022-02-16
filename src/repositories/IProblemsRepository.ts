@@ -35,7 +35,7 @@ interface ICountResult {
 
 interface IProblemsRepository {
   findByName(name: string): Promise<Problem | undefined>;
-  list(): Promise<Problem[]>;
+  list(contestnumber?: number): Promise<Problem[]>;
   create(problem: ICreateProblemDTO): Promise<void>;
   count(): Promise<number>;
   getById(id: number): Promise<Problem | undefined>;

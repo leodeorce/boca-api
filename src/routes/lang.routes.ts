@@ -6,8 +6,10 @@ const langRoutes = Router();
 
 const langController = new LangController();
 
-langRoutes.get("/contest/:id_c/problem", langController.listAll);
+langRoutes.get("/contest/:id_c/language", langController.listAll);
 langRoutes.post("/contest/:id_c/language", langController.create);
-langRoutes.delete("/problem/:id_problem", langController.delete);
+langRoutes.delete("/language/:id_language", langController.delete);
+langRoutes.put("/language/:id_language", langController.update);
+langRoutes.get("/language/:id_language", langController.getOne);
 
 export { langRoutes };

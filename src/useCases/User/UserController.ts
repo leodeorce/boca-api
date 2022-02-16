@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 
 import { GetProblemUseCase } from "../Problem/GetProblemUseCase";
 import { CreateUserUseCase } from "./CreateUserUseCase";
 import { DeleteUserUseCase } from "./DeleteUserUseCase";
 import { GetUserUseCase } from "./GetUserUseCase";
-import { ListUsersUseCase } from "./ListUsersUseCase";
+import { ListUsersUseCase } from "./ListUserUseCase";
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
 
 class UserController {
@@ -41,71 +42,59 @@ class UserController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const createUserUseCase = container.resolve(CreateUserUseCase);
-    const getProblemUseCase = container.resolve(GetProblemUseCase);
+    const getContestUseCase = container.resolve(GetContestsUseCase);
 
-    const { id_p } = request.params;
+    const { id_c } = request.params;
 
     const {
+      contestnumber,
       usersitenumber,
       usernumber,
-      userdate,
-      userdatediff,
-      userdatediffans,
-      userfilename,
-      userdata,
-      useranswer,
-      userstatus,
-      userjudge,
-      userjudgesite,
-      useranswer1,
-      userjudge1,
-      userjudgesite1,
-      useranswer2,
-      userjudge2,
-      userjudgesite2,
-      userlangnumber,
-      autoip,
-      autobegindate,
-      autoenddate,
-      autoanswer,
-      autostdout,
-      autostderr,
-    } = request.body;
+      username,
+      userfullname,
+      userdesc,
+      usertype,
+      userenabled,
+      usermultilogin,
+      userpassword,
+      userip,
+      userlastlogin,
+      usersession,
+      usersessionextra,
+      userlastlogout,
+      userpermitip,
+      userinfo,
+      updatetime,
+      usercpcid,
+    } = request.body();
 
-    const problem = await getProblemUseCase.execute({ id: parseInt(id_p, 10) });
+    const user = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
 
-    if (!problem) {
-      throw new Error("Problem not found");
+    if (!user) {
+      throw new Error("Contest not found");
     }
 
     try {
       await createUserUseCase.execute({
-        contestnumber: problem.contestnumber,
+        contestnumber: parseInt(id_c, 10),
         usersitenumber,
         usernumber,
-        userdate,
-        userdatediff,
-        userdatediffans,
-        userproblem: parseInt(id_p, 10),
-        userfilename,
-        userdata,
-        useranswer,
-        userstatus,
-        userjudge,
-        userjudgesite,
-        useranswer1,
-        userjudge1,
-        userjudgesite1,
-        useranswer2,
-        userjudge2,
-        userjudgesite2,
-        userlangnumber,
-        autoip,
-        autobegindate,
-        autoenddate,
-        autoanswer,
-        autostdout,
-        autostderr,
+        username,
+        userfullname,
+        userdesc,
+        usertype,
+        userenabled,
+        usermultilogin,
+        userpassword,
+        userip,
+        userlastlogin,
+        usersession,
+        usersessionextra,
+        userlastlogout,
+        userpermitip,
+        userinfo,
+        updatetime,
+        usercpcid,
       });
 
       return response.status(201).send();
@@ -122,61 +111,45 @@ class UserController {
     const {
       contestnumber,
       usersitenumber,
-      usernumber,
-      userdate,
-      userproblem,
-      userdatediff,
-      userdatediffans,
-      userfilename,
-      userdata,
-      useranswer,
-      userstatus,
-      userjudge,
-      userjudgesite,
-      useranswer1,
-      userjudge1,
-      userjudgesite1,
-      useranswer2,
-      userjudge2,
-      userjudgesite2,
-      userlangnumber,
-      autoip,
-      autobegindate,
-      autoenddate,
-      autoanswer,
-      autostdout,
-      autostderr,
+      username,
+      userfullname,
+      userdesc,
+      usertype,
+      userenabled,
+      usermultilogin,
+      userpassword,
+      userip,
+      userlastlogin,
+      usersession,
+      usersessionextra,
+      userlastlogout,
+      userpermitip,
+      userinfo,
+      updatetime,
+      usercpcid,
     } = request.body;
 
     try {
       await updateUserUseCase.execute({
-        usernumber: parseInt(id_user, 10),
         contestnumber,
         usersitenumber,
-        usernumber,
-        userdate,
-        userdatediff,
-        userdatediffans,
-        userproblem,
-        userfilename,
-        userdata,
-        useranswer,
-        userstatus,
-        userjudge,
-        userjudgesite,
-        useranswer1,
-        userjudge1,
-        userjudgesite1,
-        useranswer2,
-        userjudge2,
-        userjudgesite2,
-        userlangnumber,
-        autoip,
-        autobegindate,
-        autoenddate,
-        autoanswer,
-        autostdout,
-        autostderr,
+        usernumber: parseInt(id_user, 10),
+        username,
+        userfullname,
+        userdesc,
+        usertype,
+        userenabled,
+        usermultilogin,
+        userpassword,
+        userip,
+        userlastlogin,
+        usersession,
+        usersessionextra,
+        userlastlogout,
+        userpermitip,
+        userinfo,
+        updatetime,
+        usercpcid,
       });
 
       return response.status(201).send();

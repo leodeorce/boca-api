@@ -5,9 +5,18 @@ import {
   ILangRepository,
   ICreateLangDTO,
   ICountResult,
+  IUpdadeLangDTO
 } from "../ILangRepository";
 
 class LangRepository implements ILangRepository {
+
+  private repository: Repository<Lang>;
+
+  constructor() {
+    this.repository = getRepository(Lang);
+  }
+
+
   async findByName(langname: string): Promise<Lang | undefined> {
     const lang: Lang[] = await this.repository.query(
       `SELECT * FROM langtable WHERE langname = '${langname}'`
@@ -20,7 +29,7 @@ class LangRepository implements ILangRepository {
 
   async findById(id_lang: number): Promise<Lang | undefined> {
     const lang: Lang[] = await this.repository.query(
-      `SELECT * FROM langtable WHERE id_lang = '${id_lang}'`
+      `SELECT * FROM langtable WHERE langnumber = '${id_lang}'`
     );
     if (lang.length === 0) {
       return undefined;
@@ -28,11 +37,7 @@ class LangRepository implements ILangRepository {
     return lang[0];
   }
 
-  private repository: Repository<Lang>;
 
-  constructor() {
-    this.repository = getRepository(Lang);
-  }
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
       `SELECT MAX(langnumber) FROM langtable`
@@ -43,9 +48,9 @@ class LangRepository implements ILangRepository {
     return count[0].max;
   }
 
-  async list(problemNumber: number): Promise<Lang[]> {
+  async list(contestNumber: number): Promise<Lang[]> {
     const lang: Lang[] = await this.repository.query(
-      `SELECT * FROM langtable WHERE problemnumber = ${problemNumber}`
+      `SELECT * FROM langtable WHERE contestnumber = ${contestNumber}`
     );
     return lang;
   }
@@ -77,6 +82,48 @@ class LangRepository implements ILangRepository {
     createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
 
     const query = `INSERT INTO langtable 
+      (
+        ${createColumns}
+       ) VALUES (
+         ${createValues}
+      );
+      `;
+
+    try {
+      await this.repository.query(query);
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
+  async update(updateObject: IUpdadeLangDTO): Promise<void> {
+    let createColumns = "";
+    let createValues = "";
+
+    const filteredObject = Object.fromEntries(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      Object.entries(updateObject).filter(([_, v]) => v != null)
+    );
+
+    const KeysAndValues = Object.entries(filteredObject);
+    if (KeysAndValues.length === 0) {
+      return Promise.reject();
+    }
+
+    KeysAndValues.forEach((object) => {
+      createColumns = createColumns.concat(`${object[0]},`);
+      const value =
+        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
+      createValues = createValues.concat(value);
+    });
+    // Limpar a query
+    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
+    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
+    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
+    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
+
+    const query = `UPDATE INTO langtable 
       (
         ${createColumns}
        ) VALUES (

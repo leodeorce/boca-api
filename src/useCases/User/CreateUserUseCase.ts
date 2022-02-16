@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
 
-import { RunsRepository } from "../../repositories/implementations/RunsRepository";
+import { UsersRepository } from "../../repositories/implementations/UsersRepository";
 
 interface IRequest {
   contestnumber: number;
   usersitenumber: number;
-  usernamber: number;
+  usernumber: number;
   username: string;
   userfullname: string;
   userdesc?: string;
@@ -25,16 +25,16 @@ interface IRequest {
 }
 
 @injectable()
-class CreateRunUseCase {
+class CreateUserUseCase {
   constructor(
     @inject("RunsRepository")
-    private usersRepository: RunsRepository
+    private usersRepository: UsersRepository
   ) {}
 
   async execute({
     contestnumber,
     usersitenumber,
-    usernamber,
+    usernumber,
     username,
     userfullname,
     userdesc,
@@ -55,7 +55,7 @@ class CreateRunUseCase {
     await this.usersRepository.create({
         contestnumber,
         usersitenumber,
-        usernamber,
+        usernumber,
         username,
         userfullname,
         userdesc,
@@ -76,4 +76,4 @@ class CreateRunUseCase {
   }
 }
 
-export { CreateRunUseCase };
+export { CreateUserUseCase };

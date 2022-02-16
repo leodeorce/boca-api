@@ -4,8 +4,7 @@ import { SitesRepository } from "../../repositories/implementations/SitesReposit
 
 interface IRequest {
   contestnumber?: number;
-  usersitenumber: number;
-  usernamber?: number;
+  sitenumber: number;
   siteip?: string;
   sitename?: string;
   siteactive?: boolean;
@@ -20,14 +19,13 @@ interface IRequest {
   sitescorelevel?: number;
   sitenextuser?: number;
   sitenextclar?: number;
-  sitenextsite?: number;
+  sitenextrun?: number;
+  sitenexttask?: number;
   sitemaxtask?: number;
   sitechiefname?: string;
-  updatetime?: number;
-  siteautojudge?: boolean = false;
-  sitemaxsitetime?: number;
+  siteautojudge?: boolean;
+  sitemaxruntime?: number;
   sitemaxjudgewaittime?: number;
-
 }
 
 @injectable()
@@ -39,8 +37,7 @@ class UpdateSiteUseCase {
 
   async execute({
     contestnumber,
-    usersitenumber,
-    usernamber,
+    sitenumber,
     siteip,
     sitename,
     siteactive,
@@ -55,13 +52,13 @@ class UpdateSiteUseCase {
     sitescorelevel,
     sitenextuser,
     sitenextclar,
-    sitenextsite,
+    sitenextrun,
+    sitenexttask,
     sitemaxtask,
     sitechiefname,
-    updatetime,
-    siteautojudge: boolean ,
-    sitemaxsitetime,
-    sitemaxjudgewaittime,
+    siteautojudge,
+    sitemaxruntime,
+    sitemaxjudgewaittime
   }: IRequest): Promise<void> {
     const siteExists = await this.sitesRepository.getById(sitenumber);
 
@@ -71,8 +68,7 @@ class UpdateSiteUseCase {
     try {
       await this.sitesRepository.update({
         contestnumber,
-        usersitenumber,
-        usernamber,
+        sitenumber,
         siteip,
         sitename,
         siteactive,
@@ -87,13 +83,13 @@ class UpdateSiteUseCase {
         sitescorelevel,
         sitenextuser,
         sitenextclar,
-        sitenextsite,
+        sitenextrun,
+        sitenexttask,
         sitemaxtask,
         sitechiefname,
-        updatetime,
-        siteautojudge: boolean ,
-        sitemaxsitetime,
-        sitemaxjudgewaittime,
+        siteautojudge,
+        sitemaxruntime,
+        sitemaxjudgewaittime
       });
       return Promise.resolve();
     } catch (err) {

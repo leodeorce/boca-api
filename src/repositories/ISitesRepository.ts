@@ -2,8 +2,7 @@ import { Site } from "../entities/Site";
 
 interface ICreateSiteDTO {
   contestnumber: number;
-  usersitenumber: number;
-  usernamber: number;
+  sitenumber: number;
   siteip: string;
   sitename: string;
   siteactive: boolean;
@@ -19,18 +18,17 @@ interface ICreateSiteDTO {
   sitenextuser: number;
   sitenextclar: number;
   sitenextrun: number;
+  sitenexttask: number;
   sitemaxtask: number;
   sitechiefname: string;
-  updatetime: number;
-  siteautojudge: boolean = false;
+  siteautojudge: boolean;
   sitemaxruntime: number;
   sitemaxjudgewaittime: number;
 }
 
 interface IUpdateSiteDTO {
   contestnumber?: number;
-  usersitenumber: number;
-  usernamber?: number;
+  sitenumber: number;
   siteip?: string;
   sitename?: string;
   siteactive?: boolean;
@@ -46,10 +44,10 @@ interface IUpdateSiteDTO {
   sitenextuser?: number;
   sitenextclar?: number;
   sitenextrun?: number;
+  sitenexttask?: number;
   sitemaxtask?: number;
   sitechiefname?: string;
-  updatetime?: number;
-  siteautojudge?: boolean = false;
+  siteautojudge?: boolean;
   sitemaxruntime?: number;
   sitemaxjudgewaittime?: number;
 }

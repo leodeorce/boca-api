@@ -3,25 +3,25 @@ import { inject, injectable } from "tsyringe";
 import { UsersRepository } from "../../repositories/implementations/UsersRepository";
 
 interface IRequest {
-  contestnumber: number;
-  usersitenumber: number;
-  usernamber: number;
-  username: string;
-  userfullname: string;
+  contestnumber?: number;
+  usersitenumber?: number;
+  usernumber: number;
+  username?: string;
+  userfullname?: string;
   userdesc?: string;
-  usertype: string;
-  userenabled: boolean;
-  usermultilogin: boolean;
-  userpassword: string;
+  usertype?: string;
+  userenabled?: boolean;
+  usermultilogin?: boolean;
+  userpassword?: string;
   userip?: string;
   userlastlogin?: number;
-  usersession: string;
-  usersessionextra: string;
+  usersession?: string;
+  usersessionextra?: string;
   userlastlogout?: number;
   userpermitip?: number;
-  userinfo: string;
-  updatetime: number;
-  usercpcid: string;
+  userinfo?: string;
+  updatetime?: number;
+  usercpcid?: string;
 }
 
 @injectable()
@@ -34,7 +34,7 @@ class UpdateUserUseCase {
   async execute({
     contestnumber,
     usersitenumber,
-    usernamber,
+    usernumber,
     username,
     userfullname,
     userdesc,
@@ -61,7 +61,7 @@ class UpdateUserUseCase {
       await this.usersRepository.update({
         contestnumber,
         usersitenumber,
-        usernamber,
+        usernumber,
         username,
         userfullname,
         userdesc,
