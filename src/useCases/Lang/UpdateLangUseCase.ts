@@ -3,6 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { LangRepository } from "../../repositories/implementations/LangRepository";
 
 interface IRequest {
+  langnumber: number;
   contestnumber: number;
   langname: string;
   langextension: string;
@@ -19,6 +20,7 @@ class UpdateLangUseCase {
     contestnumber,
     langname,
     langextension,
+    langnumber,
   }: IRequest): Promise<void> {
     const langAlreadyExists = await this.langRepository.findByName(langname);
 
@@ -27,11 +29,9 @@ class UpdateLangUseCase {
     }
 
     try {
-      const count = (await this.langRepository.count()) + 1;
-
-      await this.langRepository.create({
+      await this.langRepository.update({
         contestnumber,
-        langnumber: count,
+        langnumber,
         langname,
         langextension,
       });

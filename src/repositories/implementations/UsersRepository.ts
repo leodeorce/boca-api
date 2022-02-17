@@ -93,7 +93,7 @@ class UsersRepository implements IUsersRepository {
          ${createValues}
       );
       `;
-    console.log(query);
+
     try {
       await this.repository.query(query);
       return Promise.resolve();

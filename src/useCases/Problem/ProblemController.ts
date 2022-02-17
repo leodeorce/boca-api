@@ -13,10 +13,10 @@ class ProblemController {
   async listAll(request: Request, response: Response): Promise<Response> {
     const listProblemsUseCase = container.resolve(ListProblemsUseCase);
 
-    const { c_id } = request.params;
+    const { id_c } = request.params;
 
     try {
-      const all = await listProblemsUseCase.execute(parseInt(c_id, 10));
+      const all = await listProblemsUseCase.execute(parseInt(id_c, 10));
       return response.json(all);
     } catch (error) {
       if (error instanceof QueryFailedError) {
@@ -62,6 +62,7 @@ class ProblemController {
       fake,
       problemcolorname,
       problemcolor,
+      working_id,
       updatetime,
     } = request.body;
 
@@ -77,6 +78,7 @@ class ProblemController {
         fake,
         problemcolorname,
         problemcolor,
+        working_id,
         updatetime,
       });
 
@@ -106,6 +108,7 @@ class ProblemController {
       fake,
       problemcolorname,
       problemcolor,
+      working_id,
       updatetime,
     } = request.body;
 
@@ -121,6 +124,7 @@ class ProblemController {
         fake,
         problemcolorname,
         problemcolor,
+        working_id,
         updatetime,
       });
 

@@ -13,6 +13,7 @@ interface IRequest {
   fake: boolean;
   problemcolorname: string;
   problemcolor: string;
+  working_id?: number;
   updatetime: number;
 }
 
@@ -34,6 +35,7 @@ class CreateProblemUseCase {
     fake,
     problemcolorname,
     problemcolor,
+    working_id,
     updatetime,
   }: IRequest): Promise<void> {
     const contestAlreadyExists = await this.problemsRepository.findByName(
@@ -43,7 +45,7 @@ class CreateProblemUseCase {
     if (contestAlreadyExists) {
       throw new Error("Problem with that name already exists");
     }
-    const count = await this.problemsRepository.count();
+    const count = (await this.problemsRepository.count()) + 1;
 
     this.problemsRepository.create({
       contestnumber,
@@ -57,6 +59,7 @@ class CreateProblemUseCase {
       fake,
       problemcolorname,
       problemcolor,
+      working_id,
       updatetime,
     });
   }

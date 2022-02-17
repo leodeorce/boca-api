@@ -88,7 +88,7 @@ class AnswerController {
     const { id_answer } = request.params;
 
     const { contestnumber, fake, runanswer, yes } = request.body;
-    console.log(parseInt(id_answer, 10));
+
     try {
       await updateAnswerUseCase.execute({
         answernumber: parseInt(id_answer, 10),

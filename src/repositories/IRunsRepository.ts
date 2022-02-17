@@ -4,6 +4,7 @@ interface ICreateRunDTO {
   contestnumber: number;
   runsitenumber: number;
   usernumber: number;
+  runnumber: number;
   rundate: number;
   rundatediff: number;
   rundatediffans: number;

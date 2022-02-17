@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { QueryFailedError } from "typeorm";
 
+import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { GetProblemUseCase } from "../Problem/GetProblemUseCase";
 import { CreateRunUseCase } from "./CreateRunUseCase";
 import { DeleteRunUseCase } from "./DeleteRunUseCase";
@@ -56,6 +57,7 @@ class RunController {
 
     const {
       runsitenumber,
+      runproblem,
       usernumber,
       rundate,
       rundatediff,
@@ -92,12 +94,12 @@ class RunController {
     try {
       await createRunUseCase.execute({
         contestnumber: problem.contestnumber,
+        runproblem: problem.problemnumber,
         runsitenumber,
         usernumber,
         rundate,
         rundatediff,
         rundatediffans,
-        runproblem: parseInt(id_p, 10),
         runfilename,
         rundata,
         runanswer,

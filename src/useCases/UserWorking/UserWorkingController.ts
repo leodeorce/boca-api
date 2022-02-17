@@ -64,7 +64,6 @@ class UserWorkingController {
     const { id_working } = request.params;
 
     const { contestnumber, sitenumber, usernumbers } = request.body;
-
     try {
       await addUsersToWorkingUseCase.execute({
         contestnumber,

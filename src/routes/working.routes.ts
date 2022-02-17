@@ -13,6 +13,8 @@ workingsRoutes.post("/contest/:id_c/working", workingController.create);
 workingsRoutes.put("/working/:id_working", workingController.update);
 workingsRoutes.delete("/working/:id_working", workingController.delete);
 
+// Rotas de link entre usuários e workings
+
 workingsRoutes.post(
   "/working/:id_working/user",
   workingUsersController.addUsersToWorking

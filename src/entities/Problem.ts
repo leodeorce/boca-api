@@ -1,14 +1,12 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 import { Contest } from "./Contest";
-import { Working } from "./Working";
 
 @Entity("problemtable")
 class Problem {
@@ -46,9 +44,8 @@ class Problem {
   @Column()
   problemcolor?: string;
 
-  @ManyToOne((type) => Working, (workingItem) => workingItem.workingnumber)
-  @JoinColumn()
-  working?: Working;
+  @Column()
+  working_id?: number;
 
   @UpdateDateColumn()
   updatetime!: number;

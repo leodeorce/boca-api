@@ -66,9 +66,12 @@ class CreateRunUseCase {
     autostdout,
     autostderr,
   }: IRequest): Promise<void> {
+    const count = (await this.runsRepository.count()) + 1;
+
     await this.runsRepository.create({
       contestnumber,
       runsitenumber,
+      runnumber: count,
       usernumber,
       rundate,
       rundatediff,

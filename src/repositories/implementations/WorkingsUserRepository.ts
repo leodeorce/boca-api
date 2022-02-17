@@ -13,14 +13,10 @@ import {
 } from "../IWorkingsUserRepository";
 
 class WorkingsUserRepository implements IWorkingsUserRepository {
-  private workingRepository: Repository<Working>;
-  private userRepository: Repository<User>;
-  private workingsUserRepository: Repository<UserWorking>;
+  private repository: Repository<UserWorking>;
 
   constructor() {
-    this.workingRepository = getRepository(Working);
-    this.userRepository = getRepository(User);
-    this.workingsUserRepository = getRepository(UserWorking);
+    this.repository = getRepository(UserWorking);
   }
 
   async addUsersToWorking(createObject: ICreateWorkingUsers): Promise<void> {
@@ -28,12 +24,12 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
       const query = `INSERT INTO userworkingtable 
       (
         sitenumber, contestnumber, usernumber, workingnumber
-      ) VALUES (
-        ${createObject.sitenumber}, ${createObject.contestnumber}, ${user}, ${createObject.workingnumber}
-      );`;
+        ) VALUES (
+          ${createObject.sitenumber}, ${createObject.contestnumber}, ${user}, ${createObject.workingnumber}
+          );`;
 
       try {
-        await this.workingsUserRepository.query(query);
+        await this.repository.query(query);
       } catch (error) {
         return Promise.reject(error);
       }
@@ -51,7 +47,7 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
       );`;
 
       try {
-        await this.workingsUserRepository.query(query);
+        await this.repository.query(query);
       } catch (error) {
         return Promise.reject(error);
       }
@@ -67,7 +63,7 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
     WHERE usernumber = ${usernumber}`;
 
     try {
-      const workings = await this.workingsUserRepository.query(query);
+      const workings = await this.repository.query(query);
       return workings;
     } catch (error) {
       return Promise.reject(error);
@@ -84,7 +80,7 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
     WHERE workingnumber = ${workingnumber}`;
 
     try {
-      const workings = await this.workingsUserRepository.query(query);
+      const workings = await this.repository.query(query);
       return workings;
     } catch (error) {
       return Promise.reject(error);
@@ -102,7 +98,7 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
         workingnumber = ${working};`;
 
       try {
-        await this.workingsUserRepository.query(query);
+        await this.repository.query(query);
       } catch (error) {
         return Promise.reject(error);
       }
@@ -121,7 +117,7 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
         workingnumber = ${deleteObject.workingnumber};`;
 
       try {
-        await this.workingsUserRepository.query(query);
+        await this.repository.query(query);
       } catch (error) {
         return Promise.reject(error);
       }

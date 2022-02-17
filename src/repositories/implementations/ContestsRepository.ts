@@ -16,39 +16,57 @@ class ContestsRepository implements IContestRepository {
   }
 
   async list(): Promise<Contest[]> {
-    const contests = await this.repository.query(`SELECT * FROM contesttable`);
-    return contests;
+    try {
+      const contests = await this.repository.query(
+        `SELECT * FROM contesttable`
+      );
+      return contests;
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   async findByName(name: string): Promise<Contest | undefined> {
-    const query = `
-    SELECT * FROM contesttable WHERE contestname = '${name}'
-  `;
-    const contest: Contest[] = await this.repository.query(query);
-    if (contest.length === 0) {
-      return undefined;
+    try {
+      const query = `
+      SELECT * FROM contesttable WHERE contestname = '${name}'
+    `;
+      const contest: Contest[] = await this.repository.query(query);
+      if (contest.length === 0) {
+        return undefined;
+      }
+      return contest[0];
+    } catch (err) {
+      return Promise.reject(err);
     }
-    return contest[0];
   }
 
   async count(): Promise<number> {
-    const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(contestnumber) FROM contesttable`
-    );
-    if (count[0].max === null) {
-      return -1;
+    try {
+      const count: ICountResult[] = await this.repository.query(
+        `SELECT MAX(contestnumber) FROM contesttable`
+      );
+      if (count[0].max === null) {
+        return -1;
+      }
+      return count[0].max;
+    } catch (err) {
+      return Promise.reject(err);
     }
-    return count[0].max;
   }
 
   async getById(id: number): Promise<Contest | undefined> {
-    const contest: Contest[] = await this.repository.query(
-      `SELECT * FROM contesttable WHERE contestnumber = ${id}`
-    );
-    if (contest.length === 0) {
-      return undefined;
+    try {
+      const contest: Contest[] = await this.repository.query(
+        `SELECT * FROM contesttable WHERE contestnumber = ${id}`
+      );
+      if (contest.length === 0) {
+        return undefined;
+      }
+      return contest[0];
+    } catch (err) {
+      return Promise.reject(err);
     }
-    return contest[0];
   }
 
   async create(createObject: ICreateContestDTO): Promise<void> {
@@ -84,8 +102,12 @@ class ContestsRepository implements IContestRepository {
          ${createValues}
       );
       `;
-    await this.repository.query(query);
-    return Promise.resolve();
+    try {
+      await this.repository.query(query);
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   async update(updateObject: IUpdateContestDTO): Promise<Contest> {
@@ -113,14 +135,22 @@ class ContestsRepository implements IContestRepository {
       `\nWHERE contestnumber = ${updateObject.contestnumber};`
     );
 
-    const updatedContest: Contest[] = await this.repository.query(query);
-
-    return updatedContest[0];
+    try {
+      const updatedContest: Contest[] = await this.repository.query(query);
+      return updatedContest[0];
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   async delete(contestnumber: number): Promise<void> {
-    const query = `DELETE FROM contesttable WHERE contestnumber=${contestnumber}`;
-    await this.repository.query(query);
+    try {
+      const query = `DELETE FROM contesttable WHERE contestnumber=${contestnumber}`;
+      await this.repository.query(query);
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 }
 

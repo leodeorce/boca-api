@@ -13,6 +13,7 @@ interface IRequest {
   fake: boolean;
   problemcolorname: string;
   problemcolor: string;
+  working_id?: number;
   updatetime: number;
 }
 
@@ -34,6 +35,7 @@ class UpdateProblemsUseCase {
     fake,
     problemcolorname,
     problemcolor,
+    working_id,
     updatetime,
   }: IRequest): Promise<void> {
     const problemAlreadyExists = await this.problemsRepository.getById(
@@ -55,6 +57,7 @@ class UpdateProblemsUseCase {
       fake,
       problemcolorname,
       problemcolor,
+      working_id,
       updatetime,
     });
   }

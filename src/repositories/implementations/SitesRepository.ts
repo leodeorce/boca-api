@@ -20,7 +20,7 @@ class SitesRepository implements ISitesRepository {
       const problems = await this.repository.query(
         `SELECT * FROM sitetable WHERE contestnumber=${contestnumber}`
       );
-      console.log(contestnumber);
+
       return problems;
     }
     const sites = await this.repository.query(`SELECT * FROM sitetable`);

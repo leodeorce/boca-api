@@ -95,38 +95,26 @@ class LangRepository implements ILangRepository {
   }
 
   async update(updateObject: IUpdadeLangDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
-
     const filteredObject = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(updateObject).filter(([_, v]) => v != null)
     );
 
+    let query = `UPDATE langtable\n`;
     const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
+    if (KeysAndValues.length > 0) {
+      query = query.concat(`
+       SET `);
     }
 
     KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
       const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
+        typeof object[1] === "string" ? `'${object[1]}'` : object[1];
+      query = query.concat(`${object[0]} = ${value}, `);
     });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
-
-    const query = `UPDATE INTO langtable 
-      (
-        ${createColumns}
-       ) VALUES (
-         ${createValues}
-      );
-      `;
+    query = query.trim(); // Remove espaços em branco desnecessarios
+    query = query.slice(0, query.length - 1); // Retira a ultima virgula
+    query = query.concat(`\nWHERE langnumber = ${updateObject.langnumber};`);
 
     try {
       await this.repository.query(query);
@@ -137,8 +125,13 @@ class LangRepository implements ILangRepository {
   }
 
   async delete(langnumber: number): Promise<void> {
-    const query = `DELETE FROM langtable WHERE langnumber=${langnumber}`;
-    await this.repository.query(query);
+    try {
+      const query = `DELETE FROM langtable WHERE langnumber=${langnumber}`;
+      await this.repository.query(query);
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 }
 

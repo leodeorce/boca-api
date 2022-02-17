@@ -12,6 +12,7 @@ interface ICreateProblemDTO {
   fake: boolean;
   problemcolorname: string;
   problemcolor: string;
+  working_id?: number;
   updatetime: number;
 }
 
@@ -26,6 +27,7 @@ interface IUpdateProblemDTO {
   fake: boolean;
   problemcolorname: string;
   problemcolor: string;
+  working_id?: number;
   updatetime: number;
 }
 

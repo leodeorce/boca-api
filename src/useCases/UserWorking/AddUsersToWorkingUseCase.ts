@@ -29,6 +29,7 @@ class AddUsersToWorkingUseCase {
         workingnumber,
         usernumbers,
       });
+
       return Promise.resolve();
     } catch (err) {
       return Promise.reject(err);

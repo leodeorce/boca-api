@@ -98,6 +98,7 @@ class LangController {
 
     try {
       await updateLangUseCase.execute({
+        langnumber: parseInt(id_language, 10),
         contestnumber,
         langname,
         langextension,
@@ -115,8 +116,8 @@ class LangController {
   }
 
   async delete(request: Request, response: Response) {
-    const { id_lang } = request.params;
-    const idNumber = parseInt(id_lang, 10);
+    const { id_language } = request.params;
+    const idNumber = parseInt(id_language, 10);
     const deleteLangUseCase = container.resolve(DeleteLangUseCase);
 
     try {

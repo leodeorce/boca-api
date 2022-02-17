@@ -17,7 +17,7 @@ class DeleteLangUseCase {
     const langAlreadyExists = await this.langRepository.findById(id);
 
     if (!langAlreadyExists) {
-      throw new Error("Answer does not exists");
+      throw new Error("Language does not exists");
     }
 
     await this.langRepository.delete(id);

@@ -8,12 +8,14 @@ import { ILangRepository } from "../../repositories/ILangRepository";
 import { AnswersRepository } from "../../repositories/implementations/AnswersRepository";
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 import { LangRepository } from "../../repositories/implementations/LangRepository";
+import { ProblemLanguageRepository } from "../../repositories/implementations/ProblemLanguageRepository";
 import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
 import { RunsRepository } from "../../repositories/implementations/RunsRepository";
 import { SitesRepository } from "../../repositories/implementations/SitesRepository";
 import { UsersRepository } from "../../repositories/implementations/UsersRepository";
 import { WorkingsRepository } from "../../repositories/implementations/WorkingsRepository";
 import { WorkingsUserRepository } from "../../repositories/implementations/WorkingsUserRepository";
+import { IProblemLanguageRepository } from "../../repositories/IProblemLanguageRepository";
 import { IProblemsRepository } from "../../repositories/IProblemsRepository";
 import { IRunsRepository } from "../../repositories/IRunsRepository";
 import { ISitesRepository } from "../../repositories/ISitesRepository";
@@ -58,4 +60,9 @@ container.registerSingleton<IWorkingsRepository>(
 container.registerSingleton<IWorkingsUserRepository>(
   "WorkingsUserRepository",
   WorkingsUserRepository
+);
+
+container.registerSingleton<IProblemLanguageRepository>(
+  "ProblemLanguageRepository",
+  ProblemLanguageRepository
 );

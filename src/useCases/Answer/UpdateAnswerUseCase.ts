@@ -31,7 +31,6 @@ class UpdateAnswerUseCase {
     }
 
     try {
-      console.log(answernumber);
       await this.answersRepository.update({
         answernumber,
         contestnumber,

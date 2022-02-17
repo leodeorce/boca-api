@@ -77,7 +77,7 @@ class AnswersRepository implements IAnswersRepository {
          ${createValues}
       );
       `;
-    console.log(query);
+
     await this.repository.query(query);
     return Promise.resolve();
   }
@@ -104,7 +104,7 @@ class AnswersRepository implements IAnswersRepository {
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
     query = query.concat(
-      `updatetime = extract(epoch from now())
+      `,updatetime = extract(epoch from now())
       \nWHERE answernumber = ${updateObject.answernumber} ;`
     );
 

@@ -16,7 +16,7 @@ class ProblemsRepository implements IProblemsRepository {
   }
 
   async list(contestnumber?: number): Promise<Problem[]> {
-    if (contestnumber) {
+    if (contestnumber !== undefined) {
       const problems = await this.repository.query(
         `SELECT * FROM problemtable WHERE contestnumber=${contestnumber}`
       );
@@ -39,7 +39,7 @@ class ProblemsRepository implements IProblemsRepository {
 
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(contestnumber) FROM problemtable`
+      `SELECT MAX(problemnumber) FROM problemtable`
     );
     if (count[0].max === null) {
       return -1;
