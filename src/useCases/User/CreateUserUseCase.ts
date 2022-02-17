@@ -27,14 +27,13 @@ interface IRequest {
 @injectable()
 class CreateUserUseCase {
   constructor(
-    @inject("RunsRepository")
+    @inject("UsersRepository")
     private usersRepository: UsersRepository
   ) {}
 
   async execute({
     contestnumber,
     usersitenumber,
-    usernumber,
     username,
     userfullname,
     userdesc,
@@ -52,26 +51,27 @@ class CreateUserUseCase {
     updatetime,
     usercpcid,
   }: IRequest): Promise<void> {
+    const count = (await this.usersRepository.count()) + 1;
     await this.usersRepository.create({
-        contestnumber,
-        usersitenumber,
-        usernumber,
-        username,
-        userfullname,
-        userdesc,
-        usertype,
-        userenabled,
-        usermultilogin,
-        userpassword,
-        userip,
-        userlastlogin,
-        usersession,
-        usersessionextra,
-        userlastlogout,
-        userpermitip,
-        userinfo,
-        updatetime,
-        usercpcid,
+      contestnumber,
+      usersitenumber,
+      usernumber: count,
+      username,
+      userfullname,
+      userdesc,
+      usertype,
+      userenabled,
+      usermultilogin,
+      userpassword,
+      userip,
+      userlastlogin,
+      usersession,
+      usersessionextra,
+      userlastlogout,
+      userpermitip,
+      userinfo,
+      updatetime,
+      usercpcid,
     });
   }
 }

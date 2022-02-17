@@ -1,7 +1,20 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from "typeorm";
+
+import { Contest } from "./Contest";
+import { Working } from "./Working";
 
 @Entity("problemtable")
 class Problem {
+  @ManyToOne((type) => Contest, (contest) => contest.contestnumber)
   @PrimaryColumn()
   contestnumber!: number;
 
@@ -34,6 +47,10 @@ class Problem {
 
   @Column()
   problemcolor?: string;
+
+  @ManyToOne((type) => Working, (workingItem) => workingItem.workingnumber)
+  @JoinColumn()
+  working?: Working;
 
   @UpdateDateColumn()
   updatetime!: number;

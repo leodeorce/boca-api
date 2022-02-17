@@ -10,8 +10,8 @@ class ListUsersUseCase {
     private usersRepository: UsersRepository
   ) {}
 
-  async execute(problemNumber: number): Promise<User[]> {
-    const users = await this.usersRepository.list(problemNumber);
+  async execute(contestNumber: number): Promise<User[]> {
+    const users = await this.usersRepository.list(contestNumber);
 
     return users;
   }

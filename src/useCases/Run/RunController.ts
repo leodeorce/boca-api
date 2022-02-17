@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { QueryFailedError } from "typeorm";
 
 import { GetProblemUseCase } from "../Problem/GetProblemUseCase";
 import { CreateRunUseCase } from "./CreateRunUseCase";
@@ -19,8 +20,12 @@ class RunController {
       const all = await listRunsUseCase.execute(parseInt(id_p, 10));
       return response.json(all);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting run" });
     }
   }
 
@@ -34,8 +39,12 @@ class RunController {
       });
       return response.json(run);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting Run" });
     }
   }
 
@@ -75,7 +84,9 @@ class RunController {
     const problem = await getProblemUseCase.execute({ id: parseInt(id_p, 10) });
 
     if (!problem) {
-      throw new Error("Problem not found");
+      return response
+        .status(400)
+        .json({ error: "Problem with this ID not found" });
     }
 
     try {
@@ -110,6 +121,11 @@ class RunController {
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error creating Run" });
     }
   }
@@ -181,6 +197,11 @@ class RunController {
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error creating Run" });
     }
   }
@@ -194,8 +215,12 @@ class RunController {
       await deleteRunUseCase.execute({ id: idNumber });
       return response.status(200).json({ message: "Run deleted successfully" });
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error deleting run" });
     }
   }
 }

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
+import { QueryFailedError } from "typeorm";
 
-import { GetProblemUseCase } from "../Problem/GetProblemUseCase";
+import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateUserUseCase } from "./CreateUserUseCase";
 import { DeleteUserUseCase } from "./DeleteUserUseCase";
 import { GetUserUseCase } from "./GetUserUseCase";
@@ -14,14 +14,18 @@ class UserController {
   async listAll(request: Request, response: Response): Promise<Response> {
     const listUsersUseCase = container.resolve(ListUsersUseCase);
 
-    const { id_p } = request.params;
+    const { id_c } = request.params;
 
     try {
-      const all = await listUsersUseCase.execute(parseInt(id_p, 10));
+      const all = await listUsersUseCase.execute(parseInt(id_c, 10));
       return response.json(all);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting user" });
     }
   }
 
@@ -35,8 +39,12 @@ class UserController {
       });
       return response.json(user);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting User" });
     }
   }
 
@@ -47,7 +55,6 @@ class UserController {
     const { id_c } = request.params;
 
     const {
-      contestnumber,
       usersitenumber,
       usernumber,
       username,
@@ -66,12 +73,12 @@ class UserController {
       userinfo,
       updatetime,
       usercpcid,
-    } = request.body();
+    } = request.body;
 
     const user = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
 
     if (!user) {
-      throw new Error("Contest not found");
+      return response.status(400).json({ error: "Contest not found" });
     }
 
     try {
@@ -99,6 +106,11 @@ class UserController {
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error creating User" });
     }
   }
@@ -154,6 +166,11 @@ class UserController {
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error creating User" });
     }
   }
@@ -165,10 +182,16 @@ class UserController {
 
     try {
       await deleteUserUseCase.execute({ id: idNumber });
-      return response.status(200).json({ message: "User deleted successfully" });
+      return response
+        .status(200)
+        .json({ message: "User deleted successfully" });
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error deleting User" });
     }
   }
 }

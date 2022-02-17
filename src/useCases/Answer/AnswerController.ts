@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { QueryFailedError } from "typeorm";
 
 import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateAnswerUseCase } from "./CreateAnswerUseCase";
@@ -19,8 +20,12 @@ class AnswerController {
       const all = await listAnswersUseCase.execute(parseInt(id_c, 10));
       return response.json(all);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting Answers" });
     }
   }
 
@@ -34,8 +39,13 @@ class AnswerController {
       });
       return response.json(answer);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+
+      return response.status(400).json({ error: "Error getting Answer" });
     }
   }
 
@@ -63,6 +73,11 @@ class AnswerController {
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error creating Answer" });
     }
   }
@@ -85,6 +100,11 @@ class AnswerController {
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error updating Answer" });
     }
   }
@@ -100,8 +120,12 @@ class AnswerController {
         .status(200)
         .json({ message: "Answer deleted successfully" });
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error deleting Answer" });
     }
   }
 }

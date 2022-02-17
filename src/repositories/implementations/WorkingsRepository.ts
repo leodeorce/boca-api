@@ -1,45 +1,52 @@
 import { getRepository, Repository } from "typeorm";
 
-import { User } from "../../entities/User";
+import { Working } from "../../entities/Working";
 import {
   ICountResult,
-  ICreateUserDTO,
-  IUsersRepository,
-  IUpdateUserDTO,
-} from "../IUsersRepository";
+  ICreateWorkingDTO,
+  IUpdateWorkingDTO,
+  IWorkingsRepository,
+} from "../IWorkingsRepository";
 
-class UsersRepository implements IUsersRepository {
-  private repository: Repository<User>;
+class WorkingsRepository implements IWorkingsRepository {
+  private repository: Repository<Working>;
 
   constructor() {
-    this.repository = getRepository(User);
+    this.repository = getRepository(Working);
   }
 
-  async list(contestnumber?: number): Promise<User[]> {
-    if (contestnumber) {
-      const problems = await this.repository.query(
-        `SELECT * FROM usertable WHERE contestnumber=${contestnumber}`
+  async list(contestNumber?: number): Promise<Working[]> {
+    if (contestNumber !== undefined) {
+      const workings = await this.repository.query(
+        `SELECT * FROM workingtable WHERE contestnumber=${contestNumber}`
       );
-      return problems;
+      return workings;
     }
-    const users = await this.repository.query(`SELECT * FROM usertable`);
-    return users;
+    const workings = await this.repository.query(`SELECT * FROM workingtable`);
+    return workings;
   }
 
-  async findByName(name: string): Promise<User | undefined> {
+  async listByUser(userNumber: number): Promise<Working[]> {
+    const workings = await this.repository.query(
+      `SELECT * FROM workingtable WHERE contestnumber=${userNumber}`
+    );
+    return workings;
+  }
+
+  async findByName(name: string): Promise<Working | undefined> {
     const query = `
-    SELECT * FROM usertable WHERE username = '${name}'
+    SELECT * FROM workingtable WHERE name = '${name}'
   `;
-    const user: User[] = await this.repository.query(query);
-    if (user.length === 0) {
+    const working: Working[] = await this.repository.query(query);
+    if (working.length === 0) {
       return undefined;
     }
-    return user[0];
+    return working[0];
   }
 
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(usernumber) FROM usertable`
+      `SELECT MAX(workingnumber) FROM workingtable`
     );
     if (count[0].max === null) {
       return -1;
@@ -47,17 +54,17 @@ class UsersRepository implements IUsersRepository {
     return parseInt(count[0].max, 10);
   }
 
-  async getById(id: number): Promise<User | undefined> {
-    const user: User[] = await this.repository.query(
-      `SELECT * FROM usertable WHERE usernumber = ${id}`
+  async getById(id: number): Promise<Working | undefined> {
+    const working: Working[] = await this.repository.query(
+      `SELECT * FROM workingtable WHERE workingnumber = ${id}`
     );
-    if (user.length === 0) {
+    if (working.length === 0) {
       return undefined;
     }
-    return user[0];
+    return working[0];
   }
 
-  async create(createObject: ICreateUserDTO): Promise<void> {
+  async create(createObject: ICreateWorkingDTO): Promise<void> {
     let createColumns = "";
     let createValues = "";
 
@@ -86,14 +93,14 @@ class UsersRepository implements IUsersRepository {
     createValues = createValues.trim(); // Remove espaços em branco desnecessarios
     createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
 
-    const query = `INSERT INTO usertable 
+    const query = `INSERT INTO workingtable 
       (
         ${createColumns}
        ) VALUES (
          ${createValues}
       );
       `;
-    console.log(query);
+
     try {
       await this.repository.query(query);
       return Promise.resolve();
@@ -102,14 +109,14 @@ class UsersRepository implements IUsersRepository {
     }
   }
 
-  async update(updateObject: IUpdateUserDTO): Promise<User> {
+  async update(updateObject: IUpdateWorkingDTO): Promise<Working> {
     // Remover parâmetros vazios (string vazia ou nulos, etc)
     const filteredObject = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(updateObject).filter(([_, v]) => v != null)
     );
 
-    let query = `UPDATE usertable\n`;
+    let query = `UPDATE workingtable\n`;
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
@@ -123,19 +130,19 @@ class UsersRepository implements IUsersRepository {
     });
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
-    query = query.concat(`
-      updatetime = extract(epoch from now())
-      \nWHERE usernumber = ${updateObject.usernumber};`);
+    query = query.concat(
+      `\nWHERE workingnumber = ${updateObject.workingnumber};`
+    );
     try {
-      const updatedUser: User[] = await this.repository.query(query);
-      return updatedUser[0];
+      const updatedWorking: Working[] = await this.repository.query(query);
+      return updatedWorking[0];
     } catch (err) {
       return Promise.reject(err);
     }
   }
 
-  async delete(userNumber: number): Promise<void> {
-    const query = `DELETE FROM usertable WHERE usernumber=${userNumber}`;
+  async delete(workingNumber: number): Promise<void> {
+    const query = `DELETE FROM workingtable WHERE workingnumber=${workingNumber}`;
     try {
       await this.repository.query(query);
       return Promise.resolve();
@@ -145,4 +152,4 @@ class UsersRepository implements IUsersRepository {
   }
 }
 
-export { UsersRepository };
+export { WorkingsRepository };

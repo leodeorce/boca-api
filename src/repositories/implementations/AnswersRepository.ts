@@ -104,7 +104,8 @@ class AnswersRepository implements IAnswersRepository {
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
     query = query.concat(
-      `\nWHERE answernumber = ${updateObject.answernumber} ;`
+      `updatetime = extract(epoch from now())
+      \nWHERE answernumber = ${updateObject.answernumber} ;`
     );
 
     const updatedContest: Answer[] = await this.repository.query(query);

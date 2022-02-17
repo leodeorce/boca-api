@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { QueryFailedError } from "typeorm";
 
 import { CreateProblemUseCase } from "./CreateProblemUseCase";
 import { DeleteProblemUseCase } from "./DeleteProblemUseCase";
@@ -18,8 +19,12 @@ class ProblemController {
       const all = await listProblemsUseCase.execute(parseInt(c_id, 10));
       return response.json(all);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting Problem" });
     }
   }
 
@@ -33,8 +38,12 @@ class ProblemController {
       });
       return response.json(problem);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting Problem" });
     }
   }
 
@@ -73,8 +82,12 @@ class ProblemController {
 
       return response.status(201).send();
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error creating Problem" });
     }
   }
 
@@ -113,8 +126,12 @@ class ProblemController {
 
       return response.status(201).send();
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error updating Problem" });
     }
   }
 
@@ -129,8 +146,12 @@ class ProblemController {
         .status(200)
         .json({ message: "Problem deleted successfully" });
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error deleting problem" });
     }
   }
 }

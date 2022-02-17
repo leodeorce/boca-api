@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
+import { QueryFailedError } from "typeorm";
 
+import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateSiteUseCase } from "./CreateSiteUseCase";
 import { DeleteSiteUseCase } from "./DeleteSiteUseCase";
 import { GetSiteUseCase } from "./GetSiteUseCase";
@@ -18,8 +19,12 @@ class SiteController {
       const all = await listSitesUseCase.execute(parseInt(id_c, 10));
       return response.json(all);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting Site" });
     }
   }
 
@@ -33,8 +38,12 @@ class SiteController {
       });
       return response.json(site);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting Site" });
     }
   }
 
@@ -65,7 +74,7 @@ class SiteController {
       sitechiefname,
       siteautojudge,
       sitemaxruntime,
-      sitemaxjudgewaittime
+      sitemaxjudgewaittime,
     } = request.body;
 
     const contest = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
@@ -97,11 +106,16 @@ class SiteController {
         sitechiefname,
         siteautojudge,
         sitemaxruntime,
-        sitemaxjudgewaittime
+        sitemaxjudgewaittime,
       });
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error creating Site" });
     }
   }
@@ -133,7 +147,7 @@ class SiteController {
       sitechiefname,
       siteautojudge,
       sitemaxruntime,
-      sitemaxjudgewaittime
+      sitemaxjudgewaittime,
     } = request.body;
 
     try {
@@ -160,11 +174,16 @@ class SiteController {
         sitechiefname,
         siteautojudge,
         sitemaxruntime,
-        sitemaxjudgewaittime
+        sitemaxjudgewaittime,
       });
 
       return response.status(201).send();
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
       return response.status(400).json({ error: "Error Updating Site" });
     }
   }
@@ -176,10 +195,16 @@ class SiteController {
 
     try {
       await deleteSiteUseCase.execute({ id: idNumber });
-      return response.status(200).json({ message: "Site deleted successfully" });
+      return response
+        .status(200)
+        .json({ message: "Site deleted successfully" });
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error deleting Site" });
     }
   }
 }
