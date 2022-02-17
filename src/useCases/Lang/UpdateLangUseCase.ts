@@ -20,9 +20,7 @@ class UpdateLangUseCase {
     langname,
     langextension,
   }: IRequest): Promise<void> {
-    const langAlreadyExists = await this.langRepository.findByName(
-      langname
-    );
+    const langAlreadyExists = await this.langRepository.findByName(langname);
 
     if (langAlreadyExists) {
       throw new Error("Language already exists");

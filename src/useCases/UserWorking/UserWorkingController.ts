@@ -5,6 +5,8 @@ import { QueryFailedError } from "typeorm";
 
 import { AddUsersToWorkingUseCase } from "./AddUsersToWorkingUseCase";
 import { AddWorkingToUsersUseCase } from "./AddWorkingToUsersUseCase";
+import { DeleteUserFromWorkingsUseCase } from "./DeleteUserFromWorkings";
+import { DeleteWorkingFromUsersUseCase } from "./DeleteWorkingFromUsers";
 import { ListUsersByWorkingUseCase } from "./ListUsersByWorkingUseCase";
 import { ListWorkingsByUserUseCase } from "./ListWorkingsByUserUseCase";
 
@@ -61,13 +63,13 @@ class UserWorkingController {
 
     const { id_working } = request.params;
 
-    const { contestnumber, sitenumber, users } = request.body;
+    const { contestnumber, sitenumber, usernumbers } = request.body;
 
     try {
       await addUsersToWorkingUseCase.execute({
         contestnumber,
         sitenumber,
-        users,
+        usernumbers,
         workingnumber: parseInt(id_working, 10),
       });
 
@@ -117,46 +119,66 @@ class UserWorkingController {
     }
   }
 
-  async update(request: Request, response: Response): Promise<Response> {
-    // const updateWorkingUseCase = container.resolve(UpdateWorkingUseCase);
-    // const { id_working } = request.params;
-    // const {
-    //   name,
-    //   start_date,
-    //   end_date,
-    //   last_answer_date,
-    //   max_file_size,
-    //   is_multilogin,
-    // } = request.body;
-    // try {
-    //   await updateWorkingUseCase.execute({
-    //     workingnumber: parseInt(id_working, 10),
-    //     name,
-    //     start_date,
-    //     end_date,
-    //     last_answer_date,
-    //     max_file_size,
-    //     is_multilogin,
-    //   });
-    //   return response.status(201).send();
-    // } catch (error) {
-    //   return response.status(400).json({ error: "Error updating Working" });
-    // }
+  async deleteUserFromWorkings(
+    request: Request,
+    response: Response
+  ): Promise<Response> {
+    const deleteUserFromWorkings = container.resolve(
+      DeleteUserFromWorkingsUseCase
+    );
+
+    const { id_user } = request.params;
+
+    const { contestnumber, sitenumber, workingnumbers } = request.body;
+
+    try {
+      await deleteUserFromWorkings.execute({
+        contestnumber,
+        sitenumber,
+        usernumber: parseInt(id_user, 10),
+        workingnumbers,
+      });
+
+      return response.status(204).send();
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response
+        .status(400)
+        .json({ error: "Error deleting users from working" });
+    }
   }
 
-  async delete(request: Request, response: Response) {
-    // const deleteWorkingUseCase = container.resolve(DeleteWorkingUseCase);
-    // const { id_working } = request.params;
-    // const idNumber = parseInt(id_working, 10);
-    // try {
-    //   await deleteWorkingUseCase.execute({ id: idNumber });
-    //   return response
-    //     .status(200)
-    //     .json({ message: "Working deleted successfully" });
-    // } catch (error) {
-    //   const err = error as Error;
-    //   return response.status(400).json({ error: err.message });
-    // }
+  async deleteWorkingFromUsers(request: Request, response: Response) {
+    const deleteWorkingFromUsers = container.resolve(
+      DeleteWorkingFromUsersUseCase
+    );
+    const { id_working } = request.params;
+
+    const { contestnumber, sitenumber, usernumbers } = request.body;
+
+    try {
+      await deleteWorkingFromUsers.execute({
+        contestnumber,
+        sitenumber,
+        usernumbers,
+        workingnumber: parseInt(id_working, 10),
+      });
+
+      return response.status(204).send();
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response
+        .status(400)
+        .json({ error: "Error Deleting Working from Users" });
+    }
   }
 }
 

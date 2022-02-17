@@ -5,12 +5,12 @@ import { WorkingsUserRepository } from "../../repositories/implementations/Worki
 interface IRequest {
   contestnumber: number;
   sitenumber: number;
-  workingnumbers: number[];
-  usernumber: number;
+  workingnumber: number;
+  usernumbers: number[];
 }
 
 @injectable()
-class AddWorkingToUsersUseCase {
+class DeleteWorkingFromUsersUseCase {
   constructor(
     @inject("WorkingsUserRepository")
     private workingsUserRepository: WorkingsUserRepository
@@ -19,15 +19,15 @@ class AddWorkingToUsersUseCase {
   async execute({
     contestnumber,
     sitenumber,
-    workingnumbers,
-    usernumber,
+    workingnumber,
+    usernumbers,
   }: IRequest): Promise<void> {
     try {
-      await this.workingsUserRepository.addWorkingToUsers({
+      await this.workingsUserRepository.deleteWorkingFromUsers({
         contestnumber,
         sitenumber,
-        workingnumbers,
-        usernumber,
+        workingnumber,
+        usernumbers,
       });
       return Promise.resolve();
     } catch (err) {
@@ -36,4 +36,4 @@ class AddWorkingToUsersUseCase {
   }
 }
 
-export { AddWorkingToUsersUseCase };
+export { DeleteWorkingFromUsersUseCase };

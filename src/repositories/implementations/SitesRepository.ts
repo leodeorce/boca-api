@@ -16,7 +16,7 @@ class SitesRepository implements ISitesRepository {
   }
 
   async list(contestnumber?: number): Promise<Site[]> {
-    if (contestnumber != undefined) {
+    if (contestnumber !== undefined) {
       const problems = await this.repository.query(
         `SELECT * FROM sitetable WHERE contestnumber=${contestnumber}`
       );

@@ -1,4 +1,3 @@
-import { User } from "../entities/User";
 import { Working } from "../entities/Working";
 
 interface ICreateWorkingDTO {

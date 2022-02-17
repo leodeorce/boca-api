@@ -58,7 +58,7 @@ class UpdateSiteUseCase {
     sitechiefname,
     siteautojudge,
     sitemaxruntime,
-    sitemaxjudgewaittime
+    sitemaxjudgewaittime,
   }: IRequest): Promise<void> {
     const siteExists = await this.sitesRepository.getById(sitenumber);
 
@@ -89,7 +89,7 @@ class UpdateSiteUseCase {
         sitechiefname,
         siteautojudge,
         sitemaxruntime,
-        sitemaxjudgewaittime
+        sitemaxjudgewaittime,
       });
       return Promise.resolve();
     } catch (err) {

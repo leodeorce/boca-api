@@ -56,10 +56,9 @@ class CreateSiteUseCase {
     sitechiefname,
     siteautojudge,
     sitemaxruntime,
-    sitemaxjudgewaittime
+    sitemaxjudgewaittime,
   }: IRequest): Promise<void> {
-
-    const count = await this.sitesRepository.count() + 1;
+    const count = (await this.sitesRepository.count()) + 1;
 
     await this.sitesRepository.create({
       contestnumber,
@@ -84,7 +83,7 @@ class CreateSiteUseCase {
       sitechiefname,
       siteautojudge,
       sitemaxruntime,
-      sitemaxjudgewaittime
+      sitemaxjudgewaittime,
     });
   }
 }

@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { getRepository, QueryFailedError, Repository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 
 import { User } from "../../entities/User";
 import { UserWorking } from "../../entities/UserWorking";
@@ -8,6 +8,8 @@ import {
   ICreateWorkingUsers,
   ICreateUserWorkings,
   IWorkingsUserRepository,
+  IDeleteUserFromWorkings,
+  IDeleteWorkingFromUsers,
 } from "../IWorkingsUserRepository";
 
 class WorkingsUserRepository implements IWorkingsUserRepository {
@@ -22,7 +24,7 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
   }
 
   async addUsersToWorking(createObject: ICreateWorkingUsers): Promise<void> {
-    for await (const user of createObject.users) {
+    for await (const user of createObject.usernumbers) {
       const query = `INSERT INTO userworkingtable 
       (
         sitenumber, contestnumber, usernumber, workingnumber
@@ -49,7 +51,6 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
       );`;
 
       try {
-        console.log(query);
         await this.workingsUserRepository.query(query);
       } catch (error) {
         return Promise.reject(error);
@@ -59,7 +60,7 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
   }
 
   async getWorkingsByUsers(usernumber: number): Promise<Working[] | undefined> {
-    const query = `SELECT usernumber, name, start_date, end_date, last_answer_date, max_file_size, created_at, updated_at, is_multilogin, deleted_at
+    const query = `SELECT workingtable.workingnumber, usernumber, name, start_date, end_date, last_answer_date, max_file_size, created_at, updated_at, is_multilogin, deleted_at
     FROM userworkingtable 
     LEFT JOIN workingtable 
     ON userworkingtable.workingnumber = workingtable.workingnumber 
@@ -90,17 +91,41 @@ class WorkingsUserRepository implements IWorkingsUserRepository {
     }
   }
 
-  deleteUserFromWorking(
-    workingNumber: number,
-    userNumber: number
+  async deleteUserFromWorkings(
+    deleteObject: IDeleteUserFromWorkings
   ): Promise<void> {
+    for await (const working of deleteObject.workingnumbers) {
+      const query = `DELETE FROM userworkingtable 
+        WHERE sitenumber = ${deleteObject.sitenumber} AND
+        contestnumber = ${deleteObject.contestnumber} AND
+        usernumber = ${deleteObject.usernumber} AND
+        workingnumber = ${working};`;
+
+      try {
+        await this.workingsUserRepository.query(query);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
     return Promise.resolve();
   }
 
-  deleteWorkingFromUser(
-    workingNumber: number,
-    userNumber: number
+  async deleteWorkingFromUsers(
+    deleteObject: IDeleteWorkingFromUsers
   ): Promise<void> {
+    for await (const user of deleteObject.usernumbers) {
+      const query = `DELETE FROM userworkingtable 
+        WHERE sitenumber = ${deleteObject.sitenumber} AND
+        contestnumber = ${deleteObject.contestnumber} AND
+        usernumber = ${user} AND
+        workingnumber = ${deleteObject.workingnumber};`;
+
+      try {
+        await this.workingsUserRepository.query(query);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
     return Promise.resolve();
   }
 }

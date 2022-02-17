@@ -1,21 +1,19 @@
-import { getRepository, Repository, QueryFailedError } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 
 import { Lang } from "../../entities/Lang";
 import {
   ILangRepository,
   ICreateLangDTO,
   ICountResult,
-  IUpdadeLangDTO
+  IUpdadeLangDTO,
 } from "../ILangRepository";
 
 class LangRepository implements ILangRepository {
-
   private repository: Repository<Lang>;
 
   constructor() {
     this.repository = getRepository(Lang);
   }
-
 
   async findByName(langname: string): Promise<Lang | undefined> {
     const lang: Lang[] = await this.repository.query(
@@ -36,7 +34,6 @@ class LangRepository implements ILangRepository {
     }
     return lang[0];
   }
-
 
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(

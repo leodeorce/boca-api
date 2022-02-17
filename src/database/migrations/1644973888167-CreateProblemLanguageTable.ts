@@ -6,13 +6,12 @@ export class CreateProblemLanguageTable1644973888167
   public async up(queryRunner: QueryRunner): Promise<void> {
     return queryRunner.query(`
         CREATE TABLE problemlanguagetable (
-          id SERIAL,
-          id_contest INT NOT NULL,
-          id_problem INT,
-          id_language INT,
-          PRIMARY KEY(id),
-          FOREIGN KEY (id_contest, id_problem) references problemtable(contestnumber, problemnumber),
-          FOREIGN KEY (id_contest, id_language) references langtable(contestnumber, langnumber)
+          contestnumber INT NOT NULL,
+          problemnumber INT,
+          langnumber INT,
+          PRIMARY KEY(contestnumber, problemnumber, langnumber),
+          FOREIGN KEY (contestnumber, problemnumber) references problemtable(contestnumber, problemnumber),
+          FOREIGN KEY (contestnumber, langnumber) references langtable(contestnumber, langnumber)
         );
       `);
   }

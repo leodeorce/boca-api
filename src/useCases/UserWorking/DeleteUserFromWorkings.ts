@@ -10,7 +10,7 @@ interface IRequest {
 }
 
 @injectable()
-class AddWorkingToUsersUseCase {
+class DeleteUserFromWorkingsUseCase {
   constructor(
     @inject("WorkingsUserRepository")
     private workingsUserRepository: WorkingsUserRepository
@@ -23,7 +23,7 @@ class AddWorkingToUsersUseCase {
     usernumber,
   }: IRequest): Promise<void> {
     try {
-      await this.workingsUserRepository.addWorkingToUsers({
+      await this.workingsUserRepository.deleteUserFromWorkings({
         contestnumber,
         sitenumber,
         workingnumbers,
@@ -36,4 +36,4 @@ class AddWorkingToUsersUseCase {
   }
 }
 
-export { AddWorkingToUsersUseCase };
+export { DeleteUserFromWorkingsUseCase };

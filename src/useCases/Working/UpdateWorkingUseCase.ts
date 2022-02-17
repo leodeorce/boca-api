@@ -1,6 +1,5 @@
 import { inject, injectable } from "tsyringe";
 
-import { AnswersRepository } from "../../repositories/implementations/AnswersRepository";
 import { WorkingsRepository } from "../../repositories/implementations/WorkingsRepository";
 
 interface IRequest {
@@ -27,7 +26,7 @@ class UpdateWorkingUseCase {
     end_date,
     last_answer_date,
     max_file_size,
-    is_multilogin
+    is_multilogin,
   }: IRequest): Promise<void> {
     const workingExists = await this.workingsRepository.getById(workingnumber);
 
@@ -43,7 +42,7 @@ class UpdateWorkingUseCase {
         end_date,
         last_answer_date,
         max_file_size,
-        is_multilogin
+        is_multilogin,
       });
       return Promise.resolve();
     } catch (err) {

@@ -30,7 +30,14 @@ workingsRoutes.get(
   "/working/:id_working/user",
   workingUsersController.listUsersByWorking
 );
-// workingsRoutes.put("/user/:id_user", workingController.update);
-// workingsRoutes.delete("/user/:id_user", workingController.delete);
+
+workingsRoutes.delete(
+  "/user/:id_user/working",
+  workingUsersController.deleteUserFromWorkings
+);
+workingsRoutes.delete(
+  "/working/:id_working/user",
+  workingUsersController.deleteWorkingFromUsers
+);
 
 export { workingsRoutes };

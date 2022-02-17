@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { QueryFailedError } from "typeorm";
 
 import { WorkingsUserRepository } from "../../repositories/implementations/WorkingsUserRepository";
 
@@ -7,7 +6,7 @@ interface IRequest {
   contestnumber: number;
   sitenumber: number;
   workingnumber: number;
-  users: number[];
+  usernumbers: number[];
 }
 
 @injectable()
@@ -21,14 +20,14 @@ class AddUsersToWorkingUseCase {
     contestnumber,
     sitenumber,
     workingnumber,
-    users,
+    usernumbers,
   }: IRequest): Promise<void> {
     try {
       await this.workingsUserRepository.addUsersToWorking({
         contestnumber,
         sitenumber,
         workingnumber,
-        users,
+        usernumbers,
       });
       return Promise.resolve();
     } catch (err) {
