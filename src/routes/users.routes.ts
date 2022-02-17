@@ -1,27 +1,15 @@
 import { Router } from "express";
 
-// import { ContestController } from "../useCases/Contest/ContestController";
+import { UserController } from "../useCases/User/UserController";
 
-const userRoutes = Router();
+const usersRoutes = Router();
 
-// const contestController = new ContestController();
+const userController = new UserController();
 
-// Rotas relacionadas ao contest
-userRoutes.get("/contest/:id_c/user", () => {
-  console.log("Hello world");
-});
-userRoutes.post("/contest/:id_c/user", () => {
-  console.log("Hello world");
-});
+usersRoutes.get("/contest/:id_c/user", userController.listAll);
+usersRoutes.post("/contest/:id_c/user", userController.create);
+usersRoutes.get("/user/:id_user", userController.getOne);
+usersRoutes.put("/user/:id_user", userController.update);
+usersRoutes.delete("/user/:id_user", userController.delete);
 
-userRoutes.get("/user/:id_user", () => {
-  console.log("Hello world");
-});
-userRoutes.put("/user/:id_user", () => {
-  console.log("Hello world");
-});
-userRoutes.delete("/user/:id_user", () => {
-  console.log("Hello world");
-});
-
-export { userRoutes };
+export { usersRoutes };

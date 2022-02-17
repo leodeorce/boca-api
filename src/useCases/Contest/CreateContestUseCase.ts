@@ -48,7 +48,8 @@ class CreateContestsUseCase {
       throw new Error("Contest already exists");
     }
 
-    const count = await this.contestsRepository.count();
+    const count = (await this.contestsRepository.count()) + 1;
+
     this.contestsRepository.create({
       contestnumber: count,
       contestname,

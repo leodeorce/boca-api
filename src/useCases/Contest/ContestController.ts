@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { QueryFailedError } from "typeorm";
 
 import { CreateContestsUseCase } from "./CreateContestUseCase";
 import { DeleteContestsUseCase } from "./DeleteContestUseCase";
@@ -16,8 +17,12 @@ class ContestController {
       const all = await listContestsUseCase.execute();
       return response.json(all);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error listing Contests" });
     }
   }
 
@@ -30,8 +35,12 @@ class ContestController {
       const contest = await getContestsUseCase.execute({ id: numberId });
       return response.json(contest);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error getting Contest" });
     }
   }
 
@@ -72,8 +81,12 @@ class ContestController {
 
       return response.status(201).send();
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error creating Contest" });
     }
   }
 
@@ -117,8 +130,12 @@ class ContestController {
 
       return response.status(200).json(updatedContest);
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error updating Contest" });
     }
   }
 
@@ -133,8 +150,12 @@ class ContestController {
         .status(200)
         .json({ message: "Contest deleted successfully" });
     } catch (error) {
-      const err = error as Error;
-      return response.status(400).json({ error: err.message });
+      if (error instanceof QueryFailedError) {
+        return response
+          .status(400)
+          .json({ message: error.message, detail: error.driverError });
+      }
+      return response.status(400).json({ error: "Error deleting contest" });
     }
   }
 }
