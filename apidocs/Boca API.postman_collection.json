@@ -1,0 +1,1190 @@
+{
+	"info": {
+		"_postman_id": "698aff87-295a-41ec-b257-f0cced58ec33",
+		"name": "Boca API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t  \"contestnumber\": 1,\n\t\t\"usersitenumber\": 1,\n\t\t\"username\": \"Matheuslenke\",\n\t\t\"userfullname\": \"Matheus Lenke\",\n\t\t\"userdesc\": null,\n\t\t\"usertype\": \"admin\",\n\t\t\"userenabled\": true,\n\t\t\"usermultilogin\": true,\n\t\t\"userpassword\": \"123\",\n\t\t\"userip\": \"172.29.0.1\",\n\t\t\"userlastlogin\": 1644448622,\n\t\t\"usersession\": \"\",\n\t\t\"usersessionextra\": \"\",\n\t\t\"userlastlogout\": 1644448717,\n\t\t\"userpermitip\": null,\n\t\t\"userinfo\": \"\",\n\t\t\"usericpcid\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t  \"contestnumber\": 1,\n\t\t\"usersitenumber\": 1,\n\t\t\"username\": \"lenke2\",\n\t\t\"userfullname\": \"Lenke2\",\n\t\t\"userdesc\": null,\n\t\t\"usertype\": \"admin\",\n\t\t\"userenabled\": true,\n\t\t\"usermultilogin\": true,\n\t\t\"userpassword\": \"123\",\n\t\t\"userip\": \"172.29.0.1\",\n\t\t\"userlastlogin\": 1644448622,\n\t\t\"usersession\": \"\",\n\t\t\"usersessionextra\": \"\",\n\t\t\"userlastlogout\": 1644448717,\n\t\t\"userpermitip\": null,\n\t\t\"userinfo\": \"\",\n\t\t\"usericpcid\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user/2004",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"2004"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/2006",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"2006"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/2006",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"2006"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Site",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/site",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"site"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\t{\n\t\t\"contestnumber\": 0,\n\t\t\"siteip\": \"localhost\",\n\t\t\"sitename\": \"Site de teste\",\n\t\t\"siteactive\": true,\n\t\t\"sitepermitlogins\": true,\n\t\t\"sitelastmileanswer\": 0,\n\t\t\"sitelastmilescore\": 0,\n\t\t\"siteduration\": 1,\n\t\t\"siteautoend\": true,\n\t\t\"sitejudging\": \"1\",\n\t\t\"sitetasking\": \"1\",\n\t\t\"siteglobalscore\": \"0\",\n\t\t\"sitescorelevel\": 4,\n\t\t\"sitenextuser\": 0,\n\t\t\"sitenextclar\": 0,\n\t\t\"sitenextrun\": 0,\n\t\t\"sitenexttask\": 0,\n\t\t\"sitemaxtask\": 8,\n\t\t\"updatetime\": 1644438151,\n\t\t\"sitechiefname\": \"\",\n\t\t\"siteautojudge\": false,\n\t\t\"sitemaxruntime\": 600,\n\t\t\"sitemaxjudgewaittime\": 900\n\t}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/site",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"site"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\t{\n\t\t\"siteip\": \"Update\",\n\t\t\"sitename\": \"Atualizando\",\n\t\t\"siteactive\": true,\n\t\t\"sitepermitlogins\": true,\n\t\t\"sitelastmileanswer\": 0,\n\t\t\"sitelastmilescore\": 0,\n\t\t\"siteduration\": 1,\n\t\t\"siteautoend\": true,\n\t\t\"sitejudging\": \"1\",\n\t\t\"sitetasking\": \"1\",\n\t\t\"siteglobalscore\": \"0\",\n\t\t\"sitescorelevel\": 4,\n\t\t\"sitenextuser\": 0,\n\t\t\"sitenextclar\": 0,\n\t\t\"sitenextrun\": 0,\n\t\t\"sitenexttask\": 0,\n\t\t\"sitemaxtask\": 8,\n\t\t\"sitechiefname\": \"\",\n\t\t\"siteautojudge\": false,\n\t\t\"sitemaxruntime\": 600,\n\t\t\"sitemaxjudgewaittime\": 900\n\t}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/site/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"site",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/site/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"site",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get one",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/site/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"site",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Language",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"langname\": \"erlang2\",\n\t\"langextension\": \".erlang2\"\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/language",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"language"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/language",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"language"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/language/8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"language",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"langname\": \"Elixir\",\n\t\"langextension\": \".elx\"\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/language/8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"language",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/language/8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"language",
+								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contests",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\t\"contestname\": \"Contest de teste\",\n\t\t\"conteststartdate\": 1642008089,\n\t\t\"contestduration\": 0,\n\t\t\"contestlastmileanswer\": 0,\n\t\t\"contestlastmilescore\": 0,\n\t\t\"contestlocalsite\": 1,\n\t\t\"contestpenalty\": 1200,\n\t\t\"contestmaxfilesize\": 100000,\n\t\t\"contestactive\": true,\n\t\t\"contestmainsite\": 1,\n\t\t\"contestkeys\": \"\",\n\t\t\"contestunlockkey\": \"\",\n\t\t\"contestmainsiteurl\": \"\",\n\t\t\"updatetime\": 1642008089\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\t\"contestname\": \"Contest atualizado\",\n\t\t\"conteststartdate\": 1642008089,\n\t\t\"contestduration\": 100,\n\t\t\"contestlastmileanswer\": 0,\n\t\t\"contestlastmilescore\": 0,\n\t\t\"contestpenalty\": 2,\n\t\t\"contestmaxfilesize\": 20,\n\t\t\"contestactive\": false,\n\t\t\"contestmainsite\": 1,\n\t\t\"contestkeys\": \"teste\",\n\t\t\"contestunlockkey\": \"\",\n\t\t\"contestmainsiteurl\": \"\",\n\t\t\"updatetime\": 1642008089\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contests/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contests",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contests/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contests",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contests/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contests",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Problems",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"problemname\": \"P3\",\n\t\"problemfullname\": \"Problema 2\",\n\t\"problembasefilename\": \"ProblemDescription\",\n\t\"probleminputfilename\": \"solucao1.c\",\n\t\"probleminputfile\": \"123\",\n\t\"probleminputfilehash\": \"123141afsgaf\",\n\t\"fake\": true,\n\t\"problemcolorname\": \"red\",\n\t\"problemcolor\": \"#010\",\n\t\"working_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/problem",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"problem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/problem",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"problem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/problem/1102",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"problemname\": \"P Atualizado\",\n\t\"problemfullname\": \"Problema 5\",\n\t\"problembasefilename\": \"ProblemDescription5\",\n\t\"probleminputfilename\": \"solucao1.c5\",\n\t\"probleminputfile\": \"1235\",\n\t\"probleminputfilehash\": \"123141afsgaf5\",\n\t\"fake\": false,\n\t\"problemcolorname\": \"blue\",\n\t\"problemcolor\": \"#001\",\n\t\"working_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/problem/1102",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/problem/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Run",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"usernumber\": 1100,\n\t\"runproblem\": 1102,\n\t\"runsitenumber\": 1,\n\t\"rundate\": 1235124,\n\t\"rundatediff\": 123141,\n\t\"rundatediffans\": 123141,\n\t\"runfilename\": \"solutions.c\",\n\t\"rundata\": 1240,\n\t\"runanswer\": 1,\n\t\"runstatus\": \"waiting\",\n\t\"runanswer1\": 3,\n\t\"runanswer2\": 1,\n\t\"runlangnumber\": 1\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/problem/1102/run",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1102",
+								"run"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/problem/1102/run",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1102",
+								"run"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/run/400392107",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"run",
+								"400392107"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"usernumber\": 1100,\n\t\"runsitenumber\": 1,\n\t\"rundate\": 1235124,\n\t\"rundatediff\": 123141,\n\t\"rundatediffans\": 123141,\n\t\"runfilename\": \"solutions2.c\",\n\t\"rundata\": 1240,\n\t\"runanswer\": 1,\n\t\"runstatus\": \"waiting\",\n\t\"runanswer1\": 3,\n\t\"runanswer2\": 1,\n\t\"runlangnumber\": 1\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/run/400392107",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"run",
+								"400392107"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/run/400392107",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"run",
+								"400392107"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Answer",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\t\"runanswer\": \"Melhor desistir\",\n\t\t\"yes\": false,\n\t\t\"fake\": true\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/answer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"answer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/answer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"answer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/answer/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fake\": false,\n\t\"yes\": true\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/answer/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/answer/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"13"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Working",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/working",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"working"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Lista de exercicios nova\",\n\t\"start_date\": 12315123,\n\t\"end_date\": 12312414,\n\t\"last_answer_date\": 534535,\n\t\"max_file_size\": 2000,\n\t\"is_multilogin\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contest/1/working",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contest",
+								"1",
+								"working"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Lista de exercicios atualizada\",\n\t\"start_date\": 12315123,\n\t\"end_date\": 12312414,\n\t\"last_answer_date\": 534535,\n\t\"max_file_size\": 2000,\n\t\"is_multilogin\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/working/8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"working",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/working/8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"working",
+								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UserWorking",
+			"item": [
+				{
+					"name": "Add users to Working",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"usernumbers\": [2004, 1100],\n\t\"sitenumber\": 1,\n\t\"contestnumber\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/working/7/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"working",
+								"7",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workings by user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user/1100/working",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"1100",
+								"working"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users by working",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/working/7/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"working",
+								"7",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add workings to user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"workingnumbers\": [5],\n\t\"sitenumber\": 1,\n\t\"contestnumber\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user/1100/working",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"1100",
+								"working"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete workings from user",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"workingnumbers\": [6],\n\t\"sitenumber\": 1,\n\t\"contestnumber\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user/1100/working",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"1100",
+								"working"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete working from users",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"usernumbers\": [2000, 2001],\n\t\"sitenumber\": 1,\n\t\"contestnumber\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/working/6/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"working",
+								"6",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProblemLanguage",
+			"item": [
+				{
+					"name": "Add Languages to Problem",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"langnumbers\": [1,2,5,6],\n\t\"contestnumber\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/problem/1102/language",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1102",
+								"language"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Languages by Problem",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/problem/1102/language",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1102",
+								"language"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Languages from Problem",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"langnumbers\": [1,6],\n\t\"contestnumber\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/problem/1102/language",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"problem",
+								"1102",
+								"language"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
