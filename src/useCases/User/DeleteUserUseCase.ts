@@ -20,7 +20,12 @@ class DeleteUserUseCase {
       throw new Error("User does not exists");
     }
 
-    await this.usersRepository.delete(id);
+    try {
+      await this.usersRepository.delete(id);
+    } catch (error) {
+      return Promise.reject(error)
+    }
+
   }
 }
 

@@ -124,7 +124,6 @@ class UsersRepository implements IUsersRepository {
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
     query = query.concat(`
-      updatetime = extract(epoch from now())
       \nWHERE usernumber = ${updateObject.usernumber};`);
     try {
       const updatedUser: User[] = await this.repository.query(query);

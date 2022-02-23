@@ -49,23 +49,28 @@ class UpdateContestsUseCase {
     if (!contestAlreadyExists) {
       throw new Error("Contest does not exists");
     }
+    try {
+      await this.contestsRepository.update({
+        contestnumber,
+        contestname,
+        contestactive,
+        contestduration,
+        contestkeys: contestkeys === "" ? undefined : contestkeys,
+        contestlastmileanswer,
+        contestlastmilescore,
+        contestlocalsite,
+        contestmainsite,
+        contestmainsiteurl,
+        contestmaxfilesize,
+        contestpenalty,
+        conteststartdate,
+        contestunlockkey,
+      });
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
 
-    this.contestsRepository.update({
-      contestnumber,
-      contestname,
-      contestactive,
-      contestduration,
-      contestkeys: contestkeys === "" ? undefined : contestkeys,
-      contestlastmileanswer,
-      contestlastmilescore,
-      contestlocalsite,
-      contestmainsite,
-      contestmainsiteurl,
-      contestmaxfilesize,
-      contestpenalty,
-      conteststartdate,
-      contestunlockkey,
-    });
   }
 }
 

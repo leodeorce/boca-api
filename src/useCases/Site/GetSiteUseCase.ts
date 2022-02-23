@@ -15,9 +15,12 @@ class GetSiteUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<Site | undefined> {
-    const site = await this.sitesRepository.getById(id);
-
-    return site;
+    try {
+      const site = await this.sitesRepository.getById(id);
+      return site;
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

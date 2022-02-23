@@ -14,7 +14,6 @@ interface IRequest {
   problemcolorname: string;
   problemcolor: string;
   working_id?: number;
-  updatetime: number;
 }
 
 @injectable()
@@ -36,7 +35,6 @@ class UpdateProblemsUseCase {
     problemcolorname,
     problemcolor,
     working_id,
-    updatetime,
   }: IRequest): Promise<void> {
     const problemAlreadyExists = await this.problemsRepository.getById(
       problemnumber
@@ -45,21 +43,23 @@ class UpdateProblemsUseCase {
     if (!problemAlreadyExists) {
       throw new Error("Problem not found");
     }
-
-    this.problemsRepository.update({
-      problemnumber,
-      problemname,
-      problemfullname,
-      problembasefilename,
-      probleminputfilename,
-      probleminputfile,
-      probleminputfilehash,
-      fake,
-      problemcolorname,
-      problemcolor,
-      working_id,
-      updatetime,
-    });
+    try {
+      await this.problemsRepository.update({
+        problemnumber,
+        problemname,
+        problemfullname,
+        problembasefilename,
+        probleminputfilename,
+        probleminputfile,
+        probleminputfilehash,
+        fake,
+        problemcolorname,
+        problemcolor,
+        working_id,
+      });
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

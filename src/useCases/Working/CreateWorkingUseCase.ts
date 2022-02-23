@@ -28,15 +28,20 @@ class CreateWorkingUseCase {
     max_file_size,
     is_multilogin,
   }: IRequest): Promise<void> {
-    await this.workingsRepository.create({
-      contestnumber,
-      name,
-      start_date,
-      end_date,
-      last_answer_date,
-      max_file_size,
-      is_multilogin,
-    });
+
+    try {
+      await this.workingsRepository.create({
+        contestnumber,
+        name,
+        start_date,
+        end_date,
+        last_answer_date,
+        max_file_size,
+        is_multilogin,
+      });
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

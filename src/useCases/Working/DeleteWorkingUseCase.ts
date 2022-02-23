@@ -19,8 +19,12 @@ class DeleteWorkingUseCase {
     if (!workingAlreadyExists) {
       throw new Error("Working does not exists");
     }
-
-    await this.workingsRepository.delete(id);
+    try {
+      await this.workingsRepository.delete(id);
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

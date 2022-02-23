@@ -11,9 +11,14 @@ class ListProblemsUseCase {
   ) {}
 
   async execute(contestnumber: number): Promise<Problem[]> {
-    const problems = await this.problemsRepository.list(contestnumber);
+    try {
+      const problems = await this.problemsRepository.list(contestnumber);
+      return problems;
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
 
-    return problems;
   }
 }
 

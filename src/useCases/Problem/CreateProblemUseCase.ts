@@ -14,7 +14,6 @@ interface IRequest {
   problemcolorname: string;
   problemcolor: string;
   working_id?: number;
-  updatetime: number;
 }
 
 @injectable()
@@ -36,7 +35,6 @@ class CreateProblemUseCase {
     problemcolorname,
     problemcolor,
     working_id,
-    updatetime,
   }: IRequest): Promise<void> {
     const contestAlreadyExists = await this.problemsRepository.findByName(
       problemname
@@ -47,21 +45,24 @@ class CreateProblemUseCase {
     }
     const count = (await this.problemsRepository.count()) + 1;
 
-    this.problemsRepository.create({
-      contestnumber,
-      problemnumber: count,
-      problemname,
-      problemfullname,
-      problembasefilename,
-      probleminputfilename,
-      probleminputfile,
-      probleminputfilehash,
-      fake,
-      problemcolorname,
-      problemcolor,
-      working_id,
-      updatetime,
-    });
+    try {
+      await this.problemsRepository.create({
+        contestnumber,
+        problemnumber: count,
+        problemname,
+        problemfullname,
+        problembasefilename,
+        probleminputfilename,
+        probleminputfile,
+        probleminputfilehash,
+        fake,
+        problemcolorname,
+        problemcolor,
+        working_id,
+      });
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
 }
 

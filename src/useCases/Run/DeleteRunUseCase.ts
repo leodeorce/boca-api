@@ -19,8 +19,13 @@ class DeleteRunUseCase {
     if (!runAlreadyExists) {
       throw new Error("Run does not exists");
     }
+    try {
+      await this.runsRepository.delete(id);
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
 
-    await this.runsRepository.delete(id);
   }
 }
 

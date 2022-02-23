@@ -50,22 +50,27 @@ class CreateContestsUseCase {
 
     const count = (await this.contestsRepository.count()) + 1;
 
-    this.contestsRepository.create({
-      contestnumber: count,
-      contestname,
-      contestactive,
-      contestduration,
-      contestkeys,
-      contestlastmileanswer,
-      contestlastmilescore,
-      contestlocalsite,
-      contestmainsite,
-      contestmainsiteurl,
-      contestmaxfilesize,
-      contestpenalty,
-      conteststartdate,
-      contestunlockkey,
-    });
+    try {
+      await this.contestsRepository.create({
+        contestnumber: count,
+        contestname,
+        contestactive,
+        contestduration,
+        contestkeys,
+        contestlastmileanswer,
+        contestlastmilescore,
+        contestlocalsite,
+        contestmainsite,
+        contestmainsiteurl,
+        contestmaxfilesize,
+        contestpenalty,
+        conteststartdate,
+        contestunlockkey,
+      });
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

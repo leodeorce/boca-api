@@ -20,7 +20,11 @@ class DeleteContestsUseCase {
       throw new Error("Contest does not exists");
     }
 
-    await this.contestsRepository.delete(id);
+    try {
+      await this.contestsRepository.delete(id);
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

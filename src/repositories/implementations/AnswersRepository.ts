@@ -104,7 +104,7 @@ class AnswersRepository implements IAnswersRepository {
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
     query = query.concat(
-      `,updatetime = extract(epoch from now())
+      `
       \nWHERE answernumber = ${updateObject.answernumber} ;`
     );
 

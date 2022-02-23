@@ -90,8 +90,12 @@ class ProblemsRepository implements IProblemsRepository {
          ${createValues}
       );
       `;
-    await this.repository.query(query);
-    return Promise.resolve();
+    try {
+      await this.repository.query(query);
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
 
   async update(updateObject: IUpdateProblemDTO): Promise<Problem> {
@@ -119,14 +123,22 @@ class ProblemsRepository implements IProblemsRepository {
       `\nWHERE problemnumber = ${updateObject.problemnumber};`
     );
 
-    const updatedContest: Problem[] = await this.repository.query(query);
+    try {
+      const updatedProblem: Problem[] = await this.repository.query(query);
+      return updatedProblem[0];
+    } catch(err) {
+      return Promise.reject(err)
+    }
 
-    return updatedContest[0];
   }
 
   async delete(problemnumber: number): Promise<void> {
     const query = `DELETE FROM problemtable WHERE problemnumber=${problemnumber}`;
-    await this.repository.query(query);
+    try {
+      await this.repository.query(query);
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
 }
 

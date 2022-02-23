@@ -63,7 +63,6 @@ class ProblemController {
       problemcolorname,
       problemcolor,
       working_id,
-      updatetime,
     } = request.body;
 
     try {
@@ -79,7 +78,6 @@ class ProblemController {
         problemcolorname,
         problemcolor,
         working_id,
-        updatetime,
       });
 
       return response.status(201).send();
@@ -109,7 +107,6 @@ class ProblemController {
       problemcolorname,
       problemcolor,
       working_id,
-      updatetime,
     } = request.body;
 
     try {
@@ -125,7 +122,6 @@ class ProblemController {
         problemcolorname,
         problemcolor,
         working_id,
-        updatetime,
       });
 
       return response.status(201).send();

@@ -11,9 +11,13 @@ class ListUsersUseCase {
   ) {}
 
   async execute(contestNumber: number): Promise<User[]> {
-    const users = await this.usersRepository.list(contestNumber);
-
-    return users;
+    try {
+      const users = await this.usersRepository.list(contestNumber);
+      return users;
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

@@ -20,7 +20,6 @@ interface IRequest {
   userlastlogout?: number;
   userpermitip?: number;
   userinfo?: string;
-  updatetime?: number;
   usercpcid?: string;
 }
 
@@ -49,7 +48,6 @@ class UpdateUserUseCase {
     userlastlogout,
     userpermitip,
     userinfo,
-    updatetime,
     usercpcid,
   }: IRequest): Promise<void> {
     const userExists = await this.usersRepository.getById(usernumber);
@@ -76,7 +74,6 @@ class UpdateUserUseCase {
         userlastlogout,
         userpermitip,
         userinfo,
-        updatetime,
         usercpcid,
       });
       return Promise.resolve();

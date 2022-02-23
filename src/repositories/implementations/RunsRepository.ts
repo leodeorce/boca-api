@@ -26,16 +26,6 @@ class RunsRepository implements IRunsRepository {
     return runs;
   }
 
-  async findByName(name: string): Promise<Run | undefined> {
-    const query = `
-    SELECT * FROM problemtable WHERE problemname = '${name}'
-  `;
-    const contest: Run[] = await this.repository.query(query);
-    if (contest.length === 0) {
-      return undefined;
-    }
-    return contest[0];
-  }
 
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(

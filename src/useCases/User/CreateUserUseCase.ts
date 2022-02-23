@@ -20,7 +20,6 @@ interface IRequest {
   userlastlogout?: number;
   userpermitip?: number;
   userinfo: string;
-  updatetime: number;
   usercpcid: string;
 }
 
@@ -48,31 +47,33 @@ class CreateUserUseCase {
     userlastlogout,
     userpermitip,
     userinfo,
-    updatetime,
     usercpcid,
   }: IRequest): Promise<void> {
-    const count = (await this.usersRepository.count()) + 1;
-    await this.usersRepository.create({
-      contestnumber,
-      usersitenumber,
-      usernumber: count,
-      username,
-      userfullname,
-      userdesc,
-      usertype,
-      userenabled,
-      usermultilogin,
-      userpassword,
-      userip,
-      userlastlogin,
-      usersession,
-      usersessionextra,
-      userlastlogout,
-      userpermitip,
-      userinfo,
-      updatetime,
-      usercpcid,
-    });
+    try {
+      const count = (await this.usersRepository.count()) + 1;
+      await this.usersRepository.create({
+        contestnumber,
+        usersitenumber,
+        usernumber: count,
+        username,
+        userfullname,
+        userdesc,
+        usertype,
+        userenabled,
+        usermultilogin,
+        userpassword,
+        userip,
+        userlastlogin,
+        usersession,
+        usersessionextra,
+        userlastlogout,
+        userpermitip,
+        userinfo,
+        usercpcid,
+      });
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

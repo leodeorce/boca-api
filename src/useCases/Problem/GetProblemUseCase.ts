@@ -15,9 +15,14 @@ class GetProblemUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<Problem | undefined> {
-    const problem = await this.problemsRepository.getById(id);
+    try {
+      const problem = await this.problemsRepository.getById(id);
+      return problem;
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
 
-    return problem;
   }
 }
 

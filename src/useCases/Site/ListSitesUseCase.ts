@@ -11,9 +11,12 @@ class ListSitesUseCase {
   ) {}
 
   async execute(contestNumber: number): Promise<Site[]> {
-    const sites = await this.sitesRepository.list(contestNumber);
-
-    return sites;
+    try {
+      const sites = await this.sitesRepository.list(contestNumber);
+      return sites;
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

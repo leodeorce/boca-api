@@ -68,35 +68,39 @@ class CreateRunUseCase {
   }: IRequest): Promise<void> {
     const count = (await this.runsRepository.count()) + 1;
 
-    await this.runsRepository.create({
-      contestnumber,
-      runsitenumber,
-      runnumber: count,
-      usernumber,
-      rundate,
-      rundatediff,
-      rundatediffans,
-      runproblem,
-      runfilename,
-      rundata,
-      runanswer,
-      runstatus,
-      runjudge,
-      runjudgesite,
-      runanswer1,
-      runjudge1,
-      runjudgesite1,
-      runanswer2,
-      runjudge2,
-      runjudgesite2,
-      runlangnumber,
-      autoip,
-      autobegindate,
-      autoenddate,
-      autoanswer,
-      autostdout,
-      autostderr,
-    });
+    try {
+      await this.runsRepository.create({
+        contestnumber,
+        runsitenumber,
+        runnumber: count,
+        usernumber,
+        rundate,
+        rundatediff,
+        rundatediffans,
+        runproblem,
+        runfilename,
+        rundata,
+        runanswer,
+        runstatus,
+        runjudge,
+        runjudgesite,
+        runanswer1,
+        runjudge1,
+        runjudgesite1,
+        runanswer2,
+        runjudge2,
+        runjudgesite2,
+        runlangnumber,
+        autoip,
+        autobegindate,
+        autoenddate,
+        autoanswer,
+        autostdout,
+        autostderr,
+      });
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

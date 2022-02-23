@@ -18,7 +18,6 @@ interface ICreateUserDTO {
   userlastlogout?: number;
   userpermitip?: number;
   userinfo: string;
-  updatetime: number;
   usercpcid: string;
 }
 
@@ -40,7 +39,6 @@ interface IUpdateUserDTO {
   userlastlogout?: number;
   userpermitip?: number;
   userinfo?: string;
-  updatetime?: number;
   usercpcid?: string;
 }
 

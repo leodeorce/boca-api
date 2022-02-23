@@ -20,7 +20,11 @@ class DeleteProblemUseCase {
       throw new Error("Problem does not exists");
     }
 
-    await this.problemsRepository.delete(id);
+    try {
+      await this.problemsRepository.delete(id);
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

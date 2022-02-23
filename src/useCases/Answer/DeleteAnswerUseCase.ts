@@ -20,7 +20,12 @@ class DeleteAnswerUseCase {
       throw new Error("Answer does not exists");
     }
 
-    await this.answersRepository.delete(id);
+    try {
+      await this.answersRepository.delete(id);
+    } catch (error) {
+      return Promise.reject(error)
+    }
+
   }
 }
 

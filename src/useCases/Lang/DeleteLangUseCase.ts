@@ -20,7 +20,13 @@ class DeleteLangUseCase {
       throw new Error("Language does not exists");
     }
 
-    await this.langRepository.delete(id);
+    try {
+      await this.langRepository.delete(id);
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
+
   }
 }
 

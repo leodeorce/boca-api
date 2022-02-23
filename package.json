@@ -6,9 +6,11 @@
   "author": "Matheus Lenke <matheuslenke@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "dev": "ts-node-dev --inspect=0.0.0.0:9229 --transpile-only src/server.ts",
     "docker:up": "docker-compose -f docker-compose.yml -f docker-compose-api.yml up -d",
     "docker:apilogs": "docker logs boca_api -f",
+    "docker:postgreslogs": "docker logs boca-postgres -f",
     "docker:down": "docker-compose -f docker-compose.yml -f docker-compose-api.yml down",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli",
     "lint": "eslint --fix --ext .ts ."
@@ -28,6 +30,7 @@
     "pg": "^8.7.1",
     "prettier": "^2.5.1",
     "ts-node-dev": "^1.1.8",
+    "tsc": "^2.0.4",
     "typescript": "^4.5.4"
   },
   "dependencies": {

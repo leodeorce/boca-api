@@ -11,9 +11,14 @@ class ListLangUseCase {
   ) {}
 
   async execute(problemNumber: number): Promise<Lang[]> {
-    const Lang = await this.LangRepository.list(problemNumber);
+    try {
+      const Lang = await this.LangRepository.list(problemNumber);
+      return Lang;
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
 
-    return Lang;
   }
 }
 

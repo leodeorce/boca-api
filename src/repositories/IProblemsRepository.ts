@@ -13,7 +13,6 @@ interface ICreateProblemDTO {
   problemcolorname: string;
   problemcolor: string;
   working_id?: number;
-  updatetime: number;
 }
 
 interface IUpdateProblemDTO {
@@ -28,7 +27,6 @@ interface IUpdateProblemDTO {
   problemcolorname: string;
   problemcolor: string;
   working_id?: number;
-  updatetime: number;
 }
 
 interface ICountResult {

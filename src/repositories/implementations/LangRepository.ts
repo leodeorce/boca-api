@@ -15,9 +15,9 @@ class LangRepository implements ILangRepository {
     this.repository = getRepository(Lang);
   }
 
-  async findByName(langname: string): Promise<Lang | undefined> {
+  async findByName(langname: string, contestNumber: number): Promise<Lang | undefined> {
     const lang: Lang[] = await this.repository.query(
-      `SELECT * FROM langtable WHERE langname = '${langname}'`
+      `SELECT * FROM langtable WHERE langname = '${langname} AND contestnumber=${contestNumber}'`
     );
     if (lang.length === 0) {
       return undefined;

@@ -15,9 +15,14 @@ class GetContestsUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<Contest | undefined> {
-    const contest = await this.contestsRepository.getById(id);
+    try {
+      const contest = await this.contestsRepository.getById(id);
+      return contest;
+      
+    } catch (error) {
+      return Promise.reject(error)
+    }
 
-    return contest;
   }
 }
 

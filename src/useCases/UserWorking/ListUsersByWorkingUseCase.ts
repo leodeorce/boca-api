@@ -11,15 +11,17 @@ class ListUsersByWorkingUseCase {
   ) {}
 
   async execute(workingNumber: number): Promise<User[]> {
-    const users = await this.workingsUserRepository.getUsersByWorkings(
-      workingNumber
-    );
-
-    if (users === undefined) {
-      return [];
+    try {
+      const users = await this.workingsUserRepository.getUsersByWorkings(
+        workingNumber
+      );
+      if (users === undefined) {
+        return [];
+      }
+      return users;
+    } catch (error) {
+      return Promise.reject(error)
     }
-
-    return users;
   }
 }
 

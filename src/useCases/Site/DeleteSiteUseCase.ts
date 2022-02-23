@@ -20,7 +20,12 @@ class DeleteSiteUseCase {
       throw new Error("Site does not exists");
     }
 
-    await this.sitesRepository.delete(id);
+    try {
+      await this.sitesRepository.delete(id);
+    } catch (error) {
+      return Promise.reject(error)
+    }
+
   }
 }
 

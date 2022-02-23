@@ -58,33 +58,38 @@ class CreateSiteUseCase {
     sitemaxruntime,
     sitemaxjudgewaittime,
   }: IRequest): Promise<void> {
-    const count = (await this.sitesRepository.count()) + 1;
+    
+    try {
+      const count = (await this.sitesRepository.count()) + 1;
+      await this.sitesRepository.create({
+        contestnumber,
+        sitenumber: count + 1,
+        siteip,
+        sitename,
+        siteactive,
+        sitepermitlogins,
+        sitelastmileanswer,
+        sitelastmilescore,
+        siteduration,
+        siteautoend,
+        sitejudging,
+        sitetasking,
+        siteglobalscore,
+        sitescorelevel,
+        sitenextuser,
+        sitenextclar,
+        sitenextrun,
+        sitenexttask,
+        sitemaxtask,
+        sitechiefname,
+        siteautojudge,
+        sitemaxruntime,
+        sitemaxjudgewaittime,
+      });
 
-    await this.sitesRepository.create({
-      contestnumber,
-      sitenumber: count + 1,
-      siteip,
-      sitename,
-      siteactive,
-      sitepermitlogins,
-      sitelastmileanswer,
-      sitelastmilescore,
-      siteduration,
-      siteautoend,
-      sitejudging,
-      sitetasking,
-      siteglobalscore,
-      sitescorelevel,
-      sitenextuser,
-      sitenextclar,
-      sitenextrun,
-      sitenexttask,
-      sitemaxtask,
-      sitechiefname,
-      siteautojudge,
-      sitemaxruntime,
-      sitemaxjudgewaittime,
-    });
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 

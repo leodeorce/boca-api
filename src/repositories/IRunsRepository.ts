@@ -65,7 +65,6 @@ interface ICountResult {
 }
 
 interface IRunsRepository {
-  findByName(name: string): Promise<Run | undefined>;
   list(): Promise<Run[]>;
   create(run: ICreateRunDTO): Promise<void>;
   count(): Promise<number>;

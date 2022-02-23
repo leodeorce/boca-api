@@ -71,14 +71,13 @@ class UserController {
       userlastlogout,
       userpermitip,
       userinfo,
-      updatetime,
       usercpcid,
     } = request.body;
 
     const user = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
 
     if (!user) {
-      return response.status(400).json({ error: "Contest not found" });
+      return response.status(400).json({ error: "User not found" });
     }
 
     try {
@@ -100,7 +99,6 @@ class UserController {
         userlastlogout,
         userpermitip,
         userinfo,
-        updatetime,
         usercpcid,
       });
 
@@ -137,7 +135,6 @@ class UserController {
       userlastlogout,
       userpermitip,
       userinfo,
-      updatetime,
       usercpcid,
     } = request.body;
 
@@ -160,7 +157,6 @@ class UserController {
         userlastlogout,
         userpermitip,
         userinfo,
-        updatetime,
         usercpcid,
       });
 
@@ -171,7 +167,7 @@ class UserController {
           .status(400)
           .json({ message: error.message, detail: error.driverError });
       }
-      return response.status(400).json({ error: "Error creating User" });
+      return response.status(400).json({ error: "Error Updating User" });
     }
   }
 

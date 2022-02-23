@@ -15,9 +15,13 @@ class GetLangUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<Lang | undefined> {
-    const lang = await this.langRepository.findById(id);
+    try {
+      const lang = await this.langRepository.findById(id);
+      return lang;
+    } catch (error) {
+      return Promise.reject(error)
+    }
 
-    return lang;
   }
 }
 
