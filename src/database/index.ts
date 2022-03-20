@@ -6,8 +6,9 @@ interface IOptions {
 
 getConnectionOptions().then((options) => {
   const newOptions = options as IOptions;
-  newOptions.host = "boca-postgres"; // Essa opção deverá ser EXATAMENTE o nome dado ao service do banco de dados
+  newOptions.host = process.env.BOCA_POSTGRES_DOCKER_NAME ?? "boca-postgres"; // Essa opção deverá ser EXATAMENTE o nome dado ao service do banco de dados
   createConnection({
     ...options,
   });
 });
+

@@ -21,6 +21,9 @@ Algumas ferramentas adicionais recomendadas:
 * [Visual Studio Code](https://code.visualstudio.com/)
 * [Postman](https://www.postman.com/)
 
+### Variáveis de ambiente
+Para rodar o projeto, é necessário configurar as variáveis de ambiente neste projeto. Dentro do arquivo `.env`, você precisa atualizar as seguintes variáveis:
+* `BOCA_POSTGRES_DOCKER_NAME`: O nome dado para o container postgres do banco de dados do Boca
 ## Instalação
 
 Instalação de dependências
@@ -63,3 +66,21 @@ Os arquivos especificando as migrations se encontram na pasta `src/database/migr
  Cada requisição possui suas particularidades feitas com base na especificação do trabalho, podendo possuir pequenas modificações. Para modificar os dados por exemplo de um método create, basta modificar o JSON do Body da requisição
 
 
+## Decisões de projeto
+
+### Estrutura de arquivos
+
+* O código da aplicação se encontra na pasta `src`.
+* Na pasta `database`, temos todas as configurações relacionadas ao banco de dados da aplicação
+* Na pasta `entities`, temos as entidades da nossa aplicação, replicando as existentes em nosso banco de dados
+* Na pasta `repositories`, temos as classes responsáveis por realizar modificações das entidades no banco de dados, e suas interfaces de implementação
+* Na pasta `routes`, temos as rotas da nossa aplicação
+* Na pasta `shared`, temos os arquivos compartilhados pela aplicação toda. Dentro da pasta `container`, temos o arquivo responsável por registrar uma instância única de cada repository da nossa aplicação (Padrão singleton)
+* Na pasta `useCases`, temos os controladores e casos de uso de cada entidade da aplicação, contendo as regras de negócio do sistema
+* No arquivo `.env`, temos as variáveis de ambiente
+
+### Estrutura do banco de dados
+* Foi criado uma tabela `workingtable`, que permite organizar listas de problmas (exercícios).
+* Foi adicionado à tabela `problemtable` uma coluna `working_id`, que indica a qual working aquele problema pertence
+* Foi criado uma tabela `userworkingtable`, que permite definir para cada usuário listas de problemas
+* Foi criada uma tabela `problemlanguagetable`, que permite definir linguagens de programação para cada problema específico, podendo em um mesmo contest, problemas diferentes demandarem linguagens diferentes
