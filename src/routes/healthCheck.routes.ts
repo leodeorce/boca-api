@@ -6,6 +6,6 @@ const healthCheckRoutes = Router();
 
 const healthCheckController = new HealthCheckController();
 
-healthCheckRoutes.get("/", healthCheckController.ready);
+healthCheckRoutes.get("/health", healthCheckController.ready);
 
 export { healthCheckRoutes };
