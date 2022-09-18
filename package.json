@@ -7,11 +7,13 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev --inspect=0.0.0.0:9229 --transpile-only src/server.ts",
+    "dev": "ts-node-dev --transpile-only src/server.ts",
     "docker:up": "docker-compose -f docker-compose.yml -f docker-compose-api.yml up -d",
+    "test:docker:up": "docker-compose -f docker-compose.yml -f docker-compose-test.yml up -d",
     "docker:apilogs": "docker logs boca_api -f",
     "docker:postgreslogs": "docker logs boca-postgres -f",
     "docker:down": "docker-compose -f docker-compose.yml -f docker-compose-api.yml down",
+    "test:docker:down": "docker-compose -f docker-compose.yml -f docker-compose-test.yml down -v",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli",
     "lint": "eslint --fix --ext .ts ."
   },
