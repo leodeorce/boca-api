@@ -5,11 +5,11 @@ services:
     image: boca-api
     volumes:
       - .:/usr/app
-    links:
-      - boca-postgres
     depends_on:
       boca-postgres:
         condition: service_healthy
+    depends_on:
+      - boca-web
 
   boca-web:
     image: ghcr.io/joaofazolo/boca-docker/boca-web
@@ -19,7 +19,6 @@ services:
       boca-postgres:
         condition: service_healthy
     environment:
-      - DB_HOST=boca-postgres
       # initial password that is used by the admin user (web app)
       # If not set, the default value is 'boca'
       - BOCA_PASSWORD=boca
@@ -31,7 +30,7 @@ services:
     image: postgres
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
