@@ -5,6 +5,7 @@ services:
     ports:
       - 3000:3000
     environment:
+      - LISTEN_PORT=3000
       - DB_PORT=5432
       - DB_HOST=boca-postgres
       - DB_NAME=bocadb
@@ -14,6 +15,7 @@ services:
   boca-web:
     container_name: boca-web
     environment:
+      - DB_HOST=boca-postgres
       - DB_PORT=5432
       - DB_NAME=bocadb
       # unprivileged boca user
@@ -32,8 +34,8 @@ services:
     environment:
       # Database configuration
       # privileged boca user
-      POSTGRES_USER: bocauser
-      POSTGRES_PASSWORD: dAm0HAiC
+      - POSTGRES_USER=bocauser
+      - POSTGRES_PASSWORD=dAm0HAiC
 
   boca-adminer:
     image: adminer
@@ -43,8 +45,6 @@ services:
       - boca-postgres
     ports:
       - 8080:8080
-    links:
-      - boca-postgres
 
 volumes:
   db-data:
