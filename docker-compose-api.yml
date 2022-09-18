@@ -1,32 +1,51 @@
 services:
+
+  boca-api:
+    container_name: boca-api
+    ports:
+      - 3000:3000
+    environment:
+      - DB_PORT=5432
+      - DB_HOST=boca-postgres
+      - DB_NAME=bocadb
+      - DB_USER=bocauser
+      - DB_PASSWORD=dAm0HAiC
+
+  boca-web:
+    container_name: boca-web
+    environment:
+      - DB_PORT=5432
+      - DB_NAME=bocadb
+      # unprivileged boca user
+      - DB_USER=bocauser
+      - DB_PASSWORD=dAm0HAiC
+      # privileged boca user
+      - DB_SUPER_USER=bocauser
+      - DB_SUPER_PASSWORD=dAm0HAiC
+
   boca-postgres:
-    ports: 
-        - 5432:5432
+    container_name: boca-postgres
     volumes: 
-        - db-data:/var/lib/postgresql/data
-  app:
-    build: .
-    container_name: boca_api
-    ports: 
-      - 3333:3333
-      - 9229:9229 #Você pode inserir essa porta tbm pra poder usar o debug
-    volumes:
-      - .:/usr/app
-    links:
-      - boca-postgres
-    depends_on:
-      - boca-postgres
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      # Database configuration
+      # privileged boca user
+      POSTGRES_USER: bocauser
+      POSTGRES_PASSWORD: dAm0HAiC
 
   boca-adminer:
     image: adminer
+    container_name: boca-adminer
     restart: unless-stopped
     depends_on:
       - boca-postgres
     ports:
-        - 8080:8080
+      - 8080:8080
     links:
       - boca-postgres
 
 volumes:
-    db-data:
-      driver: local
+  db-data:
+    driver: local

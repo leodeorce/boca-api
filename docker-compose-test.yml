@@ -1,0 +1,36 @@
+services:
+
+  boca-api:
+    container_name: boca-api-test
+    ports:
+      # Porta exclusiva para testes
+      - 3333:3333
+    environment:
+      - DB_PORT=5555
+      - DB_HOST=boca-postgres
+      - DB_NAME=bocadb
+      - DB_USER=postgres
+      - DB_PASSWORD=admin
+
+  boca-web:
+    container_name: boca-web-test
+    environment:
+      - DB_PORT=5555
+      - DB_NAME=bocadb
+      # unprivileged boca user
+      - DB_USER=postgres
+      - DB_PASSWORD=admin
+      # privileged boca user
+      - DB_SUPER_USER=postgres
+      - DB_SUPER_PASSWORD=admin
+
+  boca-postgres:
+    container_name: boca-postgres-test
+    ports:
+      # Porta exclusiva para testes
+      - 5555:5555
+    environment:
+      # Database configuration
+      # privileged boca user
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin

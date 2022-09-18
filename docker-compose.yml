@@ -1,71 +1,37 @@
-version: "3.7"
-
 services: 
 
-  boca-web:
-      image: ghcr.io/joaofazolo/boca-docker/boca-web
-      privileged: true
-      restart: unless-stopped
-      depends_on:
-          - boca-postgres
-      environment:
-          # Database configuration
-          - DB_HOST=boca-postgres
-          - DB_PORT=5432
-          - DB_NAME=bocadb
-          # unprivileged boca user
-          - DB_USER=bocauser
-          - DB_PASSWORD=dAm0HAiC
-          # privileged boca user
-          - DB_SUPER_USER=bocauser
-          - DB_SUPER_PASSWORD=dAm0HAiC
-          # initial password that is used by the admin user (web app)
-          # If not set, the default value is 'boca'
-          - BOCA_PASSWORD=boca
-          # secret key to be used in HTTP headers
-          # MUST set it with any random large enough sequence
-          - BOCA_KEY=GG56KFJtNDBGjJprR6ex
-      ports: 
-          - 8000:80
+  boca-api:
+    build: .
+    image: boca-api
+    volumes:
+      - .:/usr/app
+    links:
+      - boca-postgres
+    depends_on:
+      boca-postgres:
+        condition: service_healthy
 
-  boca-jail:
-      image: ghcr.io/joaofazolo/boca-docker/boca-jail
-      privileged: true
-      restart: unless-stopped
-      depends_on:
-          - boca-postgres
-      environment:
-          # Database configuration
-          - DB_HOST=boca-postgres
-          - DB_PORT=5432
-          - DB_NAME=bocadb
-          # unprivileged boca user
-          - DB_USER=bocauser
-          - DB_PASSWORD=dAm0HAiC
-          - PASSWD=dAm0HAiC
+  boca-web:
+    image: ghcr.io/joaofazolo/boca-docker/boca-web
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      boca-postgres:
+        condition: service_healthy
+    environment:
+      - DB_HOST=boca-postgres
+      # initial password that is used by the admin user (web app)
+      # If not set, the default value is 'boca'
+      - BOCA_PASSWORD=boca
+      # secret key to be used in HTTP headers
+      # MUST set it with any random large enough sequence
+      - BOCA_KEY=GG56KFJtNDBGjJprR6ex
 
   boca-postgres:
-      image: postgres
-      container_name: boca-postgres
-      restart: unless-stopped
-      ports:
-          - 5432:5432
-      # networks:
-      #   - default
-      environment:
-          # Database configuration
-          # privileged boca user
-          POSTGRES_USER: bocauser
-          POSTGRES_PASSWORD: dAm0HAiC
-          # To avoid the following error with recent versions (> 13) of PorgreSQL:
-          #
-          #   FATAL:  password authentication failed for user "bocauser"
-          #   
-          #   You may also use POSTGRES_HOST_AUTH_METHOD=trust to allow all
-          #   connections without a password. This is *not* recommended. See
-          #   PostgreSQL documentation about "trust"
-          POSTGRES_HOST_AUTH_METHOD: trust
-
-# networks:
-#   default:
-#     driver: bridge
+    image: postgres
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
