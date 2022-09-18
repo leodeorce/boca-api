@@ -13,7 +13,7 @@ health=1
 
 for attempt in $(seq 1 $N_RETRIES); do
 
-  curl --max-time $TIMEOUT --fail -s --output /dev/null https://localhost:3333/api/health
+  curl --max-time $TIMEOUT --fail -s --output /dev/null http://localhost:3333/api/health
   health=$?
   echo $health
 
@@ -22,8 +22,8 @@ for attempt in $(seq 1 $N_RETRIES); do
   fi
 
   if [ "$attempt" -eq "$N_RETRIES" ]; then
-    yarn test:docker:down
     echo "API is unhealthy. Aborting test scripts..."
+    yarn test:docker:down
     exit 1
   fi
 
@@ -33,7 +33,7 @@ done
 
 ### Run test scripts
 ### Could be necessary to run scripts outside of this one so Actions can fail with the tests
-# yarn test
+yarn mocha:api
 
 
 ### Stop containers
