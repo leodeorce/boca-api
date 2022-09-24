@@ -16,6 +16,9 @@ jobs:
     steps:
     
       - uses: actions/checkout@v3
+      
+      - name: Instalar dependências
+        run: yarn install
 
       - name: Build da imagem docker da aplicação
         run: docker build -t boca-api .
