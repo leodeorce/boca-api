@@ -1,9 +1,16 @@
 services:
 
   boca-api:
+    build: .
+    image: boca-api
     container_name: boca-api
+    volumes:
+      - .:/usr/app
+    depends_on:
+      boca-postgres:
+        condition: service_healthy
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
       - LISTEN_PORT=3000
       - DB_PORT=5432
@@ -11,40 +18,38 @@ services:
       - DB_NAME=bocadb
       - DB_USER=bocauser
       - DB_PASSWORD=dAm0HAiC
-
-  boca-web:
-    container_name: boca-web
-    environment:
-      - DB_HOST=boca-postgres
-      - DB_PORT=5432
-      - DB_NAME=bocadb
-      # unprivileged boca user
-      - DB_USER=bocauser
-      - DB_PASSWORD=dAm0HAiC
       # privileged boca user
       - DB_SUPER_USER=bocauser
       - DB_SUPER_PASSWORD=dAm0HAiC
 
   boca-postgres:
+    image: postgres
     container_name: boca-postgres
-    volumes: 
+    restart: unless-stopped
+    volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       # Database configuration
       # privileged boca user
       - POSTGRES_USER=bocauser
       - POSTGRES_PASSWORD=dAm0HAiC
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 4
 
   boca-adminer:
     image: adminer
     container_name: boca-adminer
     restart: unless-stopped
     depends_on:
-      - boca-postgres
+      boca-postgres:
+        condition: service_healthy
     ports:
-      - 8080:8080
+      - "8080:8080"
 
 volumes:
   db-data:
