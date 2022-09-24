@@ -14,8 +14,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node --transpile-only src/server.ts",
-    "test:api": "sh ./tests/api/start.sh",
-    "mocha:api": "mocha -r ts-node/register './tests/api/index.ts'",
+    "test:health": "sh ./tests/api/healthcheck.sh",
+    "test:api": "mocha -r ts-node/register './tests/api/index.ts'",
     "docker:up": "docker-compose -f docker-compose-dev.yml up -d",
     "docker:down": "docker-compose -f docker-compose-dev.yml down",
     "test:docker:up": "docker-compose -f docker-compose-test.yml up -d",
