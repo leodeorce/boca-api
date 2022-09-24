@@ -1,0 +1,33 @@
+name: API Test
+
+on:
+
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+
+  use-cases:
+  
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - uses: actions/checkout@v3
+
+      - name: Build da imagem docker da aplicação
+        run: docker build -t boca-api .
+
+      - name: Subir contêineres
+        run: yarn test:docker:up
+
+      - name: Health check na aplicação
+        run: yarn test:health
+
+      - name: Script de testes
+        run: yarn test:api
+
+      - name: Descer contêineres
+        run: yarn test:docker:down
