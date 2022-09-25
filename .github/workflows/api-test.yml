@@ -1,22 +1,19 @@
+---
 name: API Test
 
 on:
-
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
   workflow_dispatch:
 
 jobs:
-
   use-cases:
-  
     runs-on: ubuntu-latest
 
     steps:
-    
       - uses: actions/checkout@v3
-      
+
       - name: Instalar dependências
         run: yarn install
 
