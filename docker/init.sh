@@ -36,6 +36,5 @@ else
     echo "Create database"
     # https://stackoverflow.com/questions/5891888/piping-data-into-command-line-php
 
-    cd ./boca/src/private
-    echo "YES" | php createdb.php
+    cd ./boca/src/private && echo "YES" | php createdb.php
 fi

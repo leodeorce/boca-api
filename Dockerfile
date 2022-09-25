@@ -2,15 +2,15 @@ FROM node:16
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-RUN apt-get -y update
-RUN apt-get -y install \
+RUN apt-get -y update && \
+    apt-get -y install \
     dialog \
     apt-utils \
     php \
     php-pgsql \
     php-gd \
-    postgresql-client
-RUN apt-get -y upgrade && \
+    postgresql-client && \
+    apt-get -y upgrade && \
     apt-get -y clean
 
 WORKDIR /usr/src/app
