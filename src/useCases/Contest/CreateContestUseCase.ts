@@ -67,9 +67,8 @@ class CreateContestsUseCase {
         conteststartdate,
         contestunlockkey,
       });
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

@@ -1,4 +1,5 @@
-import { getRepository, Repository } from "typeorm";
+import { AppDataSource } from "../../database/index";
+import { Repository } from "typeorm";
 
 import { Contest } from "../../entities/Contest";
 import {
@@ -12,7 +13,7 @@ class ContestsRepository implements IContestRepository {
   private repository: Repository<Contest>;
 
   constructor() {
-    this.repository = getRepository(Contest);
+    this.repository = AppDataSource.getRepository(Contest);
   }
 
   async list(): Promise<Contest[]> {
