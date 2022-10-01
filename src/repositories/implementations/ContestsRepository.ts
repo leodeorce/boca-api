@@ -4,8 +4,8 @@ import { Repository } from "typeorm";
 import { Contest } from "../../entities/Contest";
 import {
   IContestRepository,
-  ICountResult,
   ICreateContestDTO,
+  ILastIdResult,
   IUpdateContestDTO,
 } from "../IContestsRepository";
 
@@ -28,32 +28,26 @@ class ContestsRepository implements IContestRepository {
   }
 
   async findByName(name: string): Promise<Contest | undefined> {
-    try {
-      const query = `
-      SELECT * FROM contesttable WHERE contestname = '${name}'
-    `;
-      const contest: Contest[] = await this.repository.query(query);
-      if (contest.length === 0) {
-        return undefined;
-      }
-      return contest[0];
-    } catch (err) {
-      return Promise.reject(err);
+    const contest: Contest | null = await this.repository.findOneBy({
+      contestname: name,
+    });
+    if (contest === null) {
+      return undefined;
     }
+    return contest;
   }
 
-  async count(): Promise<number> {
-    try {
-      const count: ICountResult[] = await this.repository.query(
-        `SELECT MAX(contestnumber) FROM contesttable`
-      );
-      if (count[0].max === null) {
-        return -1;
-      }
-      return count[0].max;
-    } catch (err) {
-      return Promise.reject(err);
+  async getLastId(): Promise<number | undefined> {
+    const lastId: ILastIdResult | undefined = await this.repository
+      .createQueryBuilder("contest")
+      .select("MAX(contest.contestnumber)", "max")
+      .getRawOne();
+
+    if (lastId === undefined) {
+      return undefined;
     }
+
+    return lastId.id;
   }
 
   async getById(id: number): Promise<Contest | undefined> {

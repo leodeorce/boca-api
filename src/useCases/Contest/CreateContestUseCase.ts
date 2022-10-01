@@ -1,3 +1,5 @@
+import { Contest } from "../../entities/Contest";
+import { ApiError } from "../../errors/ApiError";
 import { inject, injectable } from "tsyringe";
 
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
@@ -8,14 +10,12 @@ interface IRequest {
   contestduration: number;
   contestlastmileanswer?: number;
   contestlastmilescore?: number;
-  contestlocalsite: number;
   contestpenalty: number;
   contestmaxfilesize: number;
   contestactive: boolean;
-  contestmainsite: number;
-  contestkeys: string;
-  contestunlockkey: string;
-  contestmainsiteurl: string;
+  contestkeys?: string;
+  contestunlockkey?: string;
+  contestmainsiteurl?: string;
 }
 
 @injectable()
@@ -27,49 +27,56 @@ class CreateContestsUseCase {
 
   async execute({
     contestname,
-    contestactive,
+    conteststartdate,
     contestduration,
-    contestkeys,
     contestlastmileanswer,
     contestlastmilescore,
-    contestlocalsite,
-    contestmainsite,
-    contestmainsiteurl,
-    contestmaxfilesize,
     contestpenalty,
-    conteststartdate,
+    contestmaxfilesize,
+    contestactive,
+    contestkeys,
     contestunlockkey,
+    contestmainsiteurl,
   }: IRequest): Promise<void> {
+    contestname = contestname.trim();
+    contestname = contestname ? contestname : "Contest";
+
     const contestAlreadyExists = await this.contestsRepository.findByName(
       contestname
     );
 
     if (contestAlreadyExists) {
-      throw new Error("Contest already exists");
+      throw ApiError.alreadyExists("Contest name already exists");
     }
 
-    const count = (await this.contestsRepository.count()) + 1;
+    contestkeys = contestkeys ? contestkeys : "";
+    contestmainsiteurl = contestmainsiteurl ? contestmainsiteurl : "";
+    contestunlockkey = contestunlockkey ? contestunlockkey : "";
+    
+    const contestlocalsite = 1;
+    const contestmainsite = 1;
+    
+    let lastId = await this.contestsRepository.getLastId();
+    lastId = lastId ? lastId : 0;
 
-    try {
-      await this.contestsRepository.create({
-        contestnumber: count,
-        contestname,
-        contestactive,
-        contestduration,
-        contestkeys,
-        contestlastmileanswer,
-        contestlastmilescore,
-        contestlocalsite,
-        contestmainsite,
-        contestmainsiteurl,
-        contestmaxfilesize,
-        contestpenalty,
-        conteststartdate,
-        contestunlockkey,
-      });
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    const contestnumber = lastId + 1;
+
+    return await this.contestsRepository.create({
+      contestnumber,
+      contestname,
+      conteststartdate,
+      contestduration,
+      contestlastmileanswer,
+      contestlastmilescore,
+      contestlocalsite,
+      contestpenalty,
+      contestmaxfilesize,
+      contestactive,
+      contestmainsite,
+      contestkeys,
+      contestunlockkey,
+      contestmainsiteurl,
+    });
   }
 }
 
