@@ -1,1 +1,1 @@
-import "./Admin/index";
+import "./admin/index";

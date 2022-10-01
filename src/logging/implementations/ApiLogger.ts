@@ -12,16 +12,13 @@ class ApiLogger implements ILogger {
     this.logger = createLogger({
       level: "info",
       format: format.combine(
-        format.colorize(),
         format.timestamp({
           format: "YYYY-MM-DD HH:mm:ss",
         }),
         format.splat(),
         customFormat
       ),
-      transports: [
-        new transports.Console(),
-      ],
+      transports: [new transports.Console()],
     });
   }
 
