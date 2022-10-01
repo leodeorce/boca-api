@@ -38,16 +38,16 @@ class ContestsRepository implements IContestRepository {
   }
 
   async getLastId(): Promise<number | undefined> {
-    const lastId: ILastIdResult | undefined = await this.repository
+    const lastIdResult: ILastIdResult | undefined = await this.repository
       .createQueryBuilder("contest")
-      .select("MAX(contest.contestnumber)", "max")
+      .select("MAX(contest.contestnumber)", "id")
       .getRawOne();
 
-    if (lastId === undefined) {
+    if (lastIdResult === undefined) {
       return undefined;
     }
 
-    return lastId.id;
+    return lastIdResult.id;
   }
 
   async getById(id: number): Promise<Contest | undefined> {

@@ -4,9 +4,11 @@ import { AppDataSource } from "./database/index";
 import "./shared/container";
 
 import {
+  errorLogger,
   errorHandler,
   fallbackRouteHandler,
   fallbackErrorHandler,
+  requestLogger,
 } from "./middleware";
 
 AppDataSource.initialize()
@@ -22,8 +24,10 @@ AppDataSource.initialize()
 const app = express();
 
 app.use(express.json());
+app.use(requestLogger);
 app.use(router);
 app.use(fallbackRouteHandler);
+app.use(errorLogger);
 app.use(errorHandler);
 app.use(fallbackErrorHandler);
 
