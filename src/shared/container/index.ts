@@ -1,6 +1,8 @@
-// import { container } from "tsyringe";
-
+import { ILogger } from "../../logging/ILogger";
+import { ApiLogger } from "../../logging/implementations/ApiLogger";
 import { container } from "tsyringe";
+
+container.registerSingleton<ILogger>("ApiLogger", ApiLogger);
 
 import { IAnswersRepository } from "../../repositories/IAnswersRepository";
 import { IContestRepository } from "../../repositories/IContestsRepository";

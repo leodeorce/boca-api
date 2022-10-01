@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { QueryFailedError } from "typeorm";
@@ -44,49 +44,45 @@ class ContestController {
     }
   }
 
-  async create(request: Request, response: Response): Promise<Response> {
-    const createContestsUseCase = container.resolve(CreateContestsUseCase);
-    const {
-      contestname,
-      contestactive,
-      contestduration,
-      contestkeys,
-      contestlastmileanswer,
-      contestlastmilescore,
-      contestlocalsite,
-      contestmainsite,
-      contestmainsiteurl,
-      contestmaxfilesize,
-      contestpenalty,
-      conteststartdate,
-      contestunlockkey,
-    } = request.body;
-
+  async create(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     try {
-      await createContestsUseCase.execute({
+      const createContestsUseCase = container.resolve(CreateContestsUseCase);
+
+      const {
         contestname,
-        contestactive,
+        conteststartdate,
         contestduration,
-        contestkeys,
         contestlastmileanswer,
         contestlastmilescore,
-        contestlocalsite,
-        contestmainsite,
-        contestmainsiteurl,
-        contestmaxfilesize,
         contestpenalty,
-        conteststartdate,
+        contestmaxfilesize,
+        contestactive,
+        contestkeys,
         contestunlockkey,
+        contestmainsiteurl,
+      } = request.body;
+
+      const contest = await createContestsUseCase.execute({
+        contestname,
+        conteststartdate,
+        contestduration,
+        contestlastmileanswer,
+        contestlastmilescore,
+        contestpenalty,
+        contestmaxfilesize,
+        contestactive,
+        contestkeys,
+        contestunlockkey,
+        contestmainsiteurl,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(contest).end();
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error creating Contest" });
+      next(error);
     }
   }
 

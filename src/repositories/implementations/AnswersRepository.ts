@@ -73,10 +73,9 @@ class AnswersRepository implements IAnswersRepository {
     const query = `INSERT INTO answertable 
       (
         ${createColumns}
-       ) VALUES (
-         ${createValues}
-      );
-      `;
+      ) VALUES (
+        ${createValues}
+      );`;
 
     await this.repository.query(query);
     return Promise.resolve();
@@ -92,8 +91,7 @@ class AnswersRepository implements IAnswersRepository {
     let query = `UPDATE answertable\n`;
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
-      query = query.concat(`
-       SET `);
+      query = query.concat(`SET `);
     }
 
     KeysAndValues.forEach((object) => {
@@ -104,8 +102,7 @@ class AnswersRepository implements IAnswersRepository {
     query = query.trim(); // Remove espaços em branco desnecessarios
     query = query.slice(0, query.length - 1); // Retira a ultima virgula
     query = query.concat(
-      `
-      \nWHERE answernumber = ${updateObject.answernumber} ;`
+      `\nWHERE answernumber = ${updateObject.answernumber} ;`
     );
 
     const updatedContest: Answer[] = await this.repository.query(query);

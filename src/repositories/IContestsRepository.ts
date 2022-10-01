@@ -34,15 +34,15 @@ interface IUpdateContestDTO {
   contestmainsiteurl?: string;
 }
 
-interface ICountResult {
-  max: number;
+interface ILastIdResult {
+  id: number;
 }
 
 interface IContestRepository {
   findByName(name: string): Promise<Contest | undefined>;
   list(): Promise<Contest[]>;
   create(contest: ICreateContestDTO): Promise<void>;
-  count(): Promise<number>;
+  getLastId(): Promise<number | undefined>;
   getById(id: number): Promise<Contest | undefined>;
   update(contest: IUpdateContestDTO): Promise<Contest>;
   delete(contestnumber: number): Promise<void>;
@@ -51,6 +51,6 @@ interface IContestRepository {
 export {
   IContestRepository,
   ICreateContestDTO,
-  ICountResult,
+  ILastIdResult,
   IUpdateContestDTO,
 };
