@@ -1,34 +1,65 @@
 import { expect } from "chai";
 import request from "supertest";
-import { contest1, contest2 } from "../../entities/Contest";
+import { createContest1, createContest2, createContest3, createContest4, createContest5 } from "../../entities/Contest";
 import { URL } from "../URL";
 
-describe("POST /api/contests", () => {
-  describe("Positive", () => {
-    it("Creates a contest (specific set of acceptable values)", async () => {
+describe("Criação de um contest", () => {
+  describe("Fluxo positivo", () => {
+    it("Cria um contest (conjunto de valores aceitáveis)", async () => {
       const response = await request(URL)
         .post("/api/contests")
         .set("Accept", "application/json")
-        .send(contest1);
+        .send(createContest1);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("contestnumber");
+      expect(response.body["contestnumber"]).to.equal(1);
     });
-    
-    it("Creates a second contest (different set of acceptable values)", async () => {
+
+    it("Cria um segundo contest (conjunto diferente de valores aceitáveis)", async () => {
       const response = await request(URL)
         .post("/api/contests")
         .set("Accept", "application/json")
-        .send(contest2);
+        .send(createContest2);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("contestnumber");
+      expect(response.body["contestnumber"]).to.equal(2);
     });
   });
-  // describe("Negative", () => {
-  //   it("Fails to create a contest", async () => {
-  //     const response = await request(URL).post("/api/contests").send(contest1);
-  //     expect(response.statusCode).to.equal(201);
-  //   });
-  // });
+
+  describe("Fluxo negativo", () => {
+    it("Falha ao criar contest (data de início inválida)", async () => {
+      const response = await request(URL)
+        .post("/api/contests")
+        .set("Accept", "application/json")
+        .send(createContest3);
+      expect(response.statusCode).to.equal(400);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("error");
+      expect(response.body["error"]).to.include("Start date is invalid");
+    });
+
+    it("Falha ao criar contest (duração inválida)", async () => {
+      const response = await request(URL)
+        .post("/api/contests")
+        .set("Accept", "application/json")
+        .send(createContest4);
+      expect(response.statusCode).to.equal(400);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("error");
+      expect(response.body["error"]).to.include("Duration");
+    });
+
+    it("Falha ao criar contest (argumentos obrigatórios faltando)", async () => {
+      const response = await request(URL)
+        .post("/api/contests")
+        .set("Accept", "application/json")
+        .send(createContest5);
+      expect(response.statusCode).to.equal(400);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("error");
+      expect(response.body["error"]).to.include("Missing required arguments");
+    });
+  });
 });

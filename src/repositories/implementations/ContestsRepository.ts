@@ -64,45 +64,10 @@ class ContestsRepository implements IContestRepository {
     }
   }
 
-  async create(createObject: ICreateContestDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
-
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(createObject).filter(([_, v]) => v != null)
-    );
-
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
-    }
-
-    KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
-    });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
-
-    const query = `INSERT INTO contesttable 
-      (
-        ${createColumns}
-       ) VALUES (
-         ${createValues}
-      );
-      `;
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (err) {
-      return Promise.reject(err);
-    }
+  async create(createObject: ICreateContestDTO): Promise<Contest> {
+    const contest = this.repository.create(createObject);
+    await this.repository.save(contest);
+    return contest;
   }
 
   async update(updateObject: IUpdateContestDTO): Promise<Contest> {

@@ -1,1 +1,2 @@
 import "./InitialSetup";
+import "./UpdateContest";

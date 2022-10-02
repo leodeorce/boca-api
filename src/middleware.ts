@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ILogger } from "logging/ILogger";
+import { ILogger } from "./logging/ILogger";
 import { container } from "tsyringe";
 import { QueryFailedError } from "typeorm";
 import { ApiError } from "./errors/ApiError";

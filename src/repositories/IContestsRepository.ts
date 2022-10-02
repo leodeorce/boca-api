@@ -41,7 +41,7 @@ interface ILastIdResult {
 interface IContestRepository {
   findByName(name: string): Promise<Contest | undefined>;
   list(): Promise<Contest[]>;
-  create(contest: ICreateContestDTO): Promise<void>;
+  create(contest: ICreateContestDTO): Promise<Contest>;
   getLastId(): Promise<number | undefined>;
   getById(id: number): Promise<Contest | undefined>;
   update(contest: IUpdateContestDTO): Promise<Contest>;

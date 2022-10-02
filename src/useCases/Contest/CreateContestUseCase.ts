@@ -10,9 +10,10 @@ interface IRequest {
   contestduration: number;
   contestlastmileanswer?: number;
   contestlastmilescore?: number;
+  contestlocalsite: number;
   contestpenalty: number;
   contestmaxfilesize: number;
-  contestactive: boolean;
+  contestmainsite: number;
   contestkeys?: string;
   contestunlockkey?: string;
   contestmainsiteurl?: string;
@@ -31,15 +32,18 @@ class CreateContestsUseCase {
     contestduration,
     contestlastmileanswer,
     contestlastmilescore,
+    contestlocalsite,
     contestpenalty,
     contestmaxfilesize,
-    contestactive,
+    contestmainsite,
     contestkeys,
     contestunlockkey,
     contestmainsiteurl,
-  }: IRequest): Promise<void> {
+  }: IRequest): Promise<Contest> {
     contestname = contestname.trim();
-    contestname = contestname ? contestname : "Contest";
+    if (contestname.length === 0) {
+      throw ApiError.badRequest("Contest name must be specified");
+    }
 
     const contestAlreadyExists = await this.contestsRepository.findByName(
       contestname
@@ -49,16 +53,38 @@ class CreateContestsUseCase {
       throw ApiError.alreadyExists("Contest name already exists");
     }
 
+    const currentDate = Math.floor(Date.now() / 1000);
+    if (currentDate > conteststartdate + 600) {
+      throw ApiError.badRequest(
+        "Start date is invalid. Verify epoch \
+          time is in UTC +0 and is at most 10 minutes ago."
+      );
+    }
+
+    if (contestduration < 3600) {
+      throw ApiError.badRequest("Duration must be at least 1 hour");
+    }
+
+    if (contestlocalsite < 1) {
+      throw ApiError.badRequest(
+        "Local site ID must be non-zero positive integer"
+      );
+    }
+
+    if (contestmainsite < 1) {
+      throw ApiError.badRequest(
+        "Main site ID must be non-zero positive integer"
+      );
+    }
+
     contestkeys = contestkeys ? contestkeys : "";
     contestmainsiteurl = contestmainsiteurl ? contestmainsiteurl : "";
     contestunlockkey = contestunlockkey ? contestunlockkey : "";
-    
-    const contestlocalsite = 1;
-    const contestmainsite = 1;
-    
+
+    const contestactive = false;
+
     let lastId = await this.contestsRepository.getLastId();
     lastId = lastId ? lastId : 0;
-
     const contestnumber = lastId + 1;
 
     return await this.contestsRepository.create({
