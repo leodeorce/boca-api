@@ -40,7 +40,7 @@ class CreateContestsUseCase {
     contestunlockkey,
     contestmainsiteurl,
   }: IRequest): Promise<Contest> {
-    contestname = contestname.trim();
+    contestname = contestname ? contestname.trim() : "";
     if (contestname.length === 0) {
       throw ApiError.badRequest("Contest name must be specified");
     }
@@ -53,30 +53,65 @@ class CreateContestsUseCase {
       throw ApiError.alreadyExists("Contest name already exists");
     }
 
-    const currentDate = Math.floor(Date.now() / 1000);
-    if (currentDate > conteststartdate + 600) {
+    if (
+      !conteststartdate ||
+      !contestduration ||
+      !contestlocalsite ||
+      !contestmainsite ||
+      !contestpenalty ||
+      !contestmaxfilesize
+    ) {
+      throw ApiError.badRequest("Missing properties");
+    }
+
+    if (contestduration <= 0) {
+      throw ApiError.badRequest("Duration must be a non-zero positive integer");
+    }
+
+    if (contestlocalsite <= 0) {
       throw ApiError.badRequest(
-        "Start date is invalid. Verify epoch \
-          time is in UTC +0 and is at most 10 minutes ago."
+        "Local site ID must be a non-zero positive integer"
       );
     }
 
-    if (contestduration < 3600) {
-      throw ApiError.badRequest("Duration must be at least 1 hour");
-    }
-
-    if (contestlocalsite < 1) {
+    if (contestmainsite <= 0) {
       throw ApiError.badRequest(
-        "Local site ID must be non-zero positive integer"
+        "Main site ID must be a non-zero positive integer"
       );
     }
 
-    if (contestmainsite < 1) {
-      throw ApiError.badRequest(
-        "Main site ID must be non-zero positive integer"
-      );
+    if (contestlastmileanswer) {
+      if (contestlastmileanswer < 0) {
+        throw ApiError.badRequest(
+          "If specified, last mile for answers must be at least zero seconds"
+        );
+      }
+      if (contestlastmileanswer > contestduration) {
+        throw ApiError.badRequest(
+          "If specified, last mile for answers cannot be greater than contest duration"
+        );
+      }
     }
 
+    if (contestlastmilescore) {
+      if (contestlastmilescore < 0) {
+        throw ApiError.badRequest(
+          "If specified, last mile for scores must be at least zero seconds"
+        );
+      }
+      if (contestlastmilescore > contestduration) {
+        throw ApiError.badRequest(
+          "If specified, last mile for scores cannot be greater than contest duration"
+        );
+      }
+    }
+
+    contestlastmileanswer = contestlastmileanswer
+      ? contestlastmileanswer
+      : contestduration;
+    contestlastmilescore = contestlastmilescore
+      ? contestlastmilescore
+      : contestduration;
     contestkeys = contestkeys ? contestkeys : "";
     contestmainsiteurl = contestmainsiteurl ? contestmainsiteurl : "";
     contestunlockkey = contestunlockkey ? contestunlockkey : "";
