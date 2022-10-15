@@ -14,9 +14,9 @@
   "scripts": {
     "build": "tsc",
     "docker:dev": "ts-node --transpile-only src/server.ts",
-    "dev": "export $(cat .env) && ts-node --transpile-only src/server.ts",
-    "test:health": "sh ./tests/api/healthcheck.sh",
-    "test:api": "mocha -r ts-node/register './tests/api/index.ts'",
+    "dev": "export $(grep '^[A-Z]' .env) && ts-node --transpile-only src/server.ts",
+    "test:health": "sh ./test/api/healthcheck.sh",
+    "test:api": "mocha -r ts-node/register './test/api/index.ts'",
     "docker:up": "docker compose -f docker-compose-dev.yml up --build -d",
     "docker:down": "docker compose -f docker-compose-dev.yml down",
     "docker:prune": "echo 'y' | docker image prune",
