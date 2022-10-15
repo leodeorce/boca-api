@@ -54,12 +54,12 @@ class CreateContestsUseCase {
     }
 
     if (
-      !conteststartdate ||
-      !contestduration ||
-      !contestlocalsite ||
-      !contestmainsite ||
-      !contestpenalty ||
-      !contestmaxfilesize
+      conteststartdate === undefined ||
+      contestduration === undefined ||
+      contestlocalsite === undefined ||
+      contestmainsite === undefined ||
+      contestpenalty === undefined ||
+      contestmaxfilesize === undefined
     ) {
       throw ApiError.badRequest("Missing properties");
     }

@@ -19,7 +19,7 @@
 #
 #========================================================================
 
-until PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -U "$DB_USER" -c '\q'; do
+until PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -c '\q'; do
   >&2 echo "PostgreSQL server is unavailable - sleeping"
   sleep 1
 done
@@ -27,7 +27,7 @@ done
 >&2 echo "PostgreSQL server is up - executing command"
 
 # https://stackoverflow.com/questions/14549270/check-if-database-exists-in-postgresql-using-shell
-if PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -U "$DB_USER" -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
+if PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
   # $? is 0
   echo "Database already exists"
 else

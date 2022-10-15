@@ -6,10 +6,10 @@ const contestsRoutes = Router();
 
 const contestController = new ContestController();
 
-contestsRoutes.get("/", contestController.listAll);
-contestsRoutes.get("/:id", contestController.getOne);
-contestsRoutes.post("/", contestController.create);
-contestsRoutes.put("/:id", contestController.update);
-contestsRoutes.delete("/:id", contestController.delete);
+contestsRoutes.get("/contests", contestController.listAll);
+contestsRoutes.get("/contests/:id", contestController.getOne);
+contestsRoutes.post("/contests", contestController.create);
+contestsRoutes.put("/contests/:id", contestController.update);
+contestsRoutes.delete("/contests/:id", contestController.delete);
 
 export { contestsRoutes };
