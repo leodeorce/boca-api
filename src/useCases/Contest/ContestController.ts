@@ -82,16 +82,20 @@ class ContestController {
         contestmainsiteurl,
       });
 
-      return response.status(200).json(contest).end();
+      return response.status(200).json(contest);
     } catch (error) {
       next(error);
     }
   }
 
-  async update(request: Request, response: Response): Promise<Response> {
+  async update(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const updateContestsUseCase = container.resolve(UpdateContestsUseCase);
     const { id } = request.params;
-    const idNumber = parseInt(id, 10);
+    const idNumber = Number(id);
     const {
       contestname,
       contestactive,
@@ -128,12 +132,7 @@ class ContestController {
 
       return response.status(200).json(updatedContest);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error updating Contest" });
+      next(error);
     }
   }
 

@@ -17,6 +17,7 @@
     "dev": "export $(grep '^[A-Z]' .env) && ts-node --transpile-only src/server.ts",
     "test:health": "sh ./test/api/healthcheck.sh",
     "test:api": "mocha -r ts-node/register './test/api/index.ts'",
+    "test:purge": "bash ./test/api/purgedb.sh",
     "docker:up": "docker compose -f docker-compose-dev.yml up --build -d",
     "docker:down": "docker compose -f docker-compose-dev.yml down",
     "docker:prune": "echo 'y' | docker image prune",
@@ -48,6 +49,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
+    "class-validator": "^0.13.2",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "reflect-metadata": "^0.1.13",

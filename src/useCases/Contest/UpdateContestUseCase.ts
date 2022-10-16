@@ -1,22 +1,24 @@
 import { inject, injectable } from "tsyringe";
-
+import { validate } from "class-validator";
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
+import { Contest } from "../../entities/Contest";
+import { ApiError } from "../../errors/ApiError";
 
 interface IRequest {
   contestnumber: number;
-  contestname: string;
-  conteststartdate: number;
-  contestduration: number;
+  contestname?: string;
+  conteststartdate?: number;
+  contestduration?: number;
   contestlastmileanswer?: number;
   contestlastmilescore?: number;
-  contestlocalsite: number;
-  contestpenalty: number;
-  contestmaxfilesize: number;
-  contestactive: boolean;
-  contestmainsite: number;
-  contestkeys: string;
-  contestunlockkey: string;
-  contestmainsiteurl: string;
+  contestlocalsite?: number;
+  contestpenalty?: number;
+  contestmaxfilesize?: number;
+  contestactive?: boolean;
+  contestmainsite?: number;
+  contestkeys?: string;
+  contestunlockkey?: string;
+  contestmainsiteurl?: string;
 }
 
 @injectable()
@@ -29,48 +31,97 @@ class UpdateContestsUseCase {
   async execute({
     contestnumber,
     contestname,
-    contestactive,
+    conteststartdate,
     contestduration,
-    contestkeys,
     contestlastmileanswer,
     contestlastmilescore,
     contestlocalsite,
-    contestmainsite,
-    contestmainsiteurl,
-    contestmaxfilesize,
     contestpenalty,
-    conteststartdate,
+    contestmaxfilesize,
+    contestactive,
+    contestmainsite,
+    contestkeys,
     contestunlockkey,
-  }: IRequest): Promise<void> {
-    const contestAlreadyExists = await this.contestsRepository.getById(
+    contestmainsiteurl,
+  }: IRequest): Promise<Contest> {
+    if (Number.isNaN(contestnumber) || contestnumber < 1) {
+      throw ApiError.badRequest("Invalid contest ID");
+    }
+
+    const existingContest = await this.contestsRepository.getById(
       contestnumber
     );
 
-    if (!contestAlreadyExists) {
-      throw new Error("Contest does not exists");
-    }
-    try {
-      await this.contestsRepository.update({
-        contestnumber,
-        contestname,
-        contestactive,
-        contestduration,
-        contestkeys: contestkeys === "" ? undefined : contestkeys,
-        contestlastmileanswer,
-        contestlastmilescore,
-        contestlocalsite,
-        contestmainsite,
-        contestmainsiteurl,
-        contestmaxfilesize,
-        contestpenalty,
-        conteststartdate,
-        contestunlockkey,
-      });
-      
-    } catch (error) {
-      return Promise.reject(error)
+    if (!existingContest) {
+      throw ApiError.doesNotExist("Contest does not exist");
     }
 
+    const contest = new Contest();
+    contest.contestnumber = contestnumber;
+    contest.contestname = contestname
+      ? contestname
+      : existingContest.contestname;
+    contest.conteststartdate = conteststartdate
+      ? conteststartdate
+      : existingContest.conteststartdate;
+    contest.contestduration = contestduration
+      ? contestduration
+      : existingContest.contestduration;
+    contest.contestlastmileanswer = contestlastmileanswer
+      ? contestlastmileanswer
+      : existingContest.contestlastmileanswer;
+    contest.contestlastmilescore = contestlastmilescore
+      ? contestlastmilescore
+      : existingContest.contestlastmilescore;
+    contest.contestlocalsite = contestlocalsite
+      ? contestlocalsite
+      : existingContest.contestlocalsite;
+    contest.contestpenalty = contestpenalty
+      ? contestpenalty
+      : existingContest.contestpenalty;
+    contest.contestmaxfilesize = contestmaxfilesize
+      ? contestmaxfilesize
+      : existingContest.contestmaxfilesize;
+    contest.contestactive = contestactive
+      ? contestactive
+      : existingContest.contestactive;
+    contest.contestmainsite = contestmainsite
+      ? contestmainsite
+      : existingContest.contestmainsite;
+    contest.contestkeys = contestkeys
+      ? contestkeys
+      : existingContest.contestkeys;
+    contest.contestunlockkey = contestunlockkey
+      ? contestunlockkey
+      : existingContest.contestunlockkey;
+    contest.contestmainsiteurl = contestmainsiteurl
+      ? contestmainsiteurl
+      : existingContest.contestmainsiteurl;
+
+    const validation = await validate(contest);
+
+    if (validation.length > 0) {
+      const errors = validation[0].constraints as object;
+      const [, message] = Object.entries(errors)[0];
+      throw ApiError.badRequest(message);
+    }
+
+    return await this.contestsRepository.update({
+      contestnumber: contest.contestnumber,
+      contestname: contest.contestname,
+      contestactive: contest.contestactive,
+      contestduration: contest.contestduration,
+      contestkeys: contest.contestkeys,
+      contestlastmileanswer: contest.contestlastmileanswer,
+      contestlastmilescore: contest.contestlastmilescore,
+      contestlocalsite: contest.contestlocalsite,
+      contestmainsite: contest.contestmainsite,
+      contestmainsiteurl: contest.contestmainsiteurl,
+      contestmaxfilesize: contest.contestmaxfilesize,
+      contestpenalty: contest.contestpenalty,
+      conteststartdate: contest.conteststartdate,
+      contestunlockkey: contest.contestunlockkey,
+    });
   }
 }
 
