@@ -17,14 +17,7 @@ class ContestsRepository implements IContestRepository {
   }
 
   async list(): Promise<Contest[]> {
-    try {
-      const contests = await this.repository.query(
-        `SELECT * FROM contesttable`
-      );
-      return contests;
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    return await this.repository.find();
   }
 
   async findByName(name: string): Promise<Contest | undefined> {

@@ -67,9 +67,20 @@ createContestFail3.contestmainsite = 2;
 const updateContestPass1 = new Contest();
 updateContestPass1.contestactive = true;
 
-// Aumenta a duração do Contest Beta
+// Modifica todas as propriedades possíveis
 const updateContestPass2 = new Contest();
+updateContestPass2.contestname = "Contest Beta Atualizado";
+updateContestPass2.conteststartdate = Math.floor(Date.now() / 1000) - 7200;
 updateContestPass2.contestduration = 7200;
+updateContestPass2.contestlastmileanswer = 5600;
+updateContestPass2.contestlastmilescore = 5600;
+updateContestPass2.contestlocalsite = 1;
+updateContestPass2.contestpenalty = 48_000;
+updateContestPass2.contestmaxfilesize = 100_000;
+updateContestPass2.contestmainsite = 3;
+updateContestPass2.contestkeys = "[d3g22q]";
+updateContestPass2.contestunlockkey = "[d3g22q]";
+updateContestPass2.contestmainsiteurl = "http://a.b";
 
 // Tenta modificar a duração do Contest Alpha com um valor inválido
 const updateContestFail1 = new Contest();

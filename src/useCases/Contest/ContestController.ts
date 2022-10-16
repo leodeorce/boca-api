@@ -10,19 +10,18 @@ import { ListContestsUseCase } from "./ListContestsUseCase";
 import { UpdateContestsUseCase } from "./UpdateContestUseCase";
 
 class ContestController {
-  async listAll(request: Request, response: Response): Promise<Response> {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const listContestsUseCase = container.resolve(ListContestsUseCase);
 
     try {
       const all = await listContestsUseCase.execute();
       return response.json(all);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error listing Contests" });
+      next(error);
     }
   }
 
