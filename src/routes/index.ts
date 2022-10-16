@@ -13,7 +13,7 @@ import { workingsRoutes } from "./working.routes";
 const router = Router();
 
 router.use("/api", AnswersRoutes);
-router.use("/api/contests", contestsRoutes);
+router.use("/api", contestsRoutes);
 router.use("/api", healthCheckRoutes);
 router.use("/api", langRoutes);
 router.use("/api", problemsRoutes);

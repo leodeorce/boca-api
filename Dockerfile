@@ -39,4 +39,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["/bin/bash", "-c", "sh ./docker/init.sh ; yarn dev"]
+CMD ["/bin/bash", "-c", "sh ./docker/init.sh ; yarn docker:dev"]

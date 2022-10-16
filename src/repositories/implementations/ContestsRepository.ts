@@ -51,91 +51,34 @@ class ContestsRepository implements IContestRepository {
   }
 
   async getById(id: number): Promise<Contest | undefined> {
-    try {
-      const contest: Contest[] = await this.repository.query(
-        `SELECT * FROM contesttable WHERE contestnumber = ${id}`
-      );
-      if (contest.length === 0) {
-        return undefined;
-      }
-      return contest[0];
-    } catch (err) {
-      return Promise.reject(err);
+    const contest: Contest | null = await this.repository.findOneBy({
+      contestnumber: id,
+    });
+    if (contest === null) {
+      return undefined;
     }
+    return contest;
   }
 
-  async create(createObject: ICreateContestDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
-
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(createObject).filter(([_, v]) => v != null)
-    );
-
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
-    }
-
-    KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
-    });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
-
-    const query = `INSERT INTO contesttable 
-      (
-        ${createColumns}
-       ) VALUES (
-         ${createValues}
-      );
-      `;
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (err) {
-      return Promise.reject(err);
-    }
+  async create(createObject: ICreateContestDTO): Promise<Contest> {
+    const contest = this.repository.create(createObject);
+    await this.repository.save(contest);
+    return contest;
   }
 
   async update(updateObject: IUpdateContestDTO): Promise<Contest> {
-    // Remover parâmetros vazios (string vazia ou nulos, etc)
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(updateObject).filter(([_, v]) => v != null)
-    );
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Contest)
+      .set(updateObject)
+      .where("contestnumber = :contestnumber", {
+        contestnumber: updateObject.contestnumber,
+      })
+      .returning("*")
+      .execute();
 
-    let query = `UPDATE contesttable\n`;
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length > 0) {
-      query = query.concat(`
-       SET `);
-    }
-
-    KeysAndValues.forEach((object) => {
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}'` : object[1];
-      query = query.concat(`${object[0]} = ${value}, `);
-    });
-    query = query.trim(); // Remove espaços em branco desnecessarios
-    query = query.slice(0, query.length - 1); // Retira a ultima virgula
-    query = query.concat(
-      `\nWHERE contestnumber = ${updateObject.contestnumber};`
-    );
-
-    try {
-      const updatedContest: Contest[] = await this.repository.query(query);
-      return updatedContest[0];
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    const updatedContest: object = result.raw[0];
+    return this.repository.create(updatedContest);
   }
 
   async delete(contestnumber: number): Promise<void> {
