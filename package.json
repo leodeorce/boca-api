@@ -14,7 +14,8 @@
   "scripts": {
     "build": "tsc",
     "docker:dev": "ts-node --transpile-only src/server.ts",
-    "dev": "export $(grep '^[A-Z]' .env) && ts-node --transpile-only src/server.ts",
+    "dev": "export $(grep '^[A-Z]' .env.dev) && ts-node --transpile-only src/server.ts",
+    "test:dev": "export $(grep '^[A-Z]' .env.test) && ts-node --transpile-only src/server.ts",
     "test:health": "sh ./test/api/healthcheck.sh",
     "test:api": "mocha -r ts-node/register './test/api/index.ts'",
     "test:purge": "bash ./test/api/purgedb.sh",
