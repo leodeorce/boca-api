@@ -43,6 +43,7 @@ interface IContestRepository {
   list(): Promise<Contest[]>;
   create(contest: ICreateContestDTO): Promise<Contest>;
   getLastId(): Promise<number | undefined>;
+  getActive(): Promise<Contest | undefined>;
   getById(id: number): Promise<Contest | undefined>;
   update(contest: IUpdateContestDTO): Promise<Contest>;
   delete(contestnumber: number): Promise<void>;

@@ -20,6 +20,16 @@ class ContestsRepository implements IContestRepository {
     return await this.repository.find();
   }
 
+  async getActive(): Promise<Contest | undefined> {
+    const contest: Contest | null = await this.repository.findOneBy({
+      contestactive: true,
+    });
+    if (contest === null) {
+      return undefined;
+    }
+    return contest;
+  }
+
   async findByName(name: string): Promise<Contest | undefined> {
     const contest: Contest | null = await this.repository.findOneBy({
       contestname: name,
@@ -75,13 +85,12 @@ class ContestsRepository implements IContestRepository {
   }
 
   async delete(contestnumber: number): Promise<void> {
-    try {
-      const query = `DELETE FROM contesttable WHERE contestnumber=${contestnumber}`;
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Contest)
+      .where("contestnumber = :contestnumber", { contestnumber: contestnumber })
+      .execute();
   }
 }
 

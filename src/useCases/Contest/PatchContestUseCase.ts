@@ -22,7 +22,7 @@ interface IRequest {
 }
 
 @injectable()
-class UpdateContestsUseCase {
+class PatchContestUseCase {
   constructor(
     @inject("ContestsRepository")
     private contestsRepository: ContestsRepository
@@ -53,7 +53,7 @@ class UpdateContestsUseCase {
     );
 
     if (!existingContest) {
-      throw ApiError.doesNotExist("Contest does not exist");
+      throw ApiError.notFound("Contest does not exist");
     }
 
     const contest = new Contest();
@@ -106,6 +106,24 @@ class UpdateContestsUseCase {
       throw ApiError.badRequest(message);
     }
 
+    /* Abaixo acontecem duas queries que podem gerar inconsistências ao falhar.
+     * Se a desativação do contest ativo falhar, mas a ativação do novo ocorrer,
+     *   existirão dois contests ativos.
+     * Se o contest ativo for desativado com sucesso, mas a ativação do novo contest falhar,
+     *   a desativação do primeiro foi em vão.
+     */
+
+    if (contestactive) {
+      const activeContest = await this.contestsRepository.getActive();
+
+      if (activeContest && activeContest.contestnumber !== contestnumber) {
+        await this.contestsRepository.update({
+          contestnumber: activeContest.contestnumber,
+          contestactive: false,
+        });
+      }
+    }
+
     return await this.contestsRepository.update({
       contestnumber: contest.contestnumber,
       contestname: contest.contestname,
@@ -125,4 +143,4 @@ class UpdateContestsUseCase {
   }
 }
 
-export { UpdateContestsUseCase };
+export { PatchContestUseCase };

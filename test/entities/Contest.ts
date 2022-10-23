@@ -1,108 +1,127 @@
 import { Contest } from "../../src/entities/Contest";
 
-const createContestPass1 = new Contest();
+const createAlphaPass = new Contest();
 
-createContestPass1.contestname = "Contest Alpha";
-createContestPass1.conteststartdate = Math.floor(Date.now() / 1000) + 3600;
-createContestPass1.contestduration = 11_264_340;
-createContestPass1.contestlastmileanswer = 11_263_440;
-createContestPass1.contestlastmilescore = 11_260_740;
-createContestPass1.contestlocalsite = 1;
-createContestPass1.contestpenalty = 1200;
-createContestPass1.contestmaxfilesize = 100_000;
-createContestPass1.contestmainsite = 1;
-createContestPass1.contestkeys = "[d3g22q]";
-createContestPass1.contestunlockkey = "[d3g22q]";
-createContestPass1.contestmainsiteurl = "http://a.b";
+createAlphaPass.contestname = "Contest Alpha";
+createAlphaPass.conteststartdate = Math.floor(Date.now() / 1000) + 3600;
+createAlphaPass.contestduration = 11_264_340;
+createAlphaPass.contestlastmileanswer = 11_263_440;
+createAlphaPass.contestlastmilescore = 11_260_740;
+createAlphaPass.contestlocalsite = 1;
+createAlphaPass.contestpenalty = 1200;
+createAlphaPass.contestmaxfilesize = 100_000;
+createAlphaPass.contestmainsite = 1;
+createAlphaPass.contestkeys = "[d3g22q]";
+createAlphaPass.contestunlockkey = "[d3g22q]";
+createAlphaPass.contestmainsiteurl = "http://a.b";
 
-const createContestPass2 = new Contest();
+const createBetaPass = new Contest();
 
-createContestPass2.contestname = "Contest Beta";
-createContestPass2.conteststartdate = Math.floor(Date.now() / 1000) - 3600;
-createContestPass2.contestduration = 3600;
-createContestPass2.contestlocalsite = 5;
-createContestPass2.contestpenalty = 12_000;
-createContestPass2.contestmaxfilesize = 1000;
-createContestPass2.contestmainsite = 2;
+createBetaPass.contestname = "Contest Beta";
+createBetaPass.conteststartdate = Math.floor(Date.now() / 1000) - 3600;
+createBetaPass.contestduration = 3600;
+createBetaPass.contestlocalsite = 5;
+createBetaPass.contestpenalty = 12_000;
+createBetaPass.contestmaxfilesize = 1000;
+createBetaPass.contestmainsite = 2;
 
 // Nome já existe
-const createContestFail1 = new Contest();
+const createAlphaFail = new Contest();
 
-createContestFail1.contestname = "Contest Beta";
-createContestFail1.conteststartdate = Math.floor(Date.now() / 1000);
-createContestFail1.contestduration = 1;
-createContestFail1.contestlastmileanswer = 11_263_440;
-createContestFail1.contestlastmilescore = 11_260_740;
-createContestFail1.contestlocalsite = 1;
-createContestFail1.contestpenalty = 12_000;
-createContestFail1.contestmaxfilesize = 1000;
-createContestFail1.contestmainsite = 2;
+createAlphaFail.contestname = "Contest Beta";
+createAlphaFail.conteststartdate = Math.floor(Date.now() / 1000);
+createAlphaFail.contestduration = 1;
+createAlphaFail.contestlastmileanswer = 11_263_440;
+createAlphaFail.contestlastmilescore = 11_260_740;
+createAlphaFail.contestlocalsite = 1;
+createAlphaFail.contestpenalty = 12_000;
+createAlphaFail.contestmaxfilesize = 1000;
+createAlphaFail.contestmainsite = 2;
 
 // Duração inválida
-const createContestFail2 = new Contest();
+const createCharlieFail = new Contest();
 
-createContestFail2.contestname = "Contest Charlie";
-createContestFail2.conteststartdate = Math.floor(Date.now() / 1000) - 300;
-createContestFail2.contestduration = 0;
-createContestFail2.contestlastmileanswer = 11_263_440;
-createContestFail2.contestlastmilescore = 11_260_740;
-createContestFail2.contestlocalsite = 1;
-createContestFail2.contestpenalty = 12_000;
-createContestFail2.contestmaxfilesize = 1000;
-createContestFail2.contestmainsite = 2;
+createCharlieFail.contestname = "Contest Charlie";
+createCharlieFail.conteststartdate = Math.floor(Date.now() / 1000) - 300;
+createCharlieFail.contestduration = 0;
+createCharlieFail.contestlastmileanswer = 11_263_440;
+createCharlieFail.contestlastmilescore = 11_260_740;
+createCharlieFail.contestlocalsite = 1;
+createCharlieFail.contestpenalty = 12_000;
+createCharlieFail.contestmaxfilesize = 1000;
+createCharlieFail.contestmainsite = 2;
 
 // Faltando data de início
-const createContestFail3 = new Contest();
+const createDeltaFail = new Contest();
 
-createContestFail3.contestname = "Contest Delta";
-createContestFail3.contestduration = 3600;
-createContestFail3.contestlastmileanswer = 11_263_440;
-createContestFail3.contestlastmilescore = 11_260_740;
-createContestFail3.contestlocalsite = 1;
-createContestFail3.contestpenalty = 12_000;
-createContestFail3.contestmaxfilesize = 1000;
-createContestFail3.contestmainsite = 2;
+createDeltaFail.contestname = "Contest Delta";
+createDeltaFail.contestduration = 3600;
+createDeltaFail.contestlastmileanswer = 11_263_440;
+createDeltaFail.contestlastmilescore = 11_260_740;
+createDeltaFail.contestlocalsite = 1;
+createDeltaFail.contestpenalty = 12_000;
+createDeltaFail.contestmaxfilesize = 1000;
+createDeltaFail.contestmainsite = 2;
 
 // Ativa o Contest Alpha
-const updateContestPass1 = new Contest();
-updateContestPass1.contestactive = true;
+const updateAlphaPass = new Contest();
+updateAlphaPass.contestactive = true;
 
 // Modifica todas as propriedades possíveis
-const updateContestPass2 = new Contest();
-updateContestPass2.contestname = "Contest Beta Atualizado";
-updateContestPass2.conteststartdate = Math.floor(Date.now() / 1000) - 7200;
-updateContestPass2.contestduration = 7200;
-updateContestPass2.contestlastmileanswer = 5600;
-updateContestPass2.contestlastmilescore = 5600;
-updateContestPass2.contestlocalsite = 1;
-updateContestPass2.contestpenalty = 48_000;
-updateContestPass2.contestmaxfilesize = 100_000;
-updateContestPass2.contestmainsite = 3;
-updateContestPass2.contestkeys = "[d3g22q]";
-updateContestPass2.contestunlockkey = "[d3g22q]";
-updateContestPass2.contestmainsiteurl = "http://a.b";
+const updateBetaPass = new Contest();
+updateBetaPass.contestname = "Contest Beta Atualizado";
+updateBetaPass.conteststartdate = Math.floor(Date.now() / 1000) - 7200;
+updateBetaPass.contestduration = 7200;
+updateBetaPass.contestlastmileanswer = 5600;
+updateBetaPass.contestlastmilescore = 5600;
+updateBetaPass.contestlocalsite = 1;
+updateBetaPass.contestpenalty = 48_000;
+updateBetaPass.contestmaxfilesize = 100_000;
+updateBetaPass.contestactive = false;
+updateBetaPass.contestmainsite = 3;
+updateBetaPass.contestkeys = "[d3g22q]";
+updateBetaPass.contestunlockkey = "[d3g22q]";
+updateBetaPass.contestmainsiteurl = "http://a.b";
+
+// Ativa o Contest Beta
+const updateBetaPass2 = new Contest();
+updateBetaPass2.contestactive = true;
 
 // Tenta modificar a duração do Contest Alpha com um valor inválido
-const updateContestFail1 = new Contest();
-updateContestFail1.contestduration = -3600;
+const updateAlphaFail = new Contest();
+updateAlphaFail.contestduration = -3600;
 
 // Tenta modificar o site principal do Contest Beta com o ID do "fake site"
-const updateContestFail2 = new Contest();
-updateContestFail2.contestmainsite = 0;
+const updateBetaFail = new Contest();
+updateBetaFail.contestname = "Contest Beta Site 0";
+updateBetaFail.conteststartdate = Math.floor(Date.now() / 1000) - 7200;
+updateBetaFail.contestduration = 7200;
+updateBetaFail.contestlastmileanswer = 5600;
+updateBetaFail.contestlastmilescore = 5600;
+updateBetaFail.contestlocalsite = 1;
+updateBetaFail.contestpenalty = 48_000;
+updateBetaFail.contestmaxfilesize = 100_000;
+updateBetaFail.contestactive = false;
+updateBetaFail.contestmainsite = 0;
+updateBetaFail.contestkeys = "[d3g22q]";
+updateBetaFail.contestunlockkey = "[d3g22q]";
+updateBetaFail.contestmainsiteurl = "http://a.b";
 
 // Tenta realizar modificação válida em um Contest que não existe
-const updateContestFail3 = new Contest();
-updateContestFail3.contestlastmileanswer = 0;
+const updateCharlieFail = new Contest();
+updateCharlieFail.contestlastmileanswer = 0;
+
 
 export {
-  createContestPass1,
-  createContestPass2,
-  createContestFail1,
-  createContestFail2,
-  createContestFail3,
-  updateContestPass1,
-  updateContestPass2,
-  updateContestFail1,
-  updateContestFail2,
-  updateContestFail3,
+  createAlphaPass,
+  createBetaPass,
+  createAlphaFail,
+  createCharlieFail,
+  createDeltaFail,
+  updateAlphaPass,
+  updateBetaPass,
+  updateBetaPass2,
+  updateAlphaFail,
+  updateBetaFail,
+  updateCharlieFail,
 };
