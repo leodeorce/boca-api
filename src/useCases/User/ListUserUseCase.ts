@@ -14,9 +14,8 @@ class ListUsersUseCase {
     try {
       const users = await this.usersRepository.list(contestNumber);
       return users;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

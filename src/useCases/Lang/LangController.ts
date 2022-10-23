@@ -93,7 +93,7 @@ class LangController {
     });
 
     if (!language) {
-      return response.status(400).json({error: "Language not found"});
+      return response.status(400).json({ error: "Language not found" });
     }
 
     try {

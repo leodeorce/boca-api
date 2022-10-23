@@ -10,7 +10,7 @@ import { Contest } from "./Contest";
 
 @Entity("problemtable")
 class Problem {
-  @ManyToOne((type) => Contest, (contest) => contest.contestnumber)
+  @ManyToOne(() => Contest, (contest) => contest.contestnumber)
   @PrimaryColumn()
   contestnumber!: number;
 

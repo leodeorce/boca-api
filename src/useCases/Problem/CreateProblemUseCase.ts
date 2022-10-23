@@ -61,7 +61,7 @@ class CreateProblemUseCase {
         working_id,
       });
     } catch (err) {
-      return Promise.reject(err)
+      return Promise.reject(err);
     }
   }
 }

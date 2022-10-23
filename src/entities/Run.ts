@@ -32,8 +32,8 @@ class Run {
   @Column()
   rundata!: number;
 
-  @Column()
-  runanswer: number = 0;
+  @Column("int4")
+  runanswer = 0;
 
   @Column()
   runstatus!: string;
@@ -44,8 +44,8 @@ class Run {
   @Column()
   runjudgesite?: number;
 
-  @Column()
-  runanswer1: number = 0;
+  @Column("int4")
+  runanswer1 = 0;
 
   @Column()
   runjudge1?: number;
@@ -53,8 +53,8 @@ class Run {
   @Column()
   runjudgesite1?: number;
 
-  @Column()
-  runanswer2: number = 0;
+  @Column("int4")
+  runanswer2 = 0;
 
   @Column()
   runjudge2?: number;

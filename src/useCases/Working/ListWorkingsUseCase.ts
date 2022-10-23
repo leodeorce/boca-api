@@ -14,9 +14,8 @@ class ListWorkingsUseCase {
     try {
       const workings = await this.workingsRepository.list(contestNumber);
       return workings;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

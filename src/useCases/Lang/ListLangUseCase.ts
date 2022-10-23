@@ -14,11 +14,9 @@ class ListLangUseCase {
     try {
       const Lang = await this.LangRepository.list(problemNumber);
       return Lang;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

@@ -58,7 +58,7 @@ class UpdateProblemsUseCase {
         working_id,
       });
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

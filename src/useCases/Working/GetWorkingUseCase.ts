@@ -15,13 +15,11 @@ class GetWorkingUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<Working | undefined> {
-
     try {
       const working = await this.workingsRepository.getById(id);
       return working;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

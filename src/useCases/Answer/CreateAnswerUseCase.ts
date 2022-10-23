@@ -33,7 +33,7 @@ class CreateAnswerUseCase {
         yes,
       });
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

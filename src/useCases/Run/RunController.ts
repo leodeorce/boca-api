@@ -3,7 +3,6 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { QueryFailedError } from "typeorm";
 
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { GetProblemUseCase } from "../Problem/GetProblemUseCase";
 import { CreateRunUseCase } from "./CreateRunUseCase";
 import { DeleteRunUseCase } from "./DeleteRunUseCase";
@@ -57,7 +56,6 @@ class RunController {
 
     const {
       runsitenumber,
-      runproblem,
       usernumber,
       rundate,
       rundatediff,

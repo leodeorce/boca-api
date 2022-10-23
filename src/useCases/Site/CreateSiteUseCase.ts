@@ -58,7 +58,6 @@ class CreateSiteUseCase {
     sitemaxruntime,
     sitemaxjudgewaittime,
   }: IRequest): Promise<void> {
-    
     try {
       const count = (await this.sitesRepository.count()) + 1;
       await this.sitesRepository.create({
@@ -86,9 +85,8 @@ class CreateSiteUseCase {
         sitemaxruntime,
         sitemaxjudgewaittime,
       });
-
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

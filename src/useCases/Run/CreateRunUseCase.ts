@@ -99,7 +99,7 @@ class CreateRunUseCase {
         autostderr,
       });
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

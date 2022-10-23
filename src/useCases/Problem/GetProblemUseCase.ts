@@ -18,11 +18,9 @@ class GetProblemUseCase {
     try {
       const problem = await this.problemsRepository.getById(id);
       return problem;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

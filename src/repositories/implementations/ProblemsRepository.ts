@@ -94,7 +94,7 @@ class ProblemsRepository implements IProblemsRepository {
       await this.repository.query(query);
       return Promise.resolve();
     } catch (err) {
-      return Promise.reject(err)
+      return Promise.reject(err);
     }
   }
 
@@ -126,10 +126,9 @@ class ProblemsRepository implements IProblemsRepository {
     try {
       const updatedProblem: Problem[] = await this.repository.query(query);
       return updatedProblem[0];
-    } catch(err) {
-      return Promise.reject(err)
+    } catch (err) {
+      return Promise.reject(err);
     }
-
   }
 
   async delete(problemnumber: number): Promise<void> {
@@ -137,7 +136,7 @@ class ProblemsRepository implements IProblemsRepository {
     try {
       await this.repository.query(query);
     } catch (err) {
-      return Promise.reject(err)
+      return Promise.reject(err);
     }
   }
 }

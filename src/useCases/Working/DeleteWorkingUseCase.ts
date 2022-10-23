@@ -21,9 +21,8 @@ class DeleteWorkingUseCase {
     }
     try {
       await this.workingsRepository.delete(id);
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

@@ -26,7 +26,6 @@ class RunsRepository implements IRunsRepository {
     return runs;
   }
 
-
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
       `SELECT MAX(runnumber) FROM runtable`

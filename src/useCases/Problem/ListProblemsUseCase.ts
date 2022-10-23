@@ -14,11 +14,9 @@ class ListProblemsUseCase {
     try {
       const problems = await this.problemsRepository.list(contestnumber);
       return problems;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

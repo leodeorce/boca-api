@@ -23,7 +23,7 @@ class DeleteProblemUseCase {
     try {
       await this.problemsRepository.delete(id);
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

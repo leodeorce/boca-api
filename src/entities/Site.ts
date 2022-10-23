@@ -62,8 +62,8 @@ class Site {
   @UpdateDateColumn()
   updatetime!: number;
 
-  @Column()
-  siteautojudge: boolean = false;
+  @Column("bool")
+  siteautojudge = false;
 
   @Column()
   sitemaxruntime!: number;

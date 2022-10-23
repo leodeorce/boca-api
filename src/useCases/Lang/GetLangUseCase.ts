@@ -19,9 +19,8 @@ class GetLangUseCase {
       const lang = await this.langRepository.findById(id);
       return lang;
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

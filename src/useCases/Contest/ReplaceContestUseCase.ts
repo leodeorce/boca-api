@@ -76,7 +76,7 @@ class ReplaceContestUseCase {
       const activeContest = await this.contestsRepository.getActive();
 
       if (activeContest) {
-        if(activeContest.contestnumber !== contestnumber) {
+        if (activeContest.contestnumber !== contestnumber) {
           throw ApiError.alreadyExists("Another contest is already active");
         }
       }
@@ -109,7 +109,7 @@ class ReplaceContestUseCase {
       const [, message] = Object.entries(errors)[0];
       throw ApiError.badRequest(message);
     }
-    
+
     /* Abaixo acontecem duas queries que podem gerar inconsistências ao falhar.
      * Se a desativação do contest ativo falhar, mas a ativação do novo ocorrer,
      *   existirão dois contests ativos.
