@@ -3,6 +3,7 @@ import { ApiError } from "../../errors/ApiError";
 import { inject, injectable } from "tsyringe";
 
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
+import { validate } from "class-validator";
 
 interface IRequest {
   contestname: string;
@@ -64,48 +65,6 @@ class CreateContestsUseCase {
       throw ApiError.badRequest("Missing properties");
     }
 
-    if (contestduration <= 0) {
-      throw ApiError.badRequest("Duration must be a non-zero positive integer");
-    }
-
-    if (contestlocalsite <= 0) {
-      throw ApiError.badRequest(
-        "Local site ID must be a non-zero positive integer"
-      );
-    }
-
-    if (contestmainsite <= 0) {
-      throw ApiError.badRequest(
-        "Main site ID must be a non-zero positive integer"
-      );
-    }
-
-    if (contestlastmileanswer) {
-      if (contestlastmileanswer < 0) {
-        throw ApiError.badRequest(
-          "If specified, last mile for answers must be at least zero seconds"
-        );
-      }
-      if (contestlastmileanswer > contestduration) {
-        throw ApiError.badRequest(
-          "If specified, last mile for answers cannot be greater than contest duration"
-        );
-      }
-    }
-
-    if (contestlastmilescore) {
-      if (contestlastmilescore < 0) {
-        throw ApiError.badRequest(
-          "If specified, last mile for scores must be at least zero seconds"
-        );
-      }
-      if (contestlastmilescore > contestduration) {
-        throw ApiError.badRequest(
-          "If specified, last mile for scores cannot be greater than contest duration"
-        );
-      }
-    }
-
     contestlastmileanswer = contestlastmileanswer
       ? contestlastmileanswer
       : contestduration;
@@ -121,6 +80,30 @@ class CreateContestsUseCase {
     let lastId = await this.contestsRepository.getLastId();
     lastId = lastId ? lastId : 0;
     const contestnumber = lastId + 1;
+
+    const contest = new Contest();
+    contest.contestnumber = contestnumber;
+    contest.contestname = contestname;
+    contest.conteststartdate = conteststartdate;
+    contest.contestduration = contestduration;
+    contest.contestlastmileanswer = contestlastmileanswer
+    contest.contestlastmilescore = contestlastmilescore
+    contest.contestlocalsite = contestlocalsite;
+    contest.contestpenalty = contestpenalty;
+    contest.contestmaxfilesize = contestmaxfilesize;
+    contest.contestactive = contestactive;
+    contest.contestmainsite = contestmainsite;
+    contest.contestkeys = contestkeys;
+    contest.contestunlockkey = contestunlockkey;
+    contest.contestmainsiteurl = contestmainsiteurl;
+
+    const validation = await validate(contest);
+
+    if (validation.length > 0) {
+      const errors = validation[0].constraints as object;
+      const [, message] = Object.entries(errors)[0];
+      throw ApiError.badRequest(message);
+    }
 
     return await this.contestsRepository.create({
       contestnumber,

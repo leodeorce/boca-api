@@ -18,115 +18,113 @@ describe("Modifica os contests criados anteriormente", () => {
   let contestAlpha: Contest;
   let contestBeta: Contest;
 
-  describe("Ativa o primeiro contest", () => {
-    it("Resgata os contests a serem modificados", async () => {
-      const all = await request(URL)
-        .get("/api/contests")
+  it("Resgata os contests a serem modificados", async () => {
+    const all = await request(URL)
+      .get("/api/contests")
+      .set("Accept", "application/json");
+    expect(all.statusCode).to.equal(200);
+    expect(all.headers["content-type"]).to.contain("application/json");
+    expect(all.body).to.be.an("array");
+
+    contestAlpha = all.body.find((contest: Contest) =>
+      contest.contestname.includes("Contest Alpha")
+    );
+
+    contestBeta = all.body.find((contest: Contest) =>
+      contest.contestname.includes("Contest Beta")
+    );
+  });
+
+  describe("Fluxo positivo", () => {
+    it('Ativa com sucesso o contest de nome "Contest Alpha"', async () => {
+      expect(contestAlpha).to.deep.include(createAlphaPass);
+      expect(contestAlpha.contestnumber).to.deep.equal(1);
+
+      const response = await request(URL)
+        .patch(`/api/contests/1`)
+        .set("Accept", "application/json")
+        .send(updateAlphaPass);
+      expect(response.statusCode).to.equal(200);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("contestnumber");
+      expect(response.body["contestnumber"]).to.equal(1);
+      expect(response.body).to.deep.include(updateAlphaPass);
+    });
+
+    it('Substitui a entidade "Contest Beta" por uma modificada', async () => {
+      expect(contestBeta).to.deep.include(createBetaPass);
+      expect(contestBeta.contestnumber).to.deep.equal(2);
+
+      const response = await request(URL)
+        .put(`/api/contests/2`)
+        .set("Accept", "application/json")
+        .send(updateBetaPass);
+      expect(response.statusCode).to.equal(200);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("contestnumber");
+      expect(response.body["contestnumber"]).to.equal(2);
+      expect(response.body).to.deep.include(updateBetaPass);
+    });
+
+    it('Ativa "Contest Beta", desativando "Contest Alpha" por consequência', async () => {
+      let response = await request(URL)
+        .patch(`/api/contests/2`)
+        .set("Accept", "application/json")
+        .send(updateBetaPass2);
+      expect(response.statusCode).to.equal(200);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("contestnumber");
+      expect(response.body["contestnumber"]).to.equal(2);
+      expect(response.body).to.deep.include(updateBetaPass2);
+
+      response = await request(URL)
+        .get(`/api/contests/1`)
         .set("Accept", "application/json");
-      expect(all.statusCode).to.equal(200);
-      expect(all.headers["content-type"]).to.contain("application/json");
-      expect(all.body).to.be.an("array");
+      expect(response.statusCode).to.equal(200);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("contestnumber");
+      expect(response.body["contestnumber"]).to.equal(1);
+      expect(response.body).to.have.own.property("contestactive");
+      expect(response.body["contestactive"]).to.equal(false);
+    });
+  });
 
-      contestAlpha = all.body.find((contest: Contest) =>
-        contest.contestname.includes("Contest Alpha")
-      );
-
-      contestBeta = all.body.find((contest: Contest) =>
-        contest.contestname.includes("Contest Beta")
+  describe("Fluxo negativo", () => {
+    it('Tenta modificar a duração de "Contest Alpha" para um valor inválido', async () => {
+      const response = await request(URL)
+        .patch(`/api/contests/1`)
+        .set("Accept", "application/json")
+        .send(updateAlphaFail);
+      expect(response.statusCode).to.equal(400);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("error");
+      expect(response.body["error"]).to.include(
+        "contestduration must be greater than zero"
       );
     });
 
-    describe("Fluxo positivo", () => {
-      it('Ativa com sucesso o contest de nome "Contest Alpha"', async () => {
-        expect(contestAlpha).to.deep.include(createAlphaPass);
-        expect(contestAlpha.contestnumber).to.deep.equal(1);
-
-        const response = await request(URL)
-          .patch(`/api/contests/1`)
-          .set("Accept", "application/json")
-          .send(updateAlphaPass);
-        expect(response.statusCode).to.equal(200);
-        expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("contestnumber");
-        expect(response.body["contestnumber"]).to.equal(1);
-        expect(response.body).to.deep.include(updateAlphaPass);
-      });
-
-      it('Substitui a entidade "Contest Beta" por uma modificada', async () => {
-        expect(contestBeta).to.deep.include(createBetaPass);
-        expect(contestBeta.contestnumber).to.deep.equal(2);
-
-        const response = await request(URL)
-          .put(`/api/contests/2`)
-          .set("Accept", "application/json")
-          .send(updateBetaPass);
-        expect(response.statusCode).to.equal(200);
-        expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("contestnumber");
-        expect(response.body["contestnumber"]).to.equal(2);
-        expect(response.body).to.deep.include(updateBetaPass);
-      });
-
-      it('Ativa "Contest Beta", desativando "Contest Alpha" por consequência', async () => {
-        let response = await request(URL)
-          .patch(`/api/contests/2`)
-          .set("Accept", "application/json")
-          .send(updateBetaPass2);
-        expect(response.statusCode).to.equal(200);
-        expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("contestnumber");
-        expect(response.body["contestnumber"]).to.equal(2);
-        expect(response.body).to.deep.include(updateBetaPass2);
-
-        response = await request(URL)
-          .get(`/api/contests/1`)
-          .set("Accept", "application/json");
-        expect(response.statusCode).to.equal(200);
-        expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("contestnumber");
-        expect(response.body["contestnumber"]).to.equal(1);
-        expect(response.body).to.have.own.property("contestactive");
-        expect(response.body["contestactive"]).to.equal(false);
-      });
+    it('Tenta substituir o site principal de "Contest Beta" pelo fake site', async () => {
+      const response = await request(URL)
+        .put(`/api/contests/2`)
+        .set("Accept", "application/json")
+        .send(updateBetaFail);
+      expect(response.statusCode).to.equal(400);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("error");
+      expect(response.body["error"]).to.include(
+        "contestmainsite must be greater than zero"
+      );
     });
 
-    describe("Fluxo negativo", () => {
-      it('Tenta modificar a duração de "Contest Alpha" para um valor inválido', async () => {
-        const response = await request(URL)
-          .patch(`/api/contests/1`)
-          .set("Accept", "application/json")
-          .send(updateAlphaFail);
-        expect(response.statusCode).to.equal(400);
-        expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("error");
-        expect(response.body["error"]).to.include(
-          "contestduration must be greater than zero"
-        );
-      });
-
-      it('Tenta substituir o site principal de "Contest Beta" pelo fake site', async () => {
-        const response = await request(URL)
-          .put(`/api/contests/2`)
-          .set("Accept", "application/json")
-          .send(updateBetaFail);
-        expect(response.statusCode).to.equal(400);
-        expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("error");
-        expect(response.body["error"]).to.include(
-          "contestmainsite must be greater than zero"
-        );
-      });
-
-      it("Tenta modificar um contest que não existe", async () => {
-        const response = await request(URL)
-          .put(`/api/contests/3`)
-          .set("Accept", "application/json")
-          .send(updateCharlieFail);
-        expect(response.statusCode).to.equal(404);
-        expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("error");
-        expect(response.body["error"]).to.include("Contest does not exist");
-      });
+    it("Tenta modificar um contest que não existe", async () => {
+      const response = await request(URL)
+        .put(`/api/contests/3`)
+        .set("Accept", "application/json")
+        .send(updateCharlieFail);
+      expect(response.statusCode).to.equal(404);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("error");
+      expect(response.body["error"]).to.include("Contest does not exist");
     });
   });
 });

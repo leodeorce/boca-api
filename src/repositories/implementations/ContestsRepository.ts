@@ -1,6 +1,5 @@
 import { AppDataSource } from "../../database/index";
 import { Repository } from "typeorm";
-
 import { Contest } from "../../entities/Contest";
 import {
   IContestRepository,
@@ -80,7 +79,7 @@ class ContestsRepository implements IContestRepository {
       .returning("*")
       .execute();
 
-    const updatedContest: object = result.raw[0];
+    const updatedContest: Record<string, unknown> = result.raw[0];
     return this.repository.create(updatedContest);
   }
 

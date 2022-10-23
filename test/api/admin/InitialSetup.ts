@@ -32,6 +32,7 @@ describe("Criação de um contest", () => {
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("contestnumber");
       expect(response.body["contestnumber"]).to.equal(2);
+      expect(response.body).to.deep.include(createBetaPass);
     });
 
     it('Resgata o "Contest Alpha" criado anteriormente', async () => {
@@ -66,7 +67,7 @@ describe("Criação de um contest", () => {
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Duration must be a non-zero positive integer");
+      expect(response.body["error"]).to.include("contestduration must be greater than zero");
     });
 
     it("Tenta criar um contest sem especificar alguma propriedade obrigatória", async () => {

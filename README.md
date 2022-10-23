@@ -16,7 +16,7 @@ Para rodar este projeto, temos as seguintes dependências obrigatórias para rod
 - [Docker](https://www.docker.com/)
 - [Typescript](https://www.typescriptlang.org/)
 
-foi utilizado `Typescript` como linguagem principal e o `Visual Studio Code` como editor de código. É necessário instalar o `Node.js`, e recomenda-se a última versão LTS `16.14.0`.
+foi utilizado `TypeScript` como linguagem principal e o `Visual Studio Code` como editor de código. É necessário instalar o `Node.js`, e recomenda-se a última versão LTS `16.14.0`.
 Além disso, para gerenciamento de dependências, pode-se utilizar o `npm`, porém devido às suas vantagens, recomenda-se a utilização do `yarn`.
 Também foi utilizado a ferramenta `postman` para testagem das rotas, além do `docker` para utilização de containers, isolando a API, os serviços do BOCA e o banco de dados.
 

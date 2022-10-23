@@ -35,8 +35,8 @@ class WorkingsRepository implements IWorkingsRepository {
 
   async findByName(name: string): Promise<Working | undefined> {
     const query = `
-    SELECT * FROM workingtable WHERE name = '${name}'
-  `;
+      SELECT * FROM workingtable WHERE name = '${name}'
+    `;
     const working: Working[] = await this.repository.query(query);
     if (working.length === 0) {
       return undefined;
@@ -96,8 +96,8 @@ class WorkingsRepository implements IWorkingsRepository {
     const query = `INSERT INTO workingtable 
       (
         ${createColumns}
-       ) VALUES (
-         ${createValues}
+      ) VALUES (
+        ${createValues}
       );
       `;
 
@@ -120,7 +120,7 @@ class WorkingsRepository implements IWorkingsRepository {
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
-       SET `);
+      SET `);
     }
 
     KeysAndValues.forEach((object) => {

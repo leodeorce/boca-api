@@ -84,8 +84,8 @@ class LangRepository implements ILangRepository {
     const query = `INSERT INTO langtable 
       (
         ${createColumns}
-       ) VALUES (
-         ${createValues}
+      ) VALUES (
+        ${createValues}
       );
       `;
 
@@ -107,7 +107,7 @@ class LangRepository implements ILangRepository {
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
-       SET `);
+      SET `);
     }
 
     KeysAndValues.forEach((object) => {
