@@ -13,16 +13,17 @@ class ListLanguagesByProblemUseCase {
   async execute(problemNumber: number): Promise<Lang[]> {
     try {
       const languages =
-        await this.problemLanguageRepository.getLanguagesByProblem(problemNumber);
-  
+        await this.problemLanguageRepository.getLanguagesByProblem(
+          problemNumber
+        );
+
       if (languages === undefined) {
         return [];
       }
-  
+
       return languages;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

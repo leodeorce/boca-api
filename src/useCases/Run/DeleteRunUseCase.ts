@@ -21,11 +21,9 @@ class DeleteRunUseCase {
     }
     try {
       await this.runsRepository.delete(id);
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

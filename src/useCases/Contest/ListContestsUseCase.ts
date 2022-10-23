@@ -11,14 +11,7 @@ class ListContestsUseCase {
   ) {}
 
   async execute(): Promise<Contest[]> {
-    try {
-      const contests = await this.contestsRepository.list();
-      return contests;
-      
-    } catch (error) {
-      return Promise.reject(error)
-    }
-
+    return await this.contestsRepository.list();
   }
 }
 

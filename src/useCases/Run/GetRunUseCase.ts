@@ -15,13 +15,11 @@ class GetRunUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<Run | undefined> {
-
     try {
       const run = await this.runsRepository.getById(id);
       return run;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

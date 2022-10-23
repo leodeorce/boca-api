@@ -14,11 +14,9 @@ class ListRunsUseCase {
     try {
       const runs = await this.runsRepository.list(problemNumber);
       return runs;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

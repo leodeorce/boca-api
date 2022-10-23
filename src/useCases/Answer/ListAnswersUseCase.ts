@@ -14,11 +14,9 @@ class ListAnswersUseCase {
     try {
       const answers = await this.answersRepository.list(contestNumber);
       return answers;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

@@ -15,7 +15,10 @@ class LangRepository implements ILangRepository {
     this.repository = getRepository(Lang);
   }
 
-  async findByName(langname: string, contestNumber: number): Promise<Lang | undefined> {
+  async findByName(
+    langname: string,
+    contestNumber: number
+  ): Promise<Lang | undefined> {
     const lang: Lang[] = await this.repository.query(
       `SELECT * FROM langtable WHERE langname = '${langname} AND contestnumber=${contestNumber}'`
     );
@@ -81,8 +84,8 @@ class LangRepository implements ILangRepository {
     const query = `INSERT INTO langtable 
       (
         ${createColumns}
-       ) VALUES (
-         ${createValues}
+      ) VALUES (
+        ${createValues}
       );
       `;
 
@@ -104,7 +107,7 @@ class LangRepository implements ILangRepository {
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
-       SET `);
+      SET `);
     }
 
     KeysAndValues.forEach((object) => {

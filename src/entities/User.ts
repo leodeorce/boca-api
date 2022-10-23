@@ -23,14 +23,14 @@ class User {
   @Column()
   usertype!: string;
 
-  @Column()
-  userenabled: boolean = true;
+  @Column("bool")
+  userenabled = true;
 
-  @Column()
-  usermultilogin: boolean = false;
+  @Column("bool")
+  usermultilogin = false;
 
-  @Column()
-  userpassword: string = "";
+  @Column("varchar", { length: 200 })
+  userpassword = "";
 
   @Column()
   userip?: string;
@@ -38,11 +38,11 @@ class User {
   @Column()
   userlastlogin?: number;
 
-  @Column()
-  usersession: string = "";
+  @Column("varchar", { length: 50 })
+  usersession = "";
 
-  @Column()
-  usersessionextra: string = "";
+  @Column("varchar", { length: 50 })
+  usersessionextra = "";
 
   @Column()
   userlastlogout?: number;
@@ -50,14 +50,14 @@ class User {
   @Column()
   userpermitip?: number;
 
-  @Column()
-  userinfo: string = "";
+  @Column("varchar", { length: 300 })
+  userinfo = "";
 
   @UpdateDateColumn()
   updatetime!: number;
 
-  @Column()
-  usercpcid: string = "";
+  @Column("varchar", { length: 50 })
+  usercpcid = "";
 }
 
 export { User };

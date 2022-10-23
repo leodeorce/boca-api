@@ -15,15 +15,14 @@ class ListWorkingsByUserUseCase {
       const workings = await this.workingsUserRepository.getWorkingsByUsers(
         userNumber
       );
-  
+
       if (workings === undefined) {
         return [];
       }
-  
+
       return workings;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

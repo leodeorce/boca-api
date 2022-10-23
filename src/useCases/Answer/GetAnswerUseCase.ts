@@ -15,15 +15,12 @@ class GetAnswerUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<Answer | undefined> {
-
     try {
       const answer = await this.answersRepository.getById(id);
       return answer;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-
   }
 }
 

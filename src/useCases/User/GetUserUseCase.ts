@@ -15,13 +15,11 @@ class GetUserUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<User | undefined> {
-
     try {
       const user = await this.usersRepository.getById(id);
       return user;
-      
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

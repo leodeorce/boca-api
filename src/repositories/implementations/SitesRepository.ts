@@ -29,8 +29,8 @@ class SitesRepository implements ISitesRepository {
 
   async findByName(name: string): Promise<Site | undefined> {
     const query = `
-    SELECT * FROM sitetable WHERE sitename = '${name}'
-  `;
+      SELECT * FROM sitetable WHERE sitename = '${name}'
+    `;
     const contest: Site[] = await this.repository.query(query);
     if (contest.length === 0) {
       return undefined;
@@ -114,7 +114,7 @@ class SitesRepository implements ISitesRepository {
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
-       SET `);
+      SET `);
     }
 
     KeysAndValues.forEach((object) => {

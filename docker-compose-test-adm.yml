@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
     container_name: boca-postgres-test
     expose:
-      - "5433" # Publishes 5433 to other containers but NOT to host machine
+      - "5433"
     ports:
       - "5433:5433"
     command: -p 5433
@@ -51,4 +51,4 @@ services:
       boca-postgres-test:
         condition: service_healthy
     ports:
-      - "8000:8080"
+      - "8888:8080"

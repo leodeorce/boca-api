@@ -28,8 +28,8 @@ class UsersRepository implements IUsersRepository {
 
   async findByName(name: string): Promise<User | undefined> {
     const query = `
-    SELECT * FROM usertable WHERE username = '${name}'
-  `;
+      SELECT * FROM usertable WHERE username = '${name}'
+    `;
     const user: User[] = await this.repository.query(query);
     if (user.length === 0) {
       return undefined;
@@ -89,8 +89,8 @@ class UsersRepository implements IUsersRepository {
     const query = `INSERT INTO usertable 
       (
         ${createColumns}
-       ) VALUES (
-         ${createValues}
+      ) VALUES (
+        ${createValues}
       );
       `;
 
@@ -113,7 +113,7 @@ class UsersRepository implements IUsersRepository {
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
-       SET `);
+      SET `);
     }
 
     KeysAndValues.forEach((object) => {

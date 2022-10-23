@@ -18,8 +18,8 @@ class ApiError extends Error {
     return new ApiError("InternalError", 500, message);
   }
 
-  static doesNotExist(message: string): ApiError {
-    return new ApiError("DoesNotExistError", 500, message);
+  static notFound(message: string): ApiError {
+    return new ApiError("NotFoundError", 404, message);
   }
 
   static alreadyExists(message: string): ApiError {

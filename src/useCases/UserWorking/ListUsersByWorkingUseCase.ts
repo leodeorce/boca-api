@@ -20,7 +20,7 @@ class ListUsersByWorkingUseCase {
       }
       return users;
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

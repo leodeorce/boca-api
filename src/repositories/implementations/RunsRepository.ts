@@ -26,7 +26,6 @@ class RunsRepository implements IRunsRepository {
     return runs;
   }
 
-
   async count(): Promise<number> {
     const count: ICountResult[] = await this.repository.query(
       `SELECT MAX(runnumber) FROM runtable`
@@ -79,8 +78,8 @@ class RunsRepository implements IRunsRepository {
     const query = `INSERT INTO runtable 
       (
         ${createColumns}
-       ) VALUES (
-         ${createValues}
+      ) VALUES (
+        ${createValues}
       );
       `;
 
@@ -103,7 +102,7 @@ class RunsRepository implements IRunsRepository {
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
-       SET `);
+      SET `);
     }
 
     KeysAndValues.forEach((object) => {

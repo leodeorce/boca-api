@@ -1,5 +1,6 @@
 FROM node:16.17.1
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]

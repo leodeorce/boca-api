@@ -19,7 +19,7 @@ class GetSiteUseCase {
       const site = await this.sitesRepository.getById(id);
       return site;
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

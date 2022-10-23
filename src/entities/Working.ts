@@ -45,7 +45,7 @@ class Working {
   @UpdateDateColumn()
   updated_at!: number;
 
-  @OneToMany((type) => Problem, (problem) => problem.problemnumber)
+  @OneToMany(() => Problem, (problem) => problem.problemnumber)
   problems?: Problem[];
 }
 

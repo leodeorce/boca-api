@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { ApiError } from "../../errors/ApiError";
 
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 
@@ -14,17 +15,17 @@ class DeleteContestsUseCase {
   ) {}
 
   async execute({ id }: IRequest): Promise<void> {
-    const contestAlreadyExists = await this.contestsRepository.getById(id);
-
-    if (!contestAlreadyExists) {
-      throw new Error("Contest does not exists");
+    if (Number.isNaN(id) || id < 1) {
+      throw ApiError.badRequest("Invalid contest ID");
     }
 
-    try {
-      await this.contestsRepository.delete(id);
-    } catch (error) {
-      return Promise.reject(error)
+    const existingContest = await this.contestsRepository.getById(id);
+
+    if (!existingContest) {
+      throw ApiError.notFound("Contest does not exist");
     }
+
+    await this.contestsRepository.delete(id);
   }
 }
 

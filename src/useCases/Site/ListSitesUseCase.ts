@@ -15,7 +15,7 @@ class ListSitesUseCase {
       const sites = await this.sitesRepository.list(contestNumber);
       return sites;
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 }

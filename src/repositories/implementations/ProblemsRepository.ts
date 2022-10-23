@@ -28,8 +28,8 @@ class ProblemsRepository implements IProblemsRepository {
 
   async findByName(name: string): Promise<Problem | undefined> {
     const query = `
-    SELECT * FROM problemtable WHERE problemname = '${name}'
-  `;
+      SELECT * FROM problemtable WHERE problemname = '${name}'
+    `;
     const contest: Problem[] = await this.repository.query(query);
     if (contest.length === 0) {
       return undefined;
@@ -86,15 +86,15 @@ class ProblemsRepository implements IProblemsRepository {
     const query = `INSERT INTO problemtable 
       (
         ${createColumns}
-       ) VALUES (
-         ${createValues}
+      ) VALUES (
+        ${createValues}
       );
       `;
     try {
       await this.repository.query(query);
       return Promise.resolve();
     } catch (err) {
-      return Promise.reject(err)
+      return Promise.reject(err);
     }
   }
 
@@ -109,7 +109,7 @@ class ProblemsRepository implements IProblemsRepository {
     const KeysAndValues = Object.entries(filteredObject);
     if (KeysAndValues.length > 0) {
       query = query.concat(`
-       SET `);
+      SET `);
     }
 
     KeysAndValues.forEach((object) => {
@@ -126,10 +126,9 @@ class ProblemsRepository implements IProblemsRepository {
     try {
       const updatedProblem: Problem[] = await this.repository.query(query);
       return updatedProblem[0];
-    } catch(err) {
-      return Promise.reject(err)
+    } catch (err) {
+      return Promise.reject(err);
     }
-
   }
 
   async delete(problemnumber: number): Promise<void> {
@@ -137,7 +136,7 @@ class ProblemsRepository implements IProblemsRepository {
     try {
       await this.repository.query(query);
     } catch (err) {
-      return Promise.reject(err)
+      return Promise.reject(err);
     }
   }
 }

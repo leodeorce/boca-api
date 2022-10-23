@@ -1,32 +1,34 @@
-import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
+import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
-import { QueryFailedError } from "typeorm";
-
 import { CreateContestsUseCase } from "./CreateContestUseCase";
 import { DeleteContestsUseCase } from "./DeleteContestUseCase";
 import { GetContestsUseCase } from "./GetContestUseCase";
 import { ListContestsUseCase } from "./ListContestsUseCase";
-import { UpdateContestsUseCase } from "./UpdateContestUseCase";
+import { PatchContestUseCase } from "./PatchContestUseCase";
+import { ReplaceContestUseCase } from "./ReplaceContestUseCase";
 
 class ContestController {
-  async listAll(request: Request, response: Response): Promise<Response> {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const listContestsUseCase = container.resolve(ListContestsUseCase);
 
     try {
       const all = await listContestsUseCase.execute();
       return response.json(all);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error listing Contests" });
+      next(error);
     }
   }
 
-  async getOne(request: Request, response: Response): Promise<Response> {
+  async getOne(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const getContestsUseCase = container.resolve(GetContestsUseCase);
     const { id } = request.params;
     const numberId = Number(id);
@@ -35,12 +37,7 @@ class ContestController {
       const contest = await getContestsUseCase.execute({ id: numberId });
       return response.json(contest);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error getting Contest" });
+      next(error);
     }
   }
 
@@ -88,12 +85,12 @@ class ContestController {
     }
   }
 
-  async update(
+  async updatePartial(
     request: Request,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const updateContestsUseCase = container.resolve(UpdateContestsUseCase);
+    const patchContestUseCase = container.resolve(PatchContestUseCase);
     const { id } = request.params;
     const idNumber = Number(id);
     const {
@@ -113,7 +110,7 @@ class ContestController {
     } = request.body;
 
     try {
-      const updatedContest = await updateContestsUseCase.execute({
+      const updatedContest = await patchContestUseCase.execute({
         contestnumber: idNumber,
         contestname,
         contestactive,
@@ -136,23 +133,68 @@ class ContestController {
     }
   }
 
-  async delete(request: Request, response: Response): Promise<Response> {
+  async updateFull(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const replaceContestUseCase = container.resolve(ReplaceContestUseCase);
     const { id } = request.params;
-    const idNumber = parseInt(id, 10);
+    const idNumber = Number(id);
+    const {
+      contestname,
+      contestactive,
+      contestduration,
+      contestkeys,
+      contestlastmileanswer,
+      contestlastmilescore,
+      contestlocalsite,
+      contestmainsite,
+      contestmainsiteurl,
+      contestmaxfilesize,
+      contestpenalty,
+      conteststartdate,
+      contestunlockkey,
+    } = request.body;
+
+    try {
+      const updatedContest = await replaceContestUseCase.execute({
+        contestnumber: idNumber,
+        contestname,
+        contestactive,
+        contestduration,
+        contestkeys,
+        contestlastmileanswer,
+        contestlastmilescore,
+        contestlocalsite,
+        contestmainsite,
+        contestmainsiteurl,
+        contestmaxfilesize,
+        contestpenalty,
+        conteststartdate,
+        contestunlockkey,
+      });
+
+      return response.status(200).json(updatedContest);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async delete(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const { id } = request.params;
+    const idNumber = Number(id);
     const deleteContestsUseCase = container.resolve(DeleteContestsUseCase);
 
     try {
       await deleteContestsUseCase.execute({ id: idNumber });
-      return response
-        .status(200)
-        .json({ message: "Contest deleted successfully" });
+      return response.status(204).json();
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error deleting contest" });
+      next(error);
     }
   }
 }

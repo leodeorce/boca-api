@@ -1,6 +1,5 @@
 import { AppDataSource } from "../../database/index";
 import { Repository } from "typeorm";
-
 import { Contest } from "../../entities/Contest";
 import {
   IContestRepository,
@@ -17,14 +16,17 @@ class ContestsRepository implements IContestRepository {
   }
 
   async list(): Promise<Contest[]> {
-    try {
-      const contests = await this.repository.query(
-        `SELECT * FROM contesttable`
-      );
-      return contests;
-    } catch (err) {
-      return Promise.reject(err);
+    return await this.repository.find();
+  }
+
+  async getActive(): Promise<Contest | undefined> {
+    const contest: Contest | null = await this.repository.findOneBy({
+      contestactive: true,
+    });
+    if (contest === null) {
+      return undefined;
     }
+    return contest;
   }
 
   async findByName(name: string): Promise<Contest | undefined> {
@@ -77,18 +79,17 @@ class ContestsRepository implements IContestRepository {
       .returning("*")
       .execute();
 
-    const updatedContest: object = result.raw[0];
+    const updatedContest: Record<string, unknown> = result.raw[0];
     return this.repository.create(updatedContest);
   }
 
   async delete(contestnumber: number): Promise<void> {
-    try {
-      const query = `DELETE FROM contesttable WHERE contestnumber=${contestnumber}`;
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Contest)
+      .where("contestnumber = :contestnumber", { contestnumber: contestnumber })
+      .execute();
   }
 }
 
