@@ -6,11 +6,11 @@ const contestsRoutes = Router();
 
 const contestController = new ContestController();
 
-contestsRoutes.get("/contests", contestController.listAll);
-contestsRoutes.get("/contests/:id", contestController.getOne);
-contestsRoutes.post("/contests", contestController.create);
-contestsRoutes.put("/contests/:id", contestController.updateFull);
-contestsRoutes.patch("/contests/:id", contestController.updatePartial);
-contestsRoutes.delete("/contests/:id", contestController.delete);
+contestsRoutes.get("/contest", contestController.listAll);
+contestsRoutes.get("/contest/:id", contestController.getOne);
+contestsRoutes.post("/contest", contestController.create);
+contestsRoutes.put("/contest/:id", contestController.updateFull);
+contestsRoutes.patch("/contest/:id", contestController.updatePartial);
+contestsRoutes.delete("/contest/:id", contestController.delete);
 
 export { contestsRoutes };

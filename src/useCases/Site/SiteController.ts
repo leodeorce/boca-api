@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { QueryFailedError } from "typeorm";
+import { ApiError } from "../../errors/ApiError";
 
 import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateSiteUseCase } from "./CreateSiteUseCase";
@@ -47,13 +48,18 @@ class SiteController {
     }
   }
 
-  async create(request: Request, response: Response): Promise<Response> {
+  async create(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const createSiteUseCase = container.resolve(CreateSiteUseCase);
     const getContestUseCase = container.resolve(GetContestsUseCase);
 
     const { id_c } = request.params;
 
     const {
+      sitenumber,
       siteip,
       sitename,
       siteactive,
@@ -77,15 +83,16 @@ class SiteController {
       sitemaxjudgewaittime,
     } = request.body;
 
-    const contest = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
-
-    if (!contest) {
-      throw new Error("Contest not found");
-    }
-
     try {
-      await createSiteUseCase.execute({
+      const contest = await getContestUseCase.execute({ id: Number(id_c) });
+
+      if (!contest) {
+        throw ApiError.notFound("Contest does not exist");
+      }
+
+      const site = await createSiteUseCase.execute({
         contestnumber: contest.contestnumber,
+        sitenumber,
         siteip,
         sitename,
         siteactive,
@@ -107,16 +114,11 @@ class SiteController {
         siteautojudge,
         sitemaxruntime,
         sitemaxjudgewaittime,
-      });
+      }, contest);
 
-      return response.status(201).send();
+      return response.status(200).json(site);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error creating Site" });
+      next(error);
     }
   }
 

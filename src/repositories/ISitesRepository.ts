@@ -7,7 +7,7 @@ interface ICreateSiteDTO {
   sitename: string;
   siteactive: boolean;
   sitepermitlogins: boolean;
-  sitelastmileanswer?: boolean;
+  sitelastmileanswer?: number;
   sitelastmilescore?: number;
   siteduration?: number;
   siteautoend?: boolean;
@@ -52,18 +52,18 @@ interface IUpdateSiteDTO {
   sitemaxjudgewaittime?: number;
 }
 
-interface ICountResult {
-  max: string;
+interface ILastIdResult {
+  id: number;
 }
 
 interface ISitesRepository {
   findByName(name: string): Promise<Site | undefined>;
   list(): Promise<Site[]>;
-  create(site: ICreateSiteDTO): Promise<void>;
-  count(): Promise<number>;
-  getById(id: number): Promise<Site | undefined>;
+  create(site: ICreateSiteDTO): Promise<Site>;
+  getById(id: number, contestnumber: number): Promise<Site | undefined>;
   update(site: IUpdateSiteDTO): Promise<Site>;
   delete(contestnumber: number): Promise<void>;
+  getLastId(contestnumber: number): Promise<number | undefined>;
 }
 
-export { ISitesRepository, ICreateSiteDTO, ICountResult, IUpdateSiteDTO };
+export { ISitesRepository, ICreateSiteDTO, ILastIdResult, IUpdateSiteDTO };

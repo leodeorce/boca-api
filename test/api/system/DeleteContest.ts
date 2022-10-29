@@ -7,7 +7,7 @@ describe("Remoção de um contest", () => {
   describe("Fluxo positivo", () => {
     it('Deleta o "Contest Alpha"', async () => {
       const response = await request(URL)
-        .delete("/api/contests/1")
+        .delete("/api/contest/1")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(204);
       expect(response.headers).to.not.have.own.property("content-type");
@@ -16,7 +16,7 @@ describe("Remoção de um contest", () => {
 
     it("Resgata todos os contests, mas Alpha foi deletado", async () => {
       const all = await request(URL)
-        .get("/api/contests")
+        .get("/api/contest")
         .set("Accept", "application/json");
       expect(all.statusCode).to.equal(200);
       expect(all.headers["content-type"]).to.contain("application/json");
@@ -40,7 +40,7 @@ describe("Remoção de um contest", () => {
   describe("Fluxo negativo", () => {
     it('Tenta resgatar "Contest Alpha"', async () => {
       const response = await request(URL)
-        .get("/api/contests/1")
+        .get("/api/contest/1")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
@@ -50,7 +50,7 @@ describe("Remoção de um contest", () => {
 
     it('Tenta deletar novamente o "Contest Alpha"', async () => {
       const response = await request(URL)
-        .delete("/api/contests/1")
+        .delete("/api/contest/1")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");

@@ -56,6 +56,8 @@ class PatchContestUseCase {
       throw ApiError.notFound("Contest does not exist");
     }
 
+    // TODO Checar se novo nome não é uma string vazia
+
     const contest = new Contest();
     contest.contestnumber = contestnumber;
     contest.contestname = contestname

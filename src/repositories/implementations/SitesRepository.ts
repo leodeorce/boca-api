@@ -1,8 +1,9 @@
-import { getRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../database";
 
 import { Site } from "../../entities/Site";
 import {
-  ICountResult,
+  ILastIdResult,
   ICreateSiteDTO,
   ISitesRepository,
   IUpdateSiteDTO,
@@ -12,7 +13,7 @@ class SitesRepository implements ISitesRepository {
   private repository: Repository<Site>;
 
   constructor() {
-    this.repository = getRepository(Site);
+    this.repository = AppDataSource.getRepository(Site);
   }
 
   async list(contestnumber?: number): Promise<Site[]> {
@@ -38,69 +39,37 @@ class SitesRepository implements ISitesRepository {
     return contest[0];
   }
 
-  async count(): Promise<number> {
-    const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(sitenumber) FROM sitetable`
-    );
-    if (count[0].max === null) {
-      return -1;
-    }
-    return parseInt(count[0].max, 10);
-  }
+  async getLastId(contestnumber: number): Promise<number | undefined> {
+    const lastIdResult: ILastIdResult | undefined = await this.repository
+      .createQueryBuilder("site")
+      .select("MAX(site.sitenumber)", "id")
+      .where("site.contestnumber = :contestnumber", {
+        contestnumber: contestnumber,
+      })
+      .getRawOne();
 
-  async getById(id: number): Promise<Site | undefined> {
-    const contest: Site[] = await this.repository.query(
-      `SELECT * FROM sitetable WHERE sitenumber = ${id}`
-    );
-    if (contest.length === 0) {
+    if (lastIdResult === undefined) {
       return undefined;
     }
-    return contest[0];
+
+    return lastIdResult.id;
   }
 
-  async create(createObject: ICreateSiteDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
-
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(createObject).filter(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([_, v]) => v !== null && v !== undefined
-      )
-    );
-
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
-    }
-
-    KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
+  async getById(id: number, contestnumber: number): Promise<Site | undefined> {
+    const site: Site | null = await this.repository.findOneBy({
+      sitenumber: id,
+      contestnumber: contestnumber,
     });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
-
-    const query = `INSERT INTO sitetable 
-      (
-        ${createColumns}
-       ) VALUES (
-         ${createValues}
-      );
-      `;
-
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
+    if (site === null) {
+      return undefined;
     }
+    return site;
+  }
+
+  async create(createObject: ICreateSiteDTO): Promise<Site> {
+    const site = this.repository.create(createObject);
+    await this.repository.save(site);
+    return site;
   }
 
   async update(updateObject: IUpdateSiteDTO): Promise<Site> {
