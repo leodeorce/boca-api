@@ -1,50 +1,68 @@
 import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { QueryFailedError } from "typeorm";
 import { ApiError } from "../../errors/ApiError";
-
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateSiteUseCase } from "./CreateSiteUseCase";
 import { DeleteSiteUseCase } from "./DeleteSiteUseCase";
 import { GetSiteUseCase } from "./GetSiteUseCase";
 import { ListSitesUseCase } from "./ListSitesUseCase";
-import { UpdateSiteUseCase } from "./UpdateSiteUseCase";
+import { PatchSiteUseCase } from "./PatchSiteUseCase";
+import { ReplaceSiteUseCase } from "./ReplaceSiteUseCase";
 
 class SiteController {
-  async listAll(request: Request, response: Response): Promise<Response> {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const listSitesUseCase = container.resolve(ListSitesUseCase);
 
     const { id_c } = request.params;
+    const contestnumber = Number(id_c);
+
     try {
-      const all = await listSitesUseCase.execute(parseInt(id_c, 10));
-      return response.json(all);
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
       }
-      return response.status(400).json({ error: "Error getting Site" });
+
+      const all = await listSitesUseCase.execute({
+        contestnumber: contestnumber,
+      });
+
+      return response.status(200).json(all);
+    } catch (error) {
+      next(error);
     }
   }
 
-  async getOne(request: Request, response: Response): Promise<Response> {
+  async getOne(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const getSiteUseCase = container.resolve(GetSiteUseCase);
+
     const { id_site } = request.params;
+    const { id_c } = request.params;
+    const sitenumber = Number(id_site);
+    const contestnumber = Number(id_c);
 
     try {
-      const site = await getSiteUseCase.execute({
-        id: parseInt(id_site, 10),
-      });
-      return response.json(site);
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
       }
-      return response.status(400).json({ error: "Error getting Site" });
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+
+      const site = await getSiteUseCase.execute({
+        sitenumber: sitenumber,
+        contestnumber: contestnumber,
+      });
+
+      return response.status(200).json(site);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -54,9 +72,9 @@ class SiteController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const createSiteUseCase = container.resolve(CreateSiteUseCase);
-    const getContestUseCase = container.resolve(GetContestsUseCase);
 
     const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
     const {
       sitenumber,
@@ -84,14 +102,12 @@ class SiteController {
     } = request.body;
 
     try {
-      const contest = await getContestUseCase.execute({ id: Number(id_c) });
-
-      if (!contest) {
-        throw ApiError.notFound("Contest does not exist");
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
       }
 
       const site = await createSiteUseCase.execute({
-        contestnumber: contest.contestnumber,
+        contestnumber: contestnumber,
         sitenumber,
         siteip,
         sitename,
@@ -114,7 +130,7 @@ class SiteController {
         siteautojudge,
         sitemaxruntime,
         sitemaxjudgewaittime,
-      }, contest);
+      });
 
       return response.status(200).json(site);
     } catch (error) {
@@ -122,13 +138,19 @@ class SiteController {
     }
   }
 
-  async update(request: Request, response: Response): Promise<Response> {
-    const updateSiteUseCase = container.resolve(UpdateSiteUseCase);
+  async updateFull(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const replaceSiteUseCase = container.resolve(ReplaceSiteUseCase);
 
     const { id_site } = request.params;
+    const { id_c } = request.params;
+    const sitenumber = Number(id_site);
+    const contestnumber = Number(id_c);
 
     const {
-      contestnumber,
       siteip,
       sitename,
       siteactive,
@@ -153,9 +175,16 @@ class SiteController {
     } = request.body;
 
     try {
-      await updateSiteUseCase.execute({
-        sitenumber: parseInt(id_site, 10),
-        contestnumber,
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+
+      const updatedSite = await replaceSiteUseCase.execute({
+        contestnumber: contestnumber,
+        sitenumber: sitenumber,
         siteip,
         sitename,
         siteactive,
@@ -179,34 +208,116 @@ class SiteController {
         sitemaxjudgewaittime,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(updatedSite);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error Updating Site" });
+      next(error);
     }
   }
 
-  async delete(request: Request, response: Response) {
+  async updatePartial(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const patchSiteUseCase = container.resolve(PatchSiteUseCase);
+
     const { id_site } = request.params;
-    const idNumber = parseInt(id_site, 10);
-    const deleteSiteUseCase = container.resolve(DeleteSiteUseCase);
+    const { id_c } = request.params;
+    const sitenumber = Number(id_site);
+    const contestnumber = Number(id_c);
+
+    const {
+      siteip,
+      sitename,
+      siteactive,
+      sitepermitlogins,
+      sitelastmileanswer,
+      sitelastmilescore,
+      siteduration,
+      siteautoend,
+      sitejudging,
+      sitetasking,
+      siteglobalscore,
+      sitescorelevel,
+      sitenextuser,
+      sitenextclar,
+      sitenextrun,
+      sitenexttask,
+      sitemaxtask,
+      sitechiefname,
+      siteautojudge,
+      sitemaxruntime,
+      sitemaxjudgewaittime,
+    } = request.body;
 
     try {
-      await deleteSiteUseCase.execute({ id: idNumber });
-      return response
-        .status(200)
-        .json({ message: "Site deleted successfully" });
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
       }
-      return response.status(400).json({ error: "Error deleting Site" });
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+
+      const updatedSite = await patchSiteUseCase.execute({
+        contestnumber: contestnumber,
+        sitenumber: sitenumber,
+        siteip,
+        sitename,
+        siteactive,
+        sitepermitlogins,
+        sitelastmileanswer,
+        sitelastmilescore,
+        siteduration,
+        siteautoend,
+        sitejudging,
+        sitetasking,
+        siteglobalscore,
+        sitescorelevel,
+        sitenextuser,
+        sitenextclar,
+        sitenextrun,
+        sitenexttask,
+        sitemaxtask,
+        sitechiefname,
+        siteautojudge,
+        sitemaxruntime,
+        sitemaxjudgewaittime,
+      });
+
+      return response.status(200).json(updatedSite);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async delete(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const deleteSiteUseCase = container.resolve(DeleteSiteUseCase);
+
+    const { id_site } = request.params;
+    const { id_c } = request.params;
+    const sitenumber = Number(id_site);
+    const contestnumber = Number(id_c);
+
+    try {
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+
+      await deleteSiteUseCase.execute({
+        sitenumber: sitenumber,
+        contestnumber: contestnumber,
+      });
+
+      return response.status(204).json();
+    } catch (error) {
+      next(error);
     }
   }
 }

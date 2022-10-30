@@ -1,6 +1,11 @@
 import { expect } from "chai";
 import request from "supertest";
-import { createNewSitePass, createSite3Pass, createSite4Fail, createSite5Fail } from "../../../entities/Site";
+import {
+  createNewSitePass,
+  createSite3Pass,
+  createSite4Fail,
+  createSite5Fail,
+} from "../../../entities/Site";
 import { URL } from "../../URL";
 
 /**
@@ -17,7 +22,7 @@ describe("Criação de um site", () => {
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
-      expect(response.body["sitenumber"]).to.equal(1);  // TODO Alterar para 2 quando o contest estiver criando o site automaticamente
+      expect(response.body["sitenumber"]).to.equal(1); // TODO Alterar para 2 quando o contest estiver criando o site automaticamente
       expect(response.body).to.deep.include(createNewSitePass);
     });
 
@@ -29,12 +34,20 @@ describe("Criação de um site", () => {
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
-      expect(response.body["sitenumber"]).to.equal(3);  // TODO Alterar para 3 quando o contest estiver criando o site automaticamente
+      expect(response.body["sitenumber"]).to.equal(3);
       expect(response.body).to.deep.include(createSite3Pass);
     });
 
-    // it("Resgata o primeiro dos dois sites criados anteriormente", async () => {
-    // });
+    it("Resgata o primeiro dos dois sites criados anteriormente", async () => {
+      const response = await request(URL)
+        .get("/api/contest/2/site/1")
+        .set("Accept", "application/json");
+      expect(response.statusCode).to.equal(200);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("sitenumber");
+      expect(response.body["sitenumber"]).to.equal(1);
+      expect(response.body).to.deep.include(createNewSitePass);
+    });
   });
 
   describe("Fluxo negativo", () => {
@@ -58,6 +71,16 @@ describe("Criação de um site", () => {
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
       expect(response.body["error"]).to.include("Site name must be specified");
+    });
+
+    it('Tenta resgatar um site que não existe', async () => {
+      const response = await request(URL)
+        .get("/api/contest/2/site/4")
+        .set("Accept", "application/json")
+      expect(response.statusCode).to.equal(404);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("error");
+      expect(response.body["error"]).to.include("Site does not exist");
     });
   });
 });

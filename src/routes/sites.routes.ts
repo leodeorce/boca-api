@@ -8,8 +8,9 @@ const siteController = new SiteController();
 
 sitesRoutes.get("/contest/:id_c/site", siteController.listAll);
 sitesRoutes.post("/contest/:id_c/site", siteController.create);
-sitesRoutes.get("/site/:id_site", siteController.getOne);
-sitesRoutes.put("/site/:id_site", siteController.update);
-sitesRoutes.delete("/site/:id_site", siteController.delete);
+sitesRoutes.get("/contest/:id_c/site/:id_site", siteController.getOne);
+sitesRoutes.put("/contest/:id_c/site/:id_site", siteController.updateFull);
+sitesRoutes.patch("/contest/:id_c/site/:id_site", siteController.updatePartial);
+sitesRoutes.delete("/contest/:id_c/site/:id_site", siteController.delete);
 
 export { sitesRoutes };

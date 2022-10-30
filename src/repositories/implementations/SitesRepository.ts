@@ -16,27 +16,10 @@ class SitesRepository implements ISitesRepository {
     this.repository = AppDataSource.getRepository(Site);
   }
 
-  async list(contestnumber?: number): Promise<Site[]> {
-    if (contestnumber !== undefined) {
-      const problems = await this.repository.query(
-        `SELECT * FROM sitetable WHERE contestnumber=${contestnumber}`
-      );
-
-      return problems;
-    }
-    const sites = await this.repository.query(`SELECT * FROM sitetable`);
-    return sites;
-  }
-
-  async findByName(name: string): Promise<Site | undefined> {
-    const query = `
-      SELECT * FROM sitetable WHERE sitename = '${name}'
-    `;
-    const contest: Site[] = await this.repository.query(query);
-    if (contest.length === 0) {
-      return undefined;
-    }
-    return contest[0];
+  async list(contestnumber: number): Promise<Site[]> {
+    return await this.repository.find({
+      where: { contestnumber: contestnumber },
+    });
   }
 
   async getLastId(contestnumber: number): Promise<number | undefined> {
@@ -55,9 +38,12 @@ class SitesRepository implements ISitesRepository {
     return lastIdResult.id;
   }
 
-  async getById(id: number, contestnumber: number): Promise<Site | undefined> {
+  async getById(
+    sitenumber: number,
+    contestnumber: number
+  ): Promise<Site | undefined> {
     const site: Site | null = await this.repository.findOneBy({
-      sitenumber: id,
+      sitenumber: sitenumber,
       contestnumber: contestnumber,
     });
     if (site === null) {
@@ -73,43 +59,31 @@ class SitesRepository implements ISitesRepository {
   }
 
   async update(updateObject: IUpdateSiteDTO): Promise<Site> {
-    // Remover parâmetros vazios (string vazia ou nulos, etc)
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(updateObject).filter(([_, v]) => v != null)
-    );
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Site)
+      .set(updateObject)
+      .where("contestnumber = :contestnumber", {
+        contestnumber: updateObject.contestnumber,
+      })
+      .andWhere("sitenumber = :sitenumber", {
+        sitenumber: updateObject.sitenumber,
+      })
+      .returning("*")
+      .execute();
 
-    let query = `UPDATE sitetable\n`;
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length > 0) {
-      query = query.concat(`
-      SET `);
-    }
-
-    KeysAndValues.forEach((object) => {
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}'` : object[1];
-      query = query.concat(`${object[0]} = ${value}, `);
-    });
-    query = query.trim(); // Remove espaços em branco desnecessarios
-    query = query.slice(0, query.length - 1); // Retira a ultima virgula
-    query = query.concat(`\nWHERE sitenumber = ${updateObject.sitenumber};`);
-    try {
-      const updatedContest: Site[] = await this.repository.query(query);
-      return updatedContest[0];
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    const updatedSite: Record<string, unknown> = result.raw[0];
+    return this.repository.create(updatedSite);
   }
 
-  async delete(siteNumber: number): Promise<void> {
-    const query = `DELETE FROM sitetable WHERE sitenumber=${siteNumber}`;
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (err) {
-      return Promise.reject(err);
-    }
+  async delete(sitenumber: number, contestnumber: number): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Site)
+      .where("contestnumber = :contestnumber", { contestnumber: contestnumber })
+      .andWhere("sitenumber = :sitenumber", { sitenumber: sitenumber })
+      .execute();
   }
 }
 

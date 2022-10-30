@@ -7,6 +7,7 @@ import { GetContestsUseCase } from "./GetContestUseCase";
 import { ListContestsUseCase } from "./ListContestsUseCase";
 import { PatchContestUseCase } from "./PatchContestUseCase";
 import { ReplaceContestUseCase } from "./ReplaceContestUseCase";
+import { ApiError } from "../../errors/ApiError";
 
 class ContestController {
   async listAll(
@@ -31,10 +32,15 @@ class ContestController {
   ): Promise<Response | undefined> {
     const getContestsUseCase = container.resolve(GetContestsUseCase);
     const { id } = request.params;
-    const numberId = Number(id);
+    const contestnumber = Number(id);
 
     try {
-      const contest = await getContestsUseCase.execute({ id: numberId });
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+      const contest = await getContestsUseCase.execute({
+        contestnumber: contestnumber,
+      });
       return response.json(contest);
     } catch (error) {
       next(error);
@@ -92,7 +98,7 @@ class ContestController {
   ): Promise<Response | undefined> {
     const patchContestUseCase = container.resolve(PatchContestUseCase);
     const { id } = request.params;
-    const idNumber = Number(id);
+    const contestnumber = Number(id);
     const {
       contestname,
       contestactive,
@@ -111,7 +117,7 @@ class ContestController {
 
     try {
       const updatedContest = await patchContestUseCase.execute({
-        contestnumber: idNumber,
+        contestnumber: contestnumber,
         contestname,
         contestactive,
         contestduration,
@@ -140,7 +146,7 @@ class ContestController {
   ): Promise<Response | undefined> {
     const replaceContestUseCase = container.resolve(ReplaceContestUseCase);
     const { id } = request.params;
-    const idNumber = Number(id);
+    const contestnumber = Number(id);
     const {
       contestname,
       contestactive,
@@ -158,8 +164,12 @@ class ContestController {
     } = request.body;
 
     try {
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+
       const updatedContest = await replaceContestUseCase.execute({
-        contestnumber: idNumber,
+        contestnumber: contestnumber,
         contestname,
         contestactive,
         contestduration,
@@ -187,11 +197,15 @@ class ContestController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const { id } = request.params;
-    const idNumber = Number(id);
+    const contestnumber = Number(id);
     const deleteContestsUseCase = container.resolve(DeleteContestsUseCase);
 
     try {
-      await deleteContestsUseCase.execute({ id: idNumber });
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+
+      await deleteContestsUseCase.execute({ contestnumber: contestnumber });
       return response.status(204).json();
     } catch (error) {
       next(error);

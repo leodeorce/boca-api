@@ -15,7 +15,7 @@ interface IRequest {
   contestpenalty: number;
   contestmaxfilesize: number;
   contestmainsite: number;
-  contestkeys?: string;
+  contestkeys?: string;  // TODO Avaliar obrigatoriedade
   contestunlockkey?: string;
   contestmainsiteurl?: string;
 }
@@ -46,11 +46,11 @@ class CreateContestsUseCase {
       throw ApiError.badRequest("Contest name must be specified");
     }
 
-    const contestAlreadyExists = await this.contestsRepository.findByName(
+    const existingContest = await this.contestsRepository.findByName(
       contestname
     );
 
-    if (contestAlreadyExists) {
+    if (existingContest) {
       throw ApiError.alreadyExists("Contest name already exists");
     }
 
