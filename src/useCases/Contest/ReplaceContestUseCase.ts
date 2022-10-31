@@ -44,14 +44,9 @@ class ReplaceContestUseCase {
     contestunlockkey,
     contestmainsiteurl,
   }: IRequest): Promise<Contest> {
-    if (Number.isNaN(contestnumber) || contestnumber < 1) {
-      throw ApiError.badRequest("Invalid contest ID");
-    }
-
     const existingContest = await this.contestsRepository.getById(
       contestnumber
     );
-
     if (!existingContest) {
       throw ApiError.notFound("Contest does not exist");
     }
@@ -82,6 +77,8 @@ class ReplaceContestUseCase {
       }
     }
 
+    // TODO Checar se novo nome não é uma string vazia
+
     const contest = new Contest();
     contest.contestnumber = contestnumber;
     contest.contestname = contestname;
@@ -89,10 +86,10 @@ class ReplaceContestUseCase {
     contest.contestduration = contestduration;
     contest.contestlastmileanswer = contestlastmileanswer
       ? contestlastmileanswer
-      : undefined;
+      : contestduration;
     contest.contestlastmilescore = contestlastmilescore
       ? contestlastmilescore
-      : undefined;
+      : contestduration;
     contest.contestlocalsite = contestlocalsite;
     contest.contestpenalty = contestpenalty;
     contest.contestmaxfilesize = contestmaxfilesize;

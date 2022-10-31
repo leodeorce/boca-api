@@ -1,5 +1,7 @@
 import { Contest } from "../../src/entities/Contest";
 
+// TODO Usar desestruturação para facilitar entendimento e diminuir código
+
 const createAlphaPass = new Contest();
 
 createAlphaPass.contestname = "Contest Alpha";

@@ -32,7 +32,7 @@ interface IRequest {
 }
 
 @injectable()
-class CreateSiteUseCase {
+class ReplaceSiteUseCase {
   constructor(
     @inject("SitesRepository")
     private sitesRepository: SitesRepository,
@@ -70,9 +70,12 @@ class CreateSiteUseCase {
       throw ApiError.notFound("Contest does not exist");
     }
 
-    sitename = sitename ? sitename.trim() : "";
-    if (sitename.length === 0) {
-      throw ApiError.badRequest("Site name must be specified");
+    const existingSite = await this.sitesRepository.getById(
+      sitenumber,
+      contestnumber
+    );
+    if (!existingSite) {
+      throw ApiError.notFound("Site does not exist");
     }
 
     if (
@@ -96,22 +99,6 @@ class CreateSiteUseCase {
       throw ApiError.badRequest("Missing properties");
     }
 
-    if (sitenumber === undefined) {
-      let lastId = await this.sitesRepository.getLastId(contestnumber);
-      lastId = lastId ? lastId : 0;
-      sitenumber = lastId + 1;
-    } else {
-      const existingSite = await this.sitesRepository.getById(
-        sitenumber,
-        contestnumber
-      );
-      if (existingSite !== undefined) {
-        throw ApiError.alreadyExists(
-          "Site number already exists for this contest"
-        );
-      }
-    }
-
     siteautoend = siteautoend !== undefined ? siteautoend : true;
     siteduration =
       siteduration !== undefined
@@ -127,12 +114,16 @@ class CreateSiteUseCase {
     sitelastmileanswer =
       sitelastmileanswer !== undefined
         ? sitelastmileanswer
-        : existingContest.contestlastmileanswer;
+        : existingContest.contestlastmileanswer
+        ? existingContest.contestlastmileanswer
+        : existingContest.contestduration;
 
     sitelastmilescore =
       sitelastmilescore !== undefined
         ? sitelastmilescore
-        : existingContest.contestlastmilescore;
+        : existingContest.contestlastmilescore
+        ? existingContest.contestlastmilescore
+        : existingContest.contestduration;
 
     const site = new Site();
     site.contestnumber = contestnumber;
@@ -167,7 +158,7 @@ class CreateSiteUseCase {
       throw ApiError.badRequest(message);
     }
 
-    return await this.sitesRepository.create({
+    return await this.sitesRepository.update({
       contestnumber,
       sitenumber,
       siteip,
@@ -195,4 +186,4 @@ class CreateSiteUseCase {
   }
 }
 
-export { CreateSiteUseCase };
+export { ReplaceSiteUseCase };

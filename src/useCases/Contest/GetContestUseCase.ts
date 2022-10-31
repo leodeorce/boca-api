@@ -5,7 +5,7 @@ import { ApiError } from "../../errors/ApiError";
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 
 interface IRequest {
-  id: number;
+  contestnumber: number;
 }
 
 @injectable()
@@ -15,13 +15,8 @@ class GetContestsUseCase {
     private contestsRepository: ContestsRepository
   ) {}
 
-  async execute({ id }: IRequest): Promise<Contest | undefined> {
-    if (Number.isNaN(id) || id < 1) {
-      throw ApiError.badRequest("Invalid contest ID");
-    }
-
-    const contest = await this.contestsRepository.getById(id);
-
+  async execute({ contestnumber }: IRequest): Promise<Contest | undefined> {
+    const contest = await this.contestsRepository.getById(contestnumber);
     if (!contest) {
       throw ApiError.notFound("Contest does not exist");
     }

@@ -1,1 +1,2 @@
-import "./admin/index";
+import "./system/index";
+import "./admin/main";

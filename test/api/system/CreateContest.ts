@@ -9,11 +9,13 @@ import {
 } from "../../entities/Contest";
 import { URL } from "../URL";
 
+// TODO Explicar a equivalência do que é testado com o fluxo do usuário no BOCA
+
 describe("Criação de um contest", () => {
   describe("Fluxo positivo", () => {
     it("Cria um contest (conjunto de valores aceitáveis)", async () => {
       const response = await request(URL)
-        .post("/api/contests")
+        .post("/api/contest")
         .set("Accept", "application/json")
         .send(createAlphaPass);
       expect(response.statusCode).to.equal(200);
@@ -25,7 +27,7 @@ describe("Criação de um contest", () => {
 
     it("Cria um segundo contest (conjunto diferente de valores aceitáveis)", async () => {
       const response = await request(URL)
-        .post("/api/contests")
+        .post("/api/contest")
         .set("Accept", "application/json")
         .send(createBetaPass);
       expect(response.statusCode).to.equal(200);
@@ -37,7 +39,7 @@ describe("Criação de um contest", () => {
 
     it('Resgata o "Contest Alpha" criado anteriormente', async () => {
       const response = await request(URL)
-        .get("/api/contests/1")
+        .get("/api/contest/1")
         .set("Accept", "application/json")
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
@@ -50,7 +52,7 @@ describe("Criação de um contest", () => {
   describe("Fluxo negativo", () => {
     it("Tenta criar um contest com um nome já existente", async () => {
       const response = await request(URL)
-        .post("/api/contests")
+        .post("/api/contest")
         .set("Accept", "application/json")
         .send(createAlphaFail);
       expect(response.statusCode).to.equal(409);
@@ -61,7 +63,7 @@ describe("Criação de um contest", () => {
 
     it("Tenta criar um contest de duração inválida", async () => {
       const response = await request(URL)
-        .post("/api/contests")
+        .post("/api/contest")
         .set("Accept", "application/json")
         .send(createCharlieFail);
       expect(response.statusCode).to.equal(400);
@@ -72,7 +74,7 @@ describe("Criação de um contest", () => {
 
     it("Tenta criar um contest sem especificar alguma propriedade obrigatória", async () => {
       const response = await request(URL)
-        .post("/api/contests")
+        .post("/api/contest")
         .set("Accept", "application/json")
         .send(createDeltaFail);
       expect(response.statusCode).to.equal(400);
@@ -83,7 +85,7 @@ describe("Criação de um contest", () => {
 
     it('Tenta resgatar um contest que não existe', async () => {
       const response = await request(URL)
-        .get("/api/contests/3")
+        .get("/api/contest/3")
         .set("Accept", "application/json")
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");

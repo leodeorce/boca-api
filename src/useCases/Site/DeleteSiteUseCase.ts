@@ -1,30 +1,40 @@
 import { inject, injectable } from "tsyringe";
+import { ApiError } from "../../errors/ApiError";
+import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 
 import { SitesRepository } from "../../repositories/implementations/SitesRepository";
 
 interface IRequest {
-  id: number;
+  sitenumber: number;
+  contestnumber: number;
 }
 
 @injectable()
 class DeleteSiteUseCase {
   constructor(
     @inject("SitesRepository")
-    private sitesRepository: SitesRepository
+    private sitesRepository: SitesRepository,
+    @inject("ContestsRepository")
+    private contestRepository: ContestsRepository
   ) {}
 
-  async execute({ id }: IRequest): Promise<void> {
-    const siteAlreadyExists = await this.sitesRepository.getById(id);
+  async execute({ sitenumber, contestnumber }: IRequest): Promise<void> {
+    const existingContest = await this.contestRepository.getById(contestnumber);
 
-    if (!siteAlreadyExists) {
-      throw new Error("Site does not exists");
+    if (!existingContest) {
+      throw ApiError.notFound("Contest does not exists");
     }
 
-    try {
-      await this.sitesRepository.delete(id);
-    } catch (error) {
-      return Promise.reject(error);
+    const existingSite = await this.sitesRepository.getById(
+      sitenumber,
+      contestnumber
+    );
+
+    if (!existingSite) {
+      throw ApiError.notFound("Site does not exists");
     }
+
+    await this.sitesRepository.delete(sitenumber, contestnumber);
   }
 }
 
