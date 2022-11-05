@@ -1,8 +1,7 @@
-import { inject, injectable } from "tsyringe";
+import { container, injectable } from "tsyringe";
 import { Site } from "../../entities/Site";
-import { ApiError } from "../../errors/ApiError";
-import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
-import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import ContestValidator from "../../shared/validation/ContestValidator";
+import SiteValidator from "../../shared/validation/SiteValidator";
 
 interface IRequest {
   sitenumber: number;
@@ -11,28 +10,20 @@ interface IRequest {
 
 @injectable()
 class GetSiteUseCase {
-  constructor(
-    @inject("SitesRepository")
-    private sitesRepository: SitesRepository,
-    @inject("ContestsRepository")
-    private contestRepository: ContestsRepository
-  ) {}
+  private contestValidator: ContestValidator;
+  private siteValidator: SiteValidator;
+
+  constructor() {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.siteValidator = container.resolve(SiteValidator);
+  }
 
   async execute({
     sitenumber,
     contestnumber,
   }: IRequest): Promise<Site | undefined> {
-    const existingContest = await this.contestRepository.getById(contestnumber);
-    if (!existingContest) {
-      throw ApiError.notFound("Contest does not exist");
-    }
-
-    const site = await this.sitesRepository.getById(sitenumber, contestnumber);
-    if (!site) {
-      throw ApiError.notFound("Site does not exist");
-    }
-
-    return site;
+    await this.contestValidator.exists(contestnumber);
+    return await this.siteValidator.exists(contestnumber, sitenumber);
   }
 }
 

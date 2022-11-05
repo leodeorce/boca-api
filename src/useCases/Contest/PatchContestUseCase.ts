@@ -1,8 +1,7 @@
-import { inject, injectable } from "tsyringe";
-import { validate } from "class-validator";
+import { container, inject, injectable } from "tsyringe";
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 import { Contest } from "../../entities/Contest";
-import { ApiError } from "../../errors/ApiError";
+import ContestValidator from "../../shared/validation/ContestValidator";
 
 interface IRequest {
   contestnumber: number;
@@ -23,10 +22,14 @@ interface IRequest {
 
 @injectable()
 class PatchContestUseCase {
+  private contestValidator: ContestValidator;
+
   constructor(
     @inject("ContestsRepository")
     private contestsRepository: ContestsRepository
-  ) {}
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+  }
 
   async execute({
     contestnumber,
@@ -44,17 +47,7 @@ class PatchContestUseCase {
     contestunlockkey,
     contestmainsiteurl,
   }: IRequest): Promise<Contest> {
-    if (Number.isNaN(contestnumber) || contestnumber < 1) {
-      throw ApiError.badRequest("Invalid contest ID");
-    }
-
-    const existingContest = await this.contestsRepository.getById(
-      contestnumber
-    );
-
-    if (!existingContest) {
-      throw ApiError.notFound("Contest does not exist");
-    }
+    const existingContest = await this.contestValidator.exists(contestnumber);
 
     // TODO Checar se novo nome não é uma string vazia
 
@@ -100,18 +93,12 @@ class PatchContestUseCase {
       ? contestmainsiteurl
       : existingContest.contestmainsiteurl;
 
-    const validation = await validate(contest);
+    await this.contestValidator.isValid(contest);
 
-    if (validation.length > 0) {
-      const errors = validation[0].constraints as Record<string, string>;
-      const [, message] = Object.entries(errors)[0];
-      throw ApiError.badRequest(message);
-    }
-
-    /* Abaixo acontecem duas queries que podem gerar inconsistências ao falhar.
-     * Se a desativação do contest ativo falhar, mas a ativação do novo ocorrer,
+    /**    Abaixo acontecem duas queries que podem gerar inconsistências ao falhar.
+     *     Se a desativação do contest ativo falhar, mas a ativação do novo ocorrer,
      *   existirão dois contests ativos.
-     * Se o contest ativo for desativado com sucesso, mas a ativação do novo contest falhar,
+     *     Se o contest ativo for desativado com sucesso, mas a ativação do novo contest falhar,
      *   a desativação do primeiro foi em vão.
      */
 

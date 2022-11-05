@@ -1,9 +1,9 @@
 import { Contest } from "../../entities/Contest";
 import { ApiError } from "../../errors/ApiError";
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
-import { validate } from "class-validator";
+import ContestValidator from "../../shared/validation/ContestValidator";
 
 interface IRequest {
   contestname: string;
@@ -15,17 +15,21 @@ interface IRequest {
   contestpenalty: number;
   contestmaxfilesize: number;
   contestmainsite: number;
-  contestkeys?: string;  // TODO Avaliar obrigatoriedade
+  contestkeys?: string; // TODO Avaliar obrigatoriedade
   contestunlockkey?: string;
   contestmainsiteurl?: string;
 }
 
 @injectable()
 class CreateContestsUseCase {
+  private contestValidator: ContestValidator;
+
   constructor(
     @inject("ContestsRepository")
     private contestsRepository: ContestsRepository
-  ) {}
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+  }
 
   async execute({
     contestname,
@@ -86,8 +90,8 @@ class CreateContestsUseCase {
     contest.contestname = contestname;
     contest.conteststartdate = conteststartdate;
     contest.contestduration = contestduration;
-    contest.contestlastmileanswer = contestlastmileanswer
-    contest.contestlastmilescore = contestlastmilescore
+    contest.contestlastmileanswer = contestlastmileanswer;
+    contest.contestlastmilescore = contestlastmilescore;
     contest.contestlocalsite = contestlocalsite;
     contest.contestpenalty = contestpenalty;
     contest.contestmaxfilesize = contestmaxfilesize;
@@ -97,13 +101,7 @@ class CreateContestsUseCase {
     contest.contestunlockkey = contestunlockkey;
     contest.contestmainsiteurl = contestmainsiteurl;
 
-    const validation = await validate(contest);
-
-    if (validation.length > 0) {
-      const errors = validation[0].constraints as object;
-      const [, message] = Object.entries(errors)[0];
-      throw ApiError.badRequest(message);
-    }
+    await this.contestValidator.isValid(contest);
 
     return await this.contestsRepository.create({
       contestnumber,

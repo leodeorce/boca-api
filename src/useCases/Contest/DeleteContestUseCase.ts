@@ -1,7 +1,6 @@
-import { inject, injectable } from "tsyringe";
-import { ApiError } from "../../errors/ApiError";
-
+import { container, inject, injectable } from "tsyringe";
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
+import ContestValidator from "../../shared/validation/ContestValidator";
 
 interface IRequest {
   contestnumber: number;
@@ -9,17 +8,17 @@ interface IRequest {
 
 @injectable()
 class DeleteContestsUseCase {
+  private contestValidator: ContestValidator;
+
   constructor(
     @inject("ContestsRepository")
     private contestsRepository: ContestsRepository
-  ) {}
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+  }
 
   async execute({ contestnumber }: IRequest): Promise<void> {
-    const existingContest = await this.contestsRepository.getById(contestnumber);
-    if (!existingContest) {
-      throw ApiError.notFound("Contest does not exist");
-    }
-
+    await this.contestValidator.exists(contestnumber);
     await this.contestsRepository.delete(contestnumber);
   }
 }

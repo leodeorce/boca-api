@@ -1,9 +1,8 @@
-import { validate } from "class-validator";
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { Site } from "../../entities/Site";
-import { ApiError } from "../../errors/ApiError";
-import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import ContestValidator from "../../shared/validation/ContestValidator";
+import SiteValidator from "../../shared/validation/SiteValidator";
 
 interface IRequest {
   contestnumber: number;
@@ -34,12 +33,16 @@ interface IRequest {
 // TODO Modificar para retornar erro caso nenhuma das propriedades forem passadas
 @injectable()
 class PatchSiteUseCase {
+  private contestValidator: ContestValidator;
+  private siteValidator: SiteValidator;
+
   constructor(
     @inject("SitesRepository")
-    private sitesRepository: SitesRepository,
-    @inject("ContestsRepository")
-    private contestRepository: ContestsRepository
-  ) {}
+    private sitesRepository: SitesRepository
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.siteValidator = container.resolve(SiteValidator);
+  }
 
   async execute({
     contestnumber,
@@ -66,18 +69,11 @@ class PatchSiteUseCase {
     sitemaxruntime,
     sitemaxjudgewaittime,
   }: IRequest): Promise<Site> {
-    const existingContest = await this.contestRepository.getById(contestnumber);
-    if (!existingContest) {
-      throw ApiError.notFound("Contest does not exist");
-    }
-
-    const existingSite = await this.sitesRepository.getById(
-      sitenumber,
-      contestnumber
+    await this.contestValidator.exists(contestnumber);
+    const existingSite = await this.siteValidator.exists(
+      contestnumber,
+      sitenumber
     );
-    if (!existingSite) {
-      throw ApiError.notFound("Site does not exist");
-    }
 
     const site = new Site();
     site.contestnumber = contestnumber;
@@ -122,13 +118,7 @@ class PatchSiteUseCase {
       ? sitemaxjudgewaittime
       : existingSite.sitemaxjudgewaittime;
 
-    const validation = await validate(site);
-
-    if (validation.length > 0) {
-      const errors = validation[0].constraints as object;
-      const [, message] = Object.entries(errors)[0];
-      throw ApiError.badRequest(message);
-    }
+    await this.siteValidator.isValid(site);
 
     return await this.sitesRepository.update({
       contestnumber,

@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { QueryFailedError } from "typeorm";
+import { ApiError } from "../../errors/ApiError";
 
 import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateUserUseCase } from "./CreateUserUseCase";
@@ -11,7 +11,11 @@ import { ListUsersUseCase } from "./ListUserUseCase";
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
 
 class UserController {
-  async listAll(request: Request, response: Response): Promise<Response> {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const listUsersUseCase = container.resolve(ListUsersUseCase);
 
     const { id_c } = request.params;
@@ -20,16 +24,15 @@ class UserController {
       const all = await listUsersUseCase.execute(parseInt(id_c, 10));
       return response.json(all);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error getting user" });
+      next(error);
     }
   }
 
-  async getOne(request: Request, response: Response): Promise<Response> {
+  async getOne(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const getUserUseCase = container.resolve(GetUserUseCase);
     const { id_user } = request.params;
 
@@ -39,24 +42,23 @@ class UserController {
       });
       return response.json(user);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error getting User" });
+      next(error);
     }
   }
 
-  async create(request: Request, response: Response): Promise<Response> {
+  async create(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const createUserUseCase = container.resolve(CreateUserUseCase);
-    const getContestUseCase = container.resolve(GetContestsUseCase);
 
     const { id_c } = request.params;
+    const { id_s } = request.params;
+    const contestnumber = Number(id_c);
+    const sitenumber = Number(id_s);
 
     const {
-      usersitenumber,
-      usernumber,
       username,
       userfullname,
       userdesc,
@@ -74,17 +76,17 @@ class UserController {
       usercpcid,
     } = request.body;
 
-    const user = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
-
-    if (!user) {
-      return response.status(400).json({ error: "User not found" });
-    }
-
     try {
-      await createUserUseCase.execute({
-        contestnumber: parseInt(id_c, 10),
-        usersitenumber,
-        usernumber,
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+
+      const user = await createUserUseCase.execute({
+        contestnumber: contestnumber,
+        usersitenumber: sitenumber,
         username,
         userfullname,
         userdesc,
@@ -102,18 +104,17 @@ class UserController {
         usercpcid,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(user);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error creating User" });
+      next(error);
     }
   }
 
-  async update(request: Request, response: Response): Promise<Response> {
+  async update(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const updateUserUseCase = container.resolve(UpdateUserUseCase);
 
     const { id_user } = request.params;
@@ -162,16 +163,15 @@ class UserController {
 
       return response.status(201).send();
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error Updating User" });
+      next(error);
     }
   }
 
-  async delete(request: Request, response: Response) {
+  async delete(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const { id_user } = request.params;
     const idNumber = parseInt(id_user, 10);
     const deleteUserUseCase = container.resolve(DeleteUserUseCase);
@@ -182,12 +182,7 @@ class UserController {
         .status(200)
         .json({ message: "User deleted successfully" });
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error deleting User" });
+      next(error);
     }
   }
 }

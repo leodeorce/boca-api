@@ -59,7 +59,7 @@ interface ILastIdResult {
 interface ISitesRepository {
   list(contestnumber: number): Promise<Site[]>;
   create(site: ICreateSiteDTO): Promise<Site>;
-  getById(sitenumber: number, contestnumber: number): Promise<Site | undefined>;
+  getById(contestnumber: number, sitenumber: number): Promise<Site | undefined>;
   update(site: IUpdateSiteDTO): Promise<Site>;
   delete(sitenumber: number, contestnumber: number): Promise<void>;
   getLastId(contestnumber: number): Promise<number | undefined>;

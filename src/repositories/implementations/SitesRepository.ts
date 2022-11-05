@@ -39,12 +39,12 @@ class SitesRepository implements ISitesRepository {
   }
 
   async getById(
-    sitenumber: number,
-    contestnumber: number
+    contestnumber: number,
+    sitenumber: number
   ): Promise<Site | undefined> {
     const site: Site | null = await this.repository.findOneBy({
-      sitenumber: sitenumber,
       contestnumber: contestnumber,
+      sitenumber: sitenumber,
     });
     if (site === null) {
       return undefined;
