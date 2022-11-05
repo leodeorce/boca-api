@@ -16,9 +16,9 @@ interface ICreateUserDTO {
   usersession: string;
   usersessionextra: string;
   userlastlogout?: number;
-  userpermitip?: number;
+  userpermitip?: string;
   userinfo: string;
-  usercpcid: string;
+  usericpcid: string;
 }
 
 interface IUpdateUserDTO {
@@ -39,21 +39,28 @@ interface IUpdateUserDTO {
   userlastlogout?: number;
   userpermitip?: number;
   userinfo?: string;
-  usercpcid?: string;
+  usericpcid?: string;
 }
 
-interface ICountResult {
-  max: string;
+interface ILastIdResult {
+  id: number;
 }
 
 interface IUsersRepository {
   findByName(name: string): Promise<User | undefined>;
   list(): Promise<User[]>;
-  create(user: ICreateUserDTO): Promise<void>;
-  count(): Promise<number>;
-  getById(id: number): Promise<User | undefined>;
+  create(user: ICreateUserDTO): Promise<User>;
+  getLastId(
+    contestnumber: number,
+    usersitenumber: number
+  ): Promise<number | undefined>;
+  getById(
+    contestnumber: number,
+    usersitenumber: number,
+    usernumber: number
+  ): Promise<User | undefined>;
   update(user: IUpdateUserDTO): Promise<User>;
   delete(contestnumber: number): Promise<void>;
 }
 
-export { IUsersRepository, ICreateUserDTO, ICountResult, IUpdateUserDTO };
+export { IUsersRepository, ICreateUserDTO, ILastIdResult, IUpdateUserDTO };

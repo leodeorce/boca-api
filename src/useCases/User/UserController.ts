@@ -3,7 +3,6 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { ApiError } from "../../errors/ApiError";
 
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateUserUseCase } from "./CreateUserUseCase";
 import { DeleteUserUseCase } from "./DeleteUserUseCase";
 import { GetUserUseCase } from "./GetUserUseCase";
@@ -73,7 +72,7 @@ class UserController {
       userlastlogout,
       userpermitip,
       userinfo,
-      usercpcid,
+      usericpcid,
     } = request.body;
 
     try {
@@ -101,7 +100,7 @@ class UserController {
         userlastlogout,
         userpermitip,
         userinfo,
-        usercpcid,
+        usericpcid,
       });
 
       return response.status(200).json(user);

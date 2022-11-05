@@ -15,6 +15,6 @@ import "./UpdateContest";
 import "./DeleteContest";
 
 /**
- *   Estado final: Existe "Contest Beta" com ID = 2 ativado.
- *   Ainda não há sites ou usuário admin.
+ *   Estado final: 
+ *     Criado e ativado Contest Beta (ID: 2).
  */

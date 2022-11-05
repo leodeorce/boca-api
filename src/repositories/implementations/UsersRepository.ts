@@ -1,18 +1,18 @@
-import { getRepository, Repository } from "typeorm";
-
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../database";
 import { User } from "../../entities/User";
 import {
-  ICountResult,
   ICreateUserDTO,
   IUsersRepository,
   IUpdateUserDTO,
+  ILastIdResult,
 } from "../IUsersRepository";
 
 class UsersRepository implements IUsersRepository {
   private repository: Repository<User>;
 
   constructor() {
-    this.repository = getRepository(User);
+    this.repository = AppDataSource.getRepository(User);
   }
 
   async list(contestnumber?: number): Promise<User[]> {
@@ -37,69 +37,41 @@ class UsersRepository implements IUsersRepository {
     return user[0];
   }
 
-  async count(): Promise<number> {
-    const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(usernumber) FROM usertable`
-    );
-    if (count[0].max === null) {
-      return -1;
-    }
-    return parseInt(count[0].max, 10);
+  async getLastId(
+    contestnumber: number,
+    usersitenumber: number
+  ): Promise<number | undefined> {
+    const lastIdResult: ILastIdResult | undefined = await this.repository
+      .createQueryBuilder("user")
+      .select("MAX(user.usernumber)", "id")
+      .where("user.contestnumber = :contestnumber", {
+        contestnumber: contestnumber,
+      })
+      .andWhere("user.usersitenumber = :usersitenumber", {
+        usersitenumber: usersitenumber,
+      })
+      .getRawOne();
+
+    return lastIdResult !== undefined ? lastIdResult.id : undefined;
   }
 
-  async getById(id: number): Promise<User | undefined> {
-    const user: User[] = await this.repository.query(
-      `SELECT * FROM usertable WHERE usernumber = ${id}`
-    );
-    if (user.length === 0) {
-      return undefined;
-    }
-    return user[0];
-  }
-
-  async create(createObject: ICreateUserDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
-
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(createObject).filter(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([_, v]) => v !== null && v !== undefined
-      )
-    );
-
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
-    }
-
-    KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
+  async getById(
+    contestnumber: number,
+    usersitenumber: number,
+    usernumber: number
+  ): Promise<User | undefined> {
+    const user: User | null = await this.repository.findOneBy({
+      contestnumber: contestnumber,
+      usersitenumber: usersitenumber,
+      usernumber: usernumber,
     });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
+    return user != null ? user : undefined;
+  }
 
-    const query = `INSERT INTO usertable 
-      (
-        ${createColumns}
-      ) VALUES (
-        ${createValues}
-      );
-      `;
-
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
+  async create(createObject: ICreateUserDTO): Promise<User> {
+    const user = this.repository.create(createObject);
+    await this.repository.save(user);
+    return user;
   }
 
   async update(updateObject: IUpdateUserDTO): Promise<User> {

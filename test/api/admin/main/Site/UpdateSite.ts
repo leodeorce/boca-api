@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import request from "supertest";
-import { Site } from "../../../../src/entities/Site";
+import { Site } from "../../../../../src/entities/Site";
 import {
   createNewSitePass,
   createSite3Pass,
@@ -10,8 +10,8 @@ import {
   patchSite4Fail,
   updateSite1Pass,
   updateSite3Fail,
-} from "../../../entities/Site";
-import { URL } from "../../URL";
+} from "../../../../entities/Site";
+import { URL } from "../../../URL";
 
 describe("Modifica os sites criados anteriormente", () => {
   let site1: Site; // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente

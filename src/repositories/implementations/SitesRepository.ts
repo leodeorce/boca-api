@@ -31,11 +31,7 @@ class SitesRepository implements ISitesRepository {
       })
       .getRawOne();
 
-    if (lastIdResult === undefined) {
-      return undefined;
-    }
-
-    return lastIdResult.id;
+    return lastIdResult !== undefined ? lastIdResult.id : undefined;
   }
 
   async getById(
@@ -46,10 +42,7 @@ class SitesRepository implements ISitesRepository {
       contestnumber: contestnumber,
       sitenumber: sitenumber,
     });
-    if (site === null) {
-      return undefined;
-    }
-    return site;
+    return site != null ? site : undefined;
   }
 
   async create(createObject: ICreateSiteDTO): Promise<Site> {

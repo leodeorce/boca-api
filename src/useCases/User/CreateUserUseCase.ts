@@ -1,11 +1,14 @@
 import { container, inject, injectable } from "tsyringe";
 import { ApiError } from "../../errors/ApiError";
 import { UsersRepository } from "../../repositories/implementations/UsersRepository";
-import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import { User } from "../../entities/User";
 import ContestValidator from "../../shared/validation/ContestValidator";
+import SiteValidator from "../../shared/validation/SiteValidator";
+import UserValidator from "../../shared/validation/UserValidator";
 
 interface IRequest {
   contestnumber: number;
+  usernumber?: number;
   usersitenumber: number;
   username: string;
   userfullname: string;
@@ -19,26 +22,29 @@ interface IRequest {
   usersession: string;
   usersessionextra: string;
   userlastlogout?: number;
-  userpermitip?: number;
+  userpermitip?: string;
   userinfo: string;
-  usercpcid: string;
+  usericpcid: string;
 }
 
 @injectable()
 class CreateUserUseCase {
   private contestValidator: ContestValidator;
+  private siteValidator: SiteValidator;
+  private userValidator: UserValidator;
 
   constructor(
     @inject("UsersRepository")
-    private usersRepository: UsersRepository,
-    @inject("SitesRepository")
-    private sitesRepository: SitesRepository
+    private usersRepository: UsersRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
+    this.siteValidator = container.resolve(SiteValidator);
+    this.userValidator = container.resolve(UserValidator);
   }
 
   async execute({
     contestnumber,
+    usernumber,
     usersitenumber,
     username,
     userfullname,
@@ -54,23 +60,60 @@ class CreateUserUseCase {
     userlastlogout,
     userpermitip,
     userinfo,
-    usercpcid,
-  }: IRequest): Promise<void> {
+    usericpcid,
+  }: IRequest): Promise<User> {
     await this.contestValidator.exists(contestnumber);
+    await this.siteValidator.exists(contestnumber, usersitenumber);
 
-    const site = await this.sitesRepository.getById(
-      usersitenumber,
-      contestnumber
-    );
-    if (!site) {
-      throw ApiError.notFound("Site does not exist");
+    // usernumber é opcional. Caso não especificado, será o próximo ID disponível.
+    // Caso especificado, devemos verificar se já não existe.
+    if (usernumber === undefined) {
+      let lastId = await this.usersRepository.getLastId(
+        contestnumber,
+        usersitenumber
+      );
+      lastId = lastId ? lastId : 0;
+      usernumber = lastId + 1;
+    } else {
+      const existingUser = await this.usersRepository.getById(
+        contestnumber,
+        usersitenumber,
+        usernumber
+      );
+
+      if (existingUser !== undefined) {
+        throw ApiError.alreadyExists(
+          "User number already exists for this contest and site"
+        );
+      }
     }
 
-    const count = (await this.usersRepository.count()) + 1;
-    await this.usersRepository.create({
+    const user = new User();
+    user.contestnumber = contestnumber;
+    user.usernumber = usernumber;
+    user.usersitenumber = usersitenumber;
+    user.username = username;
+    user.userfullname = userfullname;
+    user.userdesc = userdesc;
+    user.usertype = usertype;
+    user.userenabled = userenabled;
+    user.usermultilogin = usermultilogin;
+    user.userpassword = userpassword;
+    user.userip = userip;
+    user.userlastlogin = userlastlogin;
+    user.usersession = usersession;
+    user.usersessionextra = usersessionextra;
+    user.userlastlogout = userlastlogout;
+    user.userpermitip = userpermitip;
+    user.userinfo = userinfo;
+    user.usericpcid = usericpcid;
+
+    await this.userValidator.isValid(user);
+
+    return await this.usersRepository.create({
       contestnumber,
       usersitenumber,
-      usernumber: count,
+      usernumber,
       username,
       userfullname,
       userdesc,
@@ -85,7 +128,7 @@ class CreateUserUseCase {
       userlastlogout,
       userpermitip,
       userinfo,
-      usercpcid,
+      usericpcid,
     });
   }
 }

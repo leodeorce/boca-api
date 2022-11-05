@@ -71,11 +71,6 @@ class CreateSiteUseCase {
   }: IRequest): Promise<Site> {
     const existingContest = await this.contestValidator.exists(contestnumber);
 
-    sitename = sitename ? sitename.trim() : "";
-    if (sitename.length === 0) {
-      throw ApiError.badRequest("Site name must be specified");
-    }
-
     if (
       contestnumber === undefined ||
       siteip === undefined ||
