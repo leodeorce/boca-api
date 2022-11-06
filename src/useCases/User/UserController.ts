@@ -1,63 +1,99 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { QueryFailedError } from "typeorm";
+import { ApiError } from "../../errors/ApiError";
 
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateUserUseCase } from "./CreateUserUseCase";
 import { DeleteUserUseCase } from "./DeleteUserUseCase";
 import { GetUserUseCase } from "./GetUserUseCase";
 import { ListUsersUseCase } from "./ListUserUseCase";
-import { UpdateUserUseCase } from "./UpdateUserUseCase";
+import { PatchUserUseCase } from "./PatchUserUseCase";
+import { ReplaceUserUseCase } from "./ReplaceUserUseCase";
 
 class UserController {
-  async listAll(request: Request, response: Response): Promise<Response> {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const listUsersUseCase = container.resolve(ListUsersUseCase);
 
     const { id_c } = request.params;
+    const { id_s } = request.params;
+    const contestnumber = Number(id_c);
+    const sitenumber = Number(id_s);
 
     try {
-      const all = await listUsersUseCase.execute(parseInt(id_c, 10));
-      return response.json(all);
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
       }
-      return response.status(400).json({ error: "Error getting user" });
-    }
-  }
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
 
-  async getOne(request: Request, response: Response): Promise<Response> {
-    const getUserUseCase = container.resolve(GetUserUseCase);
-    const { id_user } = request.params;
-
-    try {
-      const user = await getUserUseCase.execute({
-        id: parseInt(id_user, 10),
+      const all = await listUsersUseCase.execute({
+        contestnumber,
+        usersitenumber: sitenumber,
       });
-      return response.json(user);
+
+      return response.status(200).json(all);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error getting User" });
+      next(error);
     }
   }
 
-  async create(request: Request, response: Response): Promise<Response> {
-    const createUserUseCase = container.resolve(CreateUserUseCase);
-    const getContestUseCase = container.resolve(GetContestsUseCase);
+  async getOne(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const getUserUseCase = container.resolve(GetUserUseCase);
 
     const { id_c } = request.params;
+    const { id_s } = request.params;
+    const { id_user } = request.params;
+    const contestnumber = Number(id_c);
+    const sitenumber = Number(id_s);
+    const usernumber = Number(id_user);
+
+    try {
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+      if (Number.isNaN(usernumber) || usernumber < 1) {
+        throw ApiError.badRequest("Invalid user ID");
+      }
+
+      const user = await getUserUseCase.execute({
+        contestnumber,
+        sitenumber,
+        usernumber,
+      });
+
+      return response.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async create(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const createUserUseCase = container.resolve(CreateUserUseCase);
+
+    const { id_c } = request.params;
+    const { id_s } = request.params;
+    const contestnumber = Number(id_c);
+    const sitenumber = Number(id_s);
 
     const {
-      usersitenumber,
-      usernumber,
       username,
+      usernumber,
       userfullname,
       userdesc,
       usertype,
@@ -71,19 +107,20 @@ class UserController {
       userlastlogout,
       userpermitip,
       userinfo,
-      usercpcid,
+      usericpcid,
     } = request.body;
 
-    const user = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
-
-    if (!user) {
-      return response.status(400).json({ error: "User not found" });
-    }
-
     try {
-      await createUserUseCase.execute({
-        contestnumber: parseInt(id_c, 10),
-        usersitenumber,
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+
+      const user = await createUserUseCase.execute({
+        contestnumber: contestnumber,
+        usersitenumber: sitenumber,
         usernumber,
         username,
         userfullname,
@@ -99,28 +136,30 @@ class UserController {
         userlastlogout,
         userpermitip,
         userinfo,
-        usercpcid,
+        usericpcid,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(user);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error creating User" });
+      next(error);
     }
   }
 
-  async update(request: Request, response: Response): Promise<Response> {
-    const updateUserUseCase = container.resolve(UpdateUserUseCase);
+  async updateFull(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const replaceUserUseCase = container.resolve(ReplaceUserUseCase);
 
+    const { id_c } = request.params;
+    const { id_s } = request.params;
     const { id_user } = request.params;
+    const contestnumber = Number(id_c);
+    const sitenumber = Number(id_s);
+    const usernumber = Number(id_user);
 
     const {
-      contestnumber,
-      usersitenumber,
       username,
       userfullname,
       userdesc,
@@ -135,14 +174,24 @@ class UserController {
       userlastlogout,
       userpermitip,
       userinfo,
-      usercpcid,
+      usericpcid,
     } = request.body;
 
     try {
-      await updateUserUseCase.execute({
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+      if (Number.isNaN(usernumber) || usernumber < 1) {
+        throw ApiError.badRequest("Invalid user ID");
+      }
+
+      const updatedUser = await replaceUserUseCase.execute({
         contestnumber,
-        usersitenumber,
-        usernumber: parseInt(id_user, 10),
+        usersitenumber: sitenumber,
+        usernumber,
         username,
         userfullname,
         userdesc,
@@ -157,37 +206,119 @@ class UserController {
         userlastlogout,
         userpermitip,
         userinfo,
-        usercpcid,
+        usericpcid,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(updatedUser);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
+      next(error);
+    }
+  }
+  
+  async updatePartial(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const patchUserUseCase = container.resolve(PatchUserUseCase);
+
+    const { id_c } = request.params;
+    const { id_s } = request.params;
+    const { id_user } = request.params;
+    const contestnumber = Number(id_c);
+    const sitenumber = Number(id_s);
+    const usernumber = Number(id_user);
+
+    const {
+      username,
+      userfullname,
+      userdesc,
+      usertype,
+      userenabled,
+      usermultilogin,
+      userpassword,
+      userip,
+      userlastlogin,
+      usersession,
+      usersessionextra,
+      userlastlogout,
+      userpermitip,
+      userinfo,
+      usericpcid,
+    } = request.body;
+
+    try {
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
       }
-      return response.status(400).json({ error: "Error Updating User" });
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+      if (Number.isNaN(usernumber) || usernumber < 1) {
+        throw ApiError.badRequest("Invalid user ID");
+      }
+
+      const updatedUser = await patchUserUseCase.execute({
+        contestnumber,
+        usersitenumber: sitenumber,
+        usernumber,
+        username,
+        userfullname,
+        userdesc,
+        usertype,
+        userenabled,
+        usermultilogin,
+        userpassword,
+        userip,
+        userlastlogin,
+        usersession,
+        usersessionextra,
+        userlastlogout,
+        userpermitip,
+        userinfo,
+        usericpcid,
+      });
+
+      return response.status(200).json(updatedUser);
+    } catch (error) {
+      next(error);
     }
   }
 
-  async delete(request: Request, response: Response) {
-    const { id_user } = request.params;
-    const idNumber = parseInt(id_user, 10);
+  async delete(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const deleteUserUseCase = container.resolve(DeleteUserUseCase);
 
+    const { id_c } = request.params;
+    const { id_s } = request.params;
+    const { id_user } = request.params;
+    const contestnumber = Number(id_c);
+    const sitenumber = Number(id_s);
+    const usernumber = Number(id_user);
+
     try {
-      await deleteUserUseCase.execute({ id: idNumber });
-      return response
-        .status(200)
-        .json({ message: "User deleted successfully" });
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
       }
-      return response.status(400).json({ error: "Error deleting User" });
+      if (Number.isNaN(sitenumber) || sitenumber < 1) {
+        throw ApiError.badRequest("Invalid site ID");
+      }
+      if (Number.isNaN(usernumber) || usernumber < 1) {
+        throw ApiError.badRequest("Invalid user ID");
+      }
+
+      await deleteUserUseCase.execute({
+        contestnumber,
+        usersitenumber: sitenumber,
+        usernumber,
+      });
+
+      return response.status(204).json();
+    } catch (error) {
+      next(error);
     }
   }
 }

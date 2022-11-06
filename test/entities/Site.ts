@@ -75,7 +75,7 @@ updateSite3Fail.siteduration = -7200;
 const patchSite3Fail = new Site();
 patchSite3Fail.contestnumber = 3;
 
-// Tenta modificar uma site que não existe
+// Tenta modificar um site que não existe
 const patchSite4Fail = new Site();
 patchSite4Fail.siteautojudge = true;
 

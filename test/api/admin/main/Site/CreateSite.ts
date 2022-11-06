@@ -5,8 +5,8 @@ import {
   createSite3Pass,
   createSite4Fail,
   createSite5Fail,
-} from "../../../entities/Site";
-import { URL } from "../../URL";
+} from "../../../../entities/Site";
+import { URL } from "../../../URL";
 
 /**
  *  - Contest Beta deve existir ainda
@@ -70,13 +70,13 @@ describe("Criação de um site", () => {
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Site name must be specified");
+      expect(response.body["error"]).to.include("sitename must be longer than");
     });
 
-    it('Tenta resgatar um site que não existe', async () => {
+    it("Tenta resgatar um site que não existe", async () => {
       const response = await request(URL)
         .get("/api/contest/2/site/4")
-        .set("Accept", "application/json")
+        .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");

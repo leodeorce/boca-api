@@ -1,13 +1,13 @@
-import { validate } from "class-validator";
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { Site } from "../../entities/Site";
 import { ApiError } from "../../errors/ApiError";
-import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import ContestValidator from "../../shared/validation/ContestValidator";
+import SiteValidator from "../../shared/validation/SiteValidator";
 
 interface IRequest {
   contestnumber: number;
-  sitenumber: number;
+  sitenumber?: number;
   siteip: string;
   sitename: string;
   siteactive: boolean;
@@ -33,12 +33,16 @@ interface IRequest {
 
 @injectable()
 class CreateSiteUseCase {
+  private contestValidator: ContestValidator;
+  private siteValidator: SiteValidator;
+
   constructor(
     @inject("SitesRepository")
-    private sitesRepository: SitesRepository,
-    @inject("ContestsRepository")
-    private contestRepository: ContestsRepository
-  ) {}
+    private sitesRepository: SitesRepository
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.siteValidator = container.resolve(SiteValidator);
+  }
 
   async execute({
     contestnumber,
@@ -65,15 +69,7 @@ class CreateSiteUseCase {
     sitemaxruntime,
     sitemaxjudgewaittime,
   }: IRequest): Promise<Site> {
-    const existingContest = await this.contestRepository.getById(contestnumber);
-    if (!existingContest) {
-      throw ApiError.notFound("Contest does not exist");
-    }
-
-    sitename = sitename ? sitename.trim() : "";
-    if (sitename.length === 0) {
-      throw ApiError.badRequest("Site name must be specified");
-    }
+    const existingContest = await this.contestValidator.exists(contestnumber);
 
     if (
       contestnumber === undefined ||
@@ -96,14 +92,16 @@ class CreateSiteUseCase {
       throw ApiError.badRequest("Missing properties");
     }
 
+    // sitenumber é opcional. Caso não especificado, será o próximo ID disponível.
+    // Caso especificado, devemos verificar se já não existe.
     if (sitenumber === undefined) {
       let lastId = await this.sitesRepository.getLastId(contestnumber);
       lastId = lastId ? lastId : 0;
       sitenumber = lastId + 1;
     } else {
       const existingSite = await this.sitesRepository.getById(
-        sitenumber,
-        contestnumber
+        contestnumber,
+        sitenumber
       );
       if (existingSite !== undefined) {
         throw ApiError.alreadyExists(
@@ -159,13 +157,7 @@ class CreateSiteUseCase {
     site.sitemaxruntime = sitemaxruntime;
     site.sitemaxjudgewaittime = sitemaxjudgewaittime;
 
-    const validation = await validate(site);
-
-    if (validation.length > 0) {
-      const errors = validation[0].constraints as object;
-      const [, message] = Object.entries(errors)[0];
-      throw ApiError.badRequest(message);
-    }
+    await this.siteValidator.isValid(site);
 
     return await this.sitesRepository.create({
       contestnumber,

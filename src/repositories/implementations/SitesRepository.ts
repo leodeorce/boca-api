@@ -31,25 +31,18 @@ class SitesRepository implements ISitesRepository {
       })
       .getRawOne();
 
-    if (lastIdResult === undefined) {
-      return undefined;
-    }
-
-    return lastIdResult.id;
+    return lastIdResult !== undefined ? lastIdResult.id : undefined;
   }
 
   async getById(
-    sitenumber: number,
-    contestnumber: number
+    contestnumber: number,
+    sitenumber: number
   ): Promise<Site | undefined> {
     const site: Site | null = await this.repository.findOneBy({
-      sitenumber: sitenumber,
       contestnumber: contestnumber,
+      sitenumber: sitenumber,
     });
-    if (site === null) {
-      return undefined;
-    }
-    return site;
+    return site != null ? site : undefined;
   }
 
   async create(createObject: ICreateSiteDTO): Promise<Site> {

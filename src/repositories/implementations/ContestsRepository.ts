@@ -23,20 +23,14 @@ class ContestsRepository implements IContestRepository {
     const contest: Contest | null = await this.repository.findOneBy({
       contestactive: true,
     });
-    if (contest === null) {
-      return undefined;
-    }
-    return contest;
+    return contest != null ? contest : undefined;
   }
 
   async findByName(name: string): Promise<Contest | undefined> {
     const contest: Contest | null = await this.repository.findOneBy({
       contestname: name,
     });
-    if (contest === null) {
-      return undefined;
-    }
-    return contest;
+    return contest != null ? contest : undefined;
   }
 
   async getLastId(): Promise<number | undefined> {
@@ -45,21 +39,14 @@ class ContestsRepository implements IContestRepository {
       .select("MAX(contest.contestnumber)", "id")
       .getRawOne();
 
-    if (lastIdResult === undefined) {
-      return undefined;
-    }
-
-    return lastIdResult.id;
+    return lastIdResult !== undefined ? lastIdResult.id : undefined;
   }
 
   async getById(id: number): Promise<Contest | undefined> {
     const contest: Contest | null = await this.repository.findOneBy({
       contestnumber: id,
     });
-    if (contest === null) {
-      return undefined;
-    }
-    return contest;
+    return contest != null ? contest : undefined;
   }
 
   async create(createObject: ICreateContestDTO): Promise<Contest> {

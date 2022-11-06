@@ -1,63 +1,126 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import {
+  IsBoolean,
+  IsInt,
+  IsPositive,
+  IsString,
+  MaxLength,
+  MinLength,
+} from "class-validator";
+import { Column, Entity, PrimaryColumn } from "typeorm";
+import { IsType } from "../shared/validation/IsType";
 
 @Entity("usertable")
 class User {
-  @PrimaryColumn()
+  @PrimaryColumn("int4")
+  @IsPositive({ message: "contestnumber must be greater than zero" })
+  @IsInt()
   contestnumber!: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn("int4")
+  @IsPositive({ message: "usersitenumber must be greater than zero" })
+  @IsInt()
   usersitenumber!: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn("int4")
+  @IsPositive({ message: "usernumber must be greater than zero" })
+  @IsInt()
   usernumber!: number;
 
-  @Column()
+  @Column("varchar", { length: 20 })
+  @MaxLength(20)
+  @MinLength(1)
+  @IsString()
   username!: string;
 
-  @Column()
+  @Column("varchar", { length: 200 })
+  @MaxLength(200)
+  @MinLength(1)
+  @IsString()
   userfullname!: string;
 
-  @Column()
+  // TODO Validar manualmente
+  @Column("varchar", { length: 300 })
+  // @MaxLength(300)
+  // @MinLength(1)  // TODO Criar uma anotação manual parecida com IsType
+  @IsType(["string", "undefined"])
   userdesc?: string;
 
-  @Column()
+  @Column("varchar", { length: 20 })
+  @MaxLength(20)
+  @MinLength(1)
+  @IsString()
   usertype!: string;
 
   @Column("bool")
+  @IsBoolean()
   userenabled = true;
 
   @Column("bool")
+  @IsBoolean()
   usermultilogin = false;
 
   @Column("varchar", { length: 200 })
+  @MaxLength(200)
+  @MinLength(0)
+  @IsString()
   userpassword = "";
 
-  @Column()
+  // TODO Validar manualmente
+  @Column("varchar", { length: 300 })
+  // @MaxLength(300)
+  // @MinLength(8)
+  @IsType(["string", "undefined"])
   userip?: string;
 
-  @Column()
+  // TODO Validar manualmente
+  @Column("int4")
+  // @IsPositive({ message: "userlastlogin must be greater than zero" })
+  @IsType(["number", "undefined"], {
+    message: "If specified, userlastlogin must be greater than zero",
+  })
   userlastlogin?: number;
 
   @Column("varchar", { length: 50 })
+  @MaxLength(50)
+  @MinLength(0)
+  @IsString()
   usersession = "";
 
   @Column("varchar", { length: 50 })
+  @MaxLength(50)
+  @MinLength(0)
+  @IsString()
   usersessionextra = "";
 
-  @Column()
+  // TODO Validar manualmente
+  @Column("int4")
+  // @IsPositive({ message: "userlastlogout must be greater than zero" })
+  @IsType(["number", "undefined"], {
+    message: "If specified, userlastlogout must be greater than zero",
+  })
   userlastlogout?: number;
 
-  @Column()
-  userpermitip?: number;
+  // TODO Validar manualmente
+  @Column("varchar", { length: 300 })
+  // @MaxLength(300)
+  // @MinLength(8)
+  @IsType(["string", "undefined"])
+  userpermitip?: string;
 
   @Column("varchar", { length: 300 })
+  @MaxLength(300)
+  @MinLength(0)
+  @IsString()
   userinfo = "";
 
-  @UpdateDateColumn()
+  @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
 
   @Column("varchar", { length: 50 })
-  usercpcid = "";
+  @MaxLength(50)
+  @MinLength(0)
+  @IsString()
+  usericpcid = "";
 }
 
 export { User };

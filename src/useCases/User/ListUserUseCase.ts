@@ -1,22 +1,31 @@
-import { inject, injectable } from "tsyringe";
-
+import { container, inject, injectable } from "tsyringe";
 import { User } from "../../entities/User";
 import { UsersRepository } from "../../repositories/implementations/UsersRepository";
+import ContestValidator from "../../shared/validation/ContestValidator";
+import SiteValidator from "../../shared/validation/SiteValidator";
+
+interface IRequest {
+  contestnumber: number;
+  usersitenumber: number;
+}
 
 @injectable()
 class ListUsersUseCase {
+  private contestValidator: ContestValidator;
+  private siteValidator: SiteValidator;
+
   constructor(
     @inject("UsersRepository")
     private usersRepository: UsersRepository
-  ) {}
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.siteValidator = container.resolve(SiteValidator);
+  }
 
-  async execute(contestNumber: number): Promise<User[]> {
-    try {
-      const users = await this.usersRepository.list(contestNumber);
-      return users;
-    } catch (error) {
-      return Promise.reject(error);
-    }
+  async execute({ contestnumber, usersitenumber }: IRequest): Promise<User[]> {
+    await this.contestValidator.exists(contestnumber);
+    await this.siteValidator.exists(contestnumber, usersitenumber);
+    return await this.usersRepository.list(contestnumber, usersitenumber);
   }
 }
 

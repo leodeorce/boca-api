@@ -31,6 +31,7 @@ class ContestController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const getContestsUseCase = container.resolve(GetContestsUseCase);
+
     const { id } = request.params;
     const contestnumber = Number(id);
 
@@ -38,9 +39,11 @@ class ContestController {
       if (Number.isNaN(contestnumber) || contestnumber < 1) {
         throw ApiError.badRequest("Invalid contest ID");
       }
+
       const contest = await getContestsUseCase.execute({
         contestnumber: contestnumber,
       });
+
       return response.json(contest);
     } catch (error) {
       next(error);
@@ -97,8 +100,10 @@ class ContestController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const patchContestUseCase = container.resolve(PatchContestUseCase);
+
     const { id } = request.params;
     const contestnumber = Number(id);
+
     const {
       contestname,
       contestactive,
@@ -116,6 +121,10 @@ class ContestController {
     } = request.body;
 
     try {
+      if (Number.isNaN(contestnumber) || contestnumber < 1) {
+        throw ApiError.badRequest("Invalid contest ID");
+      }
+
       const updatedContest = await patchContestUseCase.execute({
         contestnumber: contestnumber,
         contestname,
@@ -145,8 +154,10 @@ class ContestController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const replaceContestUseCase = container.resolve(ReplaceContestUseCase);
+
     const { id } = request.params;
     const contestnumber = Number(id);
+
     const {
       contestname,
       contestactive,
@@ -196,9 +207,10 @@ class ContestController {
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
+    const deleteContestsUseCase = container.resolve(DeleteContestsUseCase);
+
     const { id } = request.params;
     const contestnumber = Number(id);
-    const deleteContestsUseCase = container.resolve(DeleteContestsUseCase);
 
     try {
       if (Number.isNaN(contestnumber) || contestnumber < 1) {
@@ -206,6 +218,7 @@ class ContestController {
       }
 
       await deleteContestsUseCase.execute({ contestnumber: contestnumber });
+
       return response.status(204).json();
     } catch (error) {
       next(error);

@@ -12,6 +12,8 @@ import {
 @Entity("contesttable")
 class Contest {
   @PrimaryColumn("int4")
+  @IsInt()
+  @IsPositive({ message: "contestnumber must be greater than zero" })
   contestnumber!: number;
 
   @Column("varchar", { length: 100 })
