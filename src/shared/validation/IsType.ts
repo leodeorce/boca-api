@@ -22,7 +22,7 @@ export function IsType(
       validator: {
         validate: (value: unknown) => types.includes(typeof value),
         defaultMessage: ({ value }: ValidationArguments) =>
-          `Current type ${typeof value} is not in [${types.join(", ")}]`,
+          `Current type "${typeof value}" is not in [${types.join(", ")}]`,
       },
     },
     validationOptions

@@ -22,24 +22,24 @@ interface ICreateUserDTO {
 }
 
 interface IUpdateUserDTO {
-  contestnumber?: number;
-  usersitenumber?: number;
+  contestnumber: number;
+  usersitenumber: number;
   usernumber: number;
-  username?: string;
-  userfullname?: string;
+  username: string;
+  userfullname: string;
   userdesc?: string;
-  usertype?: string;
-  userenabled?: boolean;
-  usermultilogin?: boolean;
-  userpassword?: string;
+  usertype: string;
+  userenabled: boolean;
+  usermultilogin: boolean;
+  userpassword: string;
   userip?: string;
   userlastlogin?: number;
-  usersession?: string;
-  usersessionextra?: string;
+  usersession: string;
+  usersessionextra: string;
   userlastlogout?: number;
-  userpermitip?: number;
-  userinfo?: string;
-  usericpcid?: string;
+  userpermitip?: string;
+  userinfo: string;
+  usericpcid: string;
 }
 
 interface ILastIdResult {
@@ -48,7 +48,7 @@ interface ILastIdResult {
 
 interface IUsersRepository {
   findByName(name: string): Promise<User | undefined>;
-  list(): Promise<User[]>;
+  list(contestnumber: number, usersitenumber: number): Promise<User[]>;
   create(user: ICreateUserDTO): Promise<User>;
   getLastId(
     contestnumber: number,
@@ -60,7 +60,11 @@ interface IUsersRepository {
     usernumber: number
   ): Promise<User | undefined>;
   update(user: IUpdateUserDTO): Promise<User>;
-  delete(contestnumber: number): Promise<void>;
+  delete(
+    contestnumber: number,
+    usersitenumber: number,
+    usernumber: number
+  ): Promise<void>;
 }
 
 export { IUsersRepository, ICreateUserDTO, ILastIdResult, IUpdateUserDTO };

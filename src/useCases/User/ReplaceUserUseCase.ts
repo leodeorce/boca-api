@@ -1,7 +1,8 @@
 import { container, inject, injectable } from "tsyringe";
-import { ApiError } from "../../errors/ApiError";
-import { UsersRepository } from "../../repositories/implementations/UsersRepository";
 import { User } from "../../entities/User";
+import { ApiError } from "../../errors/ApiError";
+
+import { UsersRepository } from "../../repositories/implementations/UsersRepository";
 import ContestValidator from "../../shared/validation/ContestValidator";
 import SiteValidator from "../../shared/validation/SiteValidator";
 import UserValidator from "../../shared/validation/UserValidator";
@@ -9,7 +10,7 @@ import UserValidator from "../../shared/validation/UserValidator";
 interface IRequest {
   contestnumber: number;
   usersitenumber: number;
-  usernumber?: number;
+  usernumber: number;
   username: string;
   userfullname: string;
   userdesc?: string;
@@ -28,7 +29,7 @@ interface IRequest {
 }
 
 @injectable()
-class CreateUserUseCase {
+class ReplaceUserUseCase {
   private contestValidator: ContestValidator;
   private siteValidator: SiteValidator;
   private userValidator: UserValidator;
@@ -44,8 +45,8 @@ class CreateUserUseCase {
 
   async execute({
     contestnumber,
-    usernumber,
     usersitenumber,
+    usernumber,
     username,
     userfullname,
     userdesc,
@@ -64,6 +65,7 @@ class CreateUserUseCase {
   }: IRequest): Promise<User> {
     await this.contestValidator.exists(contestnumber);
     await this.siteValidator.exists(contestnumber, usersitenumber);
+    await this.userValidator.exists(contestnumber, usersitenumber, usernumber);
 
     if (
       username === undefined ||
@@ -78,29 +80,6 @@ class CreateUserUseCase {
       usericpcid === undefined
     ) {
       throw ApiError.badRequest("Missing properties");
-    }
-
-    // usernumber é opcional. Caso não especificado, será o próximo ID disponível.
-    // Caso especificado, devemos verificar se já não existe.
-    if (usernumber === undefined) {
-      let lastId = await this.usersRepository.getLastId(
-        contestnumber,
-        usersitenumber
-      );
-      lastId = lastId ? lastId : 0;
-      usernumber = lastId + 1;
-    } else {
-      const existingUser = await this.usersRepository.getById(
-        contestnumber,
-        usersitenumber,
-        usernumber
-      );
-
-      if (existingUser !== undefined) {
-        throw ApiError.alreadyExists(
-          "User number already exists for this contest and site"
-        );
-      }
     }
 
     const user = new User();
@@ -125,27 +104,8 @@ class CreateUserUseCase {
 
     await this.userValidator.isValid(user);
 
-    return await this.usersRepository.create({
-      contestnumber,
-      usersitenumber,
-      usernumber,
-      username,
-      userfullname,
-      userdesc,
-      usertype,
-      userenabled,
-      usermultilogin,
-      userpassword,
-      userip,
-      userlastlogin,
-      usersession,
-      usersessionextra,
-      userlastlogout,
-      userpermitip,
-      userinfo,
-      usericpcid,
-    });
+    return await this.usersRepository.update({ ...user });
   }
 }
 
-export { CreateUserUseCase };
+export { ReplaceUserUseCase };

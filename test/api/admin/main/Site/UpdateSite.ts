@@ -84,7 +84,7 @@ describe("Modifica os sites criados anteriormente", () => {
         .patch("/api/contest/2/site/3")
         .set("Accept", "application/json")
         .send(patchSite3Fail);
-      expect(response.statusCode).to.equal(200);
+      expect(response.statusCode).to.equal(200);  // TODO Modificar para 400
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
       expect(response.body["sitenumber"]).to.equal(3);

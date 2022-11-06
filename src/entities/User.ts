@@ -1,4 +1,11 @@
-import { IsBoolean, IsInt, IsPositive, IsString, MaxLength, MinLength } from "class-validator";
+import {
+  IsBoolean,
+  IsInt,
+  IsPositive,
+  IsString,
+  MaxLength,
+  MinLength,
+} from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { IsType } from "../shared/validation/IsType";
 
@@ -34,7 +41,7 @@ class User {
   // TODO Validar manualmente
   @Column("varchar", { length: 300 })
   // @MaxLength(300)
-  // @MinLength(1)
+  // @MinLength(1)  // TODO Criar uma anotação manual parecida com IsType
   @IsType(["string", "undefined"])
   userdesc?: string;
 
@@ -68,7 +75,9 @@ class User {
   // TODO Validar manualmente
   @Column("int4")
   // @IsPositive({ message: "userlastlogin must be greater than zero" })
-  @IsType(["number", "undefined"])
+  @IsType(["number", "undefined"], {
+    message: "If specified, userlastlogin must be greater than zero",
+  })
   userlastlogin?: number;
 
   @Column("varchar", { length: 50 })
@@ -86,7 +95,9 @@ class User {
   // TODO Validar manualmente
   @Column("int4")
   // @IsPositive({ message: "userlastlogout must be greater than zero" })
-  @IsType(["number", "undefined"])
+  @IsType(["number", "undefined"], {
+    message: "If specified, userlastlogout must be greater than zero",
+  })
   userlastlogout?: number;
 
   // TODO Validar manualmente
