@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import request from "supertest";
-import { User } from "../../../../../src/entities/User";
+import { User } from "../../../src/entities/User";
 import {
   createNewUserPass,
   createUser3Pass,
@@ -10,8 +10,8 @@ import {
   patchUser4Fail,
   updateUser1Pass,
   // updateUser3Fail,
-} from "../../../../entities/User";
-import { URL } from "../../../URL";
+} from "../../entities/User";
+import { URL } from "../URL";
 
 describe("Modifica os usuários criados anteriormente", () => {
   let time1: User; // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
@@ -63,7 +63,6 @@ describe("Modifica os usuários criados anteriormente", () => {
   });
 
   describe("Fluxo negativo", () => {
-
     // TODO Habilitar quando existir validação manual
 
     // it("Tenta modificar a descrição do Time 3 para um valor inválido", async () => {

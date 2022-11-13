@@ -14,3 +14,8 @@ import "./UpdateUser"
  *   User "Time 1" do Site 1 de Contest Beta é deletado
  */
 import "./DeleteUser";
+
+/**
+ *   Estado final:
+ *     Contest Beta (ID: 2) passa a ter User "Time 1" (ID: 1).
+ */

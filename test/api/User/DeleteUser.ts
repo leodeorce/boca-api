@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import request from "supertest";
-import { User } from "../../../../../src/entities/User";
-import { URL } from "../../../URL";
+import { User } from "../../../src/entities/User";
+import { URL } from "../URL";
 
 describe("Remoção de um user", () => {
   describe("Fluxo positivo", () => {
