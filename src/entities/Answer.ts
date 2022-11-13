@@ -5,6 +5,7 @@ import {
   MaxLength,
   MinLength,
   IsBoolean,
+  Min,
 } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
@@ -16,13 +17,13 @@ class Answer {
   contestnumber!: number;
 
   @PrimaryColumn("int4")
-  @IsPositive({ message: "answernumber must be greater than zero" })
+  @Min(0)
   @IsInt()
   answernumber!: number;
 
   @Column("varchar", { length: 50 })
   @MaxLength(50)
-  @MinLength(0)
+  @MinLength(1)
   @IsString()
   runanswer!: string;
 

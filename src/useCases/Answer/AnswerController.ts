@@ -7,7 +7,8 @@ import { CreateAnswerUseCase } from "./CreateAnswerUseCase";
 import { DeleteAnswerUseCase } from "./DeleteAnswerUseCase";
 import { GetAnswerUseCase } from "./GetAnswerUseCase";
 import { ListAnswersUseCase } from "./ListAnswersUseCase";
-import { UpdateAnswerUseCase } from "./UpdateAnswerUseCase";
+import { PatchAnswerUseCase } from "./PatchAnswerUseCase";
+import { ReplaceAnswerUseCase } from "./ReplaceAnswerUseCase";
 
 class AnswerController {
   async listAll(
@@ -16,12 +17,17 @@ class AnswerController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const listAnswersUseCase = container.resolve(ListAnswersUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
     try {
-      const all = await listAnswersUseCase.execute(parseInt(id_c, 10));
-      return response.json(all);
+      idValidator.isContestId(contestnumber);
+
+      const all = await listAnswersUseCase.execute({ contestnumber });
+
+      return response.status(200).json(all);
     } catch (error) {
       next(error);
     }
@@ -33,13 +39,23 @@ class AnswerController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const getAnswerUseCase = container.resolve(GetAnswerUseCase);
-    const { id_answer } = request.params;
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const { id_a } = request.params;
+    const contestnumber = Number(id_c);
+    const answernumber = Number(id_a);
 
     try {
+      idValidator.isContestId(contestnumber);
+      idValidator.isAnswerId(answernumber);
+
       const answer = await getAnswerUseCase.execute({
-        id: parseInt(id_answer, 10),
+        contestnumber,
+        answernumber,
       });
-      return response.json(answer);
+
+      return response.status(200).json(answer);
     } catch (error) {
       next(error);
     }
@@ -59,7 +75,7 @@ class AnswerController {
     const { answernumber, fake, runanswer, yes } = request.body;
 
     try {
-      idValidator.isAnswerId(contestnumber);
+      idValidator.isContestId(contestnumber);
 
       const contest = await createAnswerUseCase.execute({
         contestnumber,
@@ -75,27 +91,67 @@ class AnswerController {
     }
   }
 
-  async update(
+  async updateFull(
     request: Request,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const updateAnswerUseCase = container.resolve(UpdateAnswerUseCase);
+    const replaceAnswerUseCase = container.resolve(ReplaceAnswerUseCase);
+    const idValidator = container.resolve(IdValidator);
 
-    const { id_answer } = request.params;
+    const { id_c } = request.params;
+    const { id_a } = request.params;
+    const contestnumber = Number(id_c);
+    const answernumber = Number(id_a);
 
-    const { contestnumber, fake, runanswer, yes } = request.body;
+    const { fake, runanswer, yes } = request.body;
 
     try {
-      await updateAnswerUseCase.execute({
-        answernumber: parseInt(id_answer, 10),
+      idValidator.isContestId(contestnumber);
+      idValidator.isAnswerId(answernumber);
+
+      const updatedAnswer = await replaceAnswerUseCase.execute({
         contestnumber,
+        answernumber,
         fake,
         runanswer,
         yes,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(updatedAnswer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updatePartial(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const patchAnswerUseCase = container.resolve(PatchAnswerUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const { id_a } = request.params;
+    const contestnumber = Number(id_c);
+    const answernumber = Number(id_a);
+
+    const { fake, runanswer, yes } = request.body;
+
+    try {
+      idValidator.isContestId(contestnumber);
+      idValidator.isAnswerId(answernumber);
+
+      const updatedAnswer = await patchAnswerUseCase.execute({
+        contestnumber,
+        answernumber,
+        fake,
+        runanswer,
+        yes,
+      });
+
+      return response.status(200).json(updatedAnswer);
     } catch (error) {
       next(error);
     }
@@ -106,15 +162,21 @@ class AnswerController {
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const { id_answer } = request.params;
-    const idNumber = parseInt(id_answer, 10);
     const deleteAnswerUseCase = container.resolve(DeleteAnswerUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const { id_a } = request.params;
+    const contestnumber = Number(id_c);
+    const answernumber = Number(id_a);
 
     try {
-      await deleteAnswerUseCase.execute({ id: idNumber });
-      return response
-        .status(200)
-        .json({ message: "Answer deleted successfully" });
+      idValidator.isContestId(contestnumber);
+      idValidator.isAnswerId(answernumber);
+
+      await deleteAnswerUseCase.execute({ contestnumber, answernumber });
+
+      return response.status(204).json();
     } catch (error) {
       next(error);
     }

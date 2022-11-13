@@ -21,7 +21,7 @@ interface ILastIdResult {
 }
 
 interface IAnswersRepository {
-  list(contestNumber: number): Promise<Answer[]>;
+  list(contestnumber: number): Promise<Answer[]>;
   create(answer: ICreateAnswerDTO): Promise<Answer>;
   getLastId(contestnumber: number): Promise<number | undefined>;
   getById(
@@ -29,7 +29,7 @@ interface IAnswersRepository {
     answernumber: number
   ): Promise<Answer | undefined>;
   update(answer: IUpdateAnswerDTO): Promise<Answer>;
-  delete(answernumber: number): Promise<void>;
+  delete(contestnumber: number, answernumber: number): Promise<void>;
 }
 
 export {

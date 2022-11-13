@@ -8,9 +8,9 @@ const answerController = new AnswerController();
 
 AnswersRoutes.get("/contest/:id_c/answer", answerController.listAll);
 AnswersRoutes.post("/contest/:id_c/answer", answerController.create);
-
-AnswersRoutes.get("/answer/:id_answer", answerController.getOne);
-AnswersRoutes.put("/answer/:id_answer", answerController.update);
-AnswersRoutes.delete("/answer/:id_answer", answerController.delete);
+AnswersRoutes.get("/contest/:id_c/answer/:id_a", answerController.getOne);
+AnswersRoutes.put("/contest/:id_c/answer/:id_a", answerController.updateFull);
+AnswersRoutes.patch("/contest/:id_c/answer/:id_a", answerController.updatePartial);
+AnswersRoutes.delete("/contest/:id_c/answer/:id_a", answerController.delete);
 
 export { AnswersRoutes };

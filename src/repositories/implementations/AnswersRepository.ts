@@ -16,11 +16,10 @@ class AnswersRepository implements IAnswersRepository {
     this.repository = AppDataSource.getRepository(Answer);
   }
 
-  async list(contestNumber: number): Promise<Answer[]> {
-    const answers: Answer[] = await this.repository.query(
-      `SELECT * FROM answertable WHERE contestnumber = ${contestNumber}`
-    );
-    return answers;
+  async list(contestnumber: number): Promise<Answer[]> {
+    return await this.repository.find({
+      where: { contestnumber: contestnumber },
+    });
   }
 
   async getById(
@@ -54,37 +53,31 @@ class AnswersRepository implements IAnswersRepository {
   }
 
   async update(updateObject: IUpdateAnswerDTO): Promise<Answer> {
-    // Remover parâmetros vazios (string vazia ou nulos, etc)
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(updateObject).filter(([_, v]) => v != null)
-    );
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Answer)
+      .set(updateObject)
+      .where("contestnumber = :contestnumber", {
+        contestnumber: updateObject.contestnumber,
+      })
+      .andWhere("answernumber = :answernumber", {
+        answernumber: updateObject.answernumber,
+      })
+      .returning("*")
+      .execute();
 
-    let query = `UPDATE answertable\n`;
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length > 0) {
-      query = query.concat(`SET `);
-    }
-
-    KeysAndValues.forEach((object) => {
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}'` : object[1];
-      query = query.concat(`${object[0]} = ${value}, `);
-    });
-    query = query.trim(); // Remove espaços em branco desnecessarios
-    query = query.slice(0, query.length - 1); // Retira a ultima virgula
-    query = query.concat(
-      `\nWHERE answernumber = ${updateObject.answernumber} ;`
-    );
-
-    const updatedContest: Answer[] = await this.repository.query(query);
-
-    return updatedContest[0];
+    const updatedAnswer: Record<string, unknown> = result.raw[0];
+    return this.repository.create(updatedAnswer);
   }
 
-  async delete(contestnumber: number): Promise<void> {
-    const query = `DELETE FROM answertable WHERE answernumber=${contestnumber}`;
-    await this.repository.query(query);
+  async delete(contestnumber: number, answernumber: number): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Answer)
+      .where("contestnumber = :contestnumber", { contestnumber: contestnumber })
+      .andWhere("answernumber = :answernumber", { answernumber: answernumber })
+      .execute();
   }
 }
 
