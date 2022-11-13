@@ -1,17 +1,17 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import request from "supertest";
-import { Site } from "../../../../../src/entities/Site";
+import { Site } from "../../../src/entities/Site";
 import {
   createNewSitePass,
-  createSite3Pass,
-  patchSite3Fail,
-  patchSite3Pass,
-  patchSite4Fail,
   updateSite1Pass,
+  createSite3Pass,
+  patchSite3Pass,
   updateSite3Fail,
-} from "../../../../entities/Site";
-import { URL } from "../../../URL";
+  patchSite3Fail,
+  patchSite4Fail,
+} from "../../entities/Site";
+import { URL } from "../URL";
 
 describe("Modifica os sites criados anteriormente", () => {
   let site1: Site; // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
@@ -84,7 +84,7 @@ describe("Modifica os sites criados anteriormente", () => {
         .patch("/api/contest/2/site/3")
         .set("Accept", "application/json")
         .send(patchSite3Fail);
-      expect(response.statusCode).to.equal(200);  // TODO Modificar para 400
+      expect(response.statusCode).to.equal(200); // TODO Modificar para 400
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
       expect(response.body["sitenumber"]).to.equal(3);

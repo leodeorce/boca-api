@@ -5,8 +5,8 @@ import {
   createSite3Pass,
   createSite4Fail,
   createSite5Fail,
-} from "../../../../entities/Site";
-import { URL } from "../../../URL";
+} from "../../entities/Site";
+import { URL } from "../URL";
 
 /**
  *  - Contest Beta deve existir ainda

@@ -2,8 +2,8 @@ import { container, inject, injectable } from "tsyringe";
 import { Site } from "../../entities/Site";
 import { ApiError } from "../../errors/ApiError";
 import { SitesRepository } from "../../repositories/implementations/SitesRepository";
-import ContestValidator from "../../shared/validation/ContestValidator";
-import SiteValidator from "../../shared/validation/SiteValidator";
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import SiteValidator from "../../shared/validation/entities/SiteValidator";
 
 interface IRequest {
   contestnumber: number;
@@ -146,31 +146,7 @@ class ReplaceSiteUseCase {
 
     await this.siteValidator.isValid(site);
 
-    return await this.sitesRepository.update({
-      contestnumber,
-      sitenumber,
-      siteip,
-      sitename,
-      siteactive,
-      sitepermitlogins,
-      sitelastmileanswer,
-      sitelastmilescore,
-      siteduration,
-      siteautoend,
-      sitejudging,
-      sitetasking,
-      siteglobalscore,
-      sitescorelevel,
-      sitenextuser,
-      sitenextclar,
-      sitenextrun,
-      sitenexttask,
-      sitemaxtask,
-      sitechiefname,
-      siteautojudge,
-      sitemaxruntime,
-      sitemaxjudgewaittime,
-    });
+    return await this.sitesRepository.update({ ...site });
   }
 }
 

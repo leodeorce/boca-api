@@ -1,11 +1,11 @@
 import { validate } from "class-validator";
 import { injectable } from "tsyringe";
-import { ApiError } from "../../errors/ApiError";
+import { ApiError } from "../../../errors/ApiError";
 
 @injectable()
-class Validator<T> {
-  async isValid(contest: T): Promise<void> {
-    const validation = await validate(contest as object);
+class EntityValidator<T> {
+  async isValid(entity: T): Promise<void> {
+    const validation = await validate(entity as object);
 
     if (validation.length > 0) {
       const errors = validation[0].constraints as object;
@@ -15,4 +15,4 @@ class Validator<T> {
   }
 }
 
-export default Validator;
+export default EntityValidator;

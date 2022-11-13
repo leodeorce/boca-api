@@ -1,63 +1,73 @@
 import { expect } from "chai";
 import request from "supertest";
-import { Site } from "../../../../../src/entities/Site";
-import { updateSite1Pass } from "../../../../entities/Site";
-import { URL } from "../../../URL";
+import { Answer } from "../../../src/entities/Answer";
+import { URL } from "../URL";
 
-describe("Remoção de um site", () => {
+describe("Remoção de uma answer", () => {
   describe("Fluxo positivo", () => {
-    it('Deleta o Site 3 do "Contest Beta"', async () => {
+    it('Deleta a answer 2 do "Contest Beta"', async () => {
       const response = await request(URL)
-        .delete("/api/contest/2/site/3")
+        .delete("/api/contest/2/answer/2")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(204);
       expect(response.headers).to.not.have.own.property("content-type");
       expect(response.body).to.be.empty;
     });
 
-    it("Resgata todos os sites, mas o Site 3 foi deletado", async () => {
+    it("Resgata todas as answers, mas a answer 2 foi deletada", async () => {
       const all = await request(URL)
-        .get("/api/contest/2/site")
+        .get("/api/contest/2/answer")
         .set("Accept", "application/json");
       expect(all.statusCode).to.equal(200);
       expect(all.headers["content-type"]).to.contain("application/json");
       expect(all.body).to.be.an("array");
 
-      // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
-      const site1 = all.body.find((site: Site) => site.sitenumber === 1);
-      const site3 = all.body.find((site: Site) => site.sitenumber === 3);
+      const answer0 = all.body.find(
+        (answer: Answer) => answer.answernumber === 0
+      );
+      const answer1 = all.body.find(
+        (answer: Answer) => answer.answernumber === 1
+      );
+      const answer2 = all.body.find(
+        (answer: Answer) => answer.answernumber === 2
+      );
 
-      expect(site3).to.be.undefined;
-      expect(site1).to.be.an("object");
-      expect(site1).to.have.own.property("sitenumber");
-      expect(site1).to.deep.include(updateSite1Pass);
+      expect(answer2).to.be.undefined;
+
+      expect(answer0).to.be.an("object");
+      expect(answer0).to.have.own.property("answernumber");
+      // expect(answer0).to.deep.include(updateAnswer0Pass);
+
+      expect(answer1).to.be.an("object");
+      expect(answer1).to.have.own.property("answernumber");
+      // expect(answer1).to.deep.include(updateAnswer1Pass);
     });
   });
 
   describe("Fluxo negativo", () => {
-    it("Tenta resgatar o Site 3 deletado", async () => {
+    it("Tenta resgatar a answer 2 deletada", async () => {
       const response = await request(URL)
-        .get("/api/contest/2/site/3")
+        .get("/api/contest/2/answer/2")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Site does not exist");
+      expect(response.body["error"]).to.include("Answer does not exist");
     });
 
-    it("Tenta deletar novamente o Site 3", async () => {
+    it("Tenta deletar novamente a answer 2", async () => {
       const response = await request(URL)
-        .delete("/api/contest/2/site/3")
+        .delete("/api/contest/2/answer/3")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Site does not exist");
+      expect(response.body["error"]).to.include("Answer does not exist");
     });
 
-    it("Tenta deletar o Site 1 de um contest inexistente", async () => {
+    it("Tenta deletar a answer 0 de um contest inexistente", async () => {
       const response = await request(URL)
-        .delete("/api/contest/3/site/1")
+        .delete("/api/contest/3/answer/0")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");

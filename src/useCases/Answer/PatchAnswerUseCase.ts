@@ -1,7 +1,5 @@
 import { container, inject, injectable } from "tsyringe";
 import { Answer } from "../../entities/Answer";
-import { ApiError } from "../../errors/ApiError";
-
 import { AnswersRepository } from "../../repositories/implementations/AnswersRepository";
 import AnswerValidator from "../../shared/validation/entities/AnswerValidator";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
@@ -14,8 +12,9 @@ interface IRequest {
   fake: boolean;
 }
 
+// TODO Modificar para retornar erro caso nenhuma das propriedades forem passadas
 @injectable()
-class CreateAnswerUseCase {
+class PatchAnswerUseCase {
   private contestValidator: ContestValidator;
   private answerValidator: AnswerValidator;
 
@@ -28,42 +27,30 @@ class CreateAnswerUseCase {
   }
 
   async execute({
-    contestnumber,
     answernumber,
+    contestnumber,
     fake,
     runanswer,
     yes,
   }: IRequest): Promise<Answer> {
     await this.contestValidator.exists(contestnumber);
-
-    if (
-      fake === undefined ||
-      runanswer === undefined ||
-      yes === undefined ||
-      answernumber === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
-
-    const existingAnswer = await this.answersRepository.getById(
+    const existingAnswer = await this.answerValidator.exists(
       contestnumber,
       answernumber
     );
-    if (existingAnswer !== undefined) {
-      throw ApiError.alreadyExists("Answer already exists for this contest");
-    }
 
     const answer = new Answer();
     answer.contestnumber = contestnumber;
     answer.answernumber = answernumber;
-    answer.fake = fake;
-    answer.runanswer = runanswer;
-    answer.yes = yes;
+    answer.fake = fake !== undefined ? fake : existingAnswer.fake;
+    answer.runanswer =
+      runanswer !== undefined ? runanswer : existingAnswer.runanswer;
+    answer.yes = yes !== undefined ? yes : existingAnswer.yes;
 
     await this.answerValidator.isValid(answer);
 
-    return await this.answersRepository.create({ ...answer });
+    return await this.answersRepository.update({ ...answer });
   }
 }
 
-export { CreateAnswerUseCase };
+export { PatchAnswerUseCase };

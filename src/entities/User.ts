@@ -7,7 +7,7 @@ import {
   MinLength,
 } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { IsType } from "../shared/validation/IsType";
+import { IsType } from "../shared/validation/utils/IsType";
 
 @Entity("usertable")
 class User {

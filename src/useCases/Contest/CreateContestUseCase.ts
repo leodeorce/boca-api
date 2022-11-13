@@ -3,7 +3,7 @@ import { ApiError } from "../../errors/ApiError";
 import { container, inject, injectable } from "tsyringe";
 
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
-import ContestValidator from "../../shared/validation/ContestValidator";
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {
   contestname: string;
@@ -103,22 +103,7 @@ class CreateContestsUseCase {
 
     await this.contestValidator.isValid(contest);
 
-    return await this.contestsRepository.create({
-      contestnumber,
-      contestname,
-      conteststartdate,
-      contestduration,
-      contestlastmileanswer,
-      contestlastmilescore,
-      contestlocalsite,
-      contestpenalty,
-      contestmaxfilesize,
-      contestactive,
-      contestmainsite,
-      contestkeys,
-      contestunlockkey,
-      contestmainsiteurl,
-    });
+    return await this.contestsRepository.create({ ...contest });
   }
 }
 
