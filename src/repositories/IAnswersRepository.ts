@@ -16,17 +16,25 @@ interface IUpdateAnswerDTO {
   fake?: boolean;
 }
 
-interface ICountResult {
-  max: number;
+interface ILastIdResult {
+  id: number;
 }
 
 interface IAnswersRepository {
   list(contestNumber: number): Promise<Answer[]>;
-  create(answer: ICreateAnswerDTO): Promise<void>;
-  count(): Promise<number>;
-  getById(id: number): Promise<Answer | undefined>;
+  create(answer: ICreateAnswerDTO): Promise<Answer>;
+  getLastId(contestnumber: number): Promise<number | undefined>;
+  getById(
+    contestnumber: number,
+    answernumber: number
+  ): Promise<Answer | undefined>;
   update(answer: IUpdateAnswerDTO): Promise<Answer>;
   delete(answernumber: number): Promise<void>;
 }
 
-export { IAnswersRepository, ICreateAnswerDTO, IUpdateAnswerDTO, ICountResult };
+export {
+  IAnswersRepository,
+  ICreateAnswerDTO,
+  IUpdateAnswerDTO,
+  ILastIdResult,
+};

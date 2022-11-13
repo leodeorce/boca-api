@@ -1,9 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { QueryFailedError } from "typeorm";
+import IdValidator from "../../shared/validation/utils/IdValidator";
 
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
 import { CreateAnswerUseCase } from "./CreateAnswerUseCase";
 import { DeleteAnswerUseCase } from "./DeleteAnswerUseCase";
 import { GetAnswerUseCase } from "./GetAnswerUseCase";
@@ -11,7 +10,11 @@ import { ListAnswersUseCase } from "./ListAnswersUseCase";
 import { UpdateAnswerUseCase } from "./UpdateAnswerUseCase";
 
 class AnswerController {
-  async listAll(request: Request, response: Response): Promise<Response> {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const listAnswersUseCase = container.resolve(ListAnswersUseCase);
 
     const { id_c } = request.params;
@@ -20,16 +23,15 @@ class AnswerController {
       const all = await listAnswersUseCase.execute(parseInt(id_c, 10));
       return response.json(all);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error getting Answers" });
+      next(error);
     }
   }
 
-  async getOne(request: Request, response: Response): Promise<Response> {
+  async getOne(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const getAnswerUseCase = container.resolve(GetAnswerUseCase);
     const { id_answer } = request.params;
 
@@ -39,50 +41,45 @@ class AnswerController {
       });
       return response.json(answer);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-
-      return response.status(400).json({ error: "Error getting Answer" });
+      next(error);
     }
   }
 
-  async create(request: Request, response: Response): Promise<Response> {
+  async create(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const createAnswerUseCase = container.resolve(CreateAnswerUseCase);
-    const getContestUseCase = container.resolve(GetContestsUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
-    const { fake, runanswer, yes } = request.body;
-
-    const contest = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
-
-    if (!contest) {
-      throw new Error("Contest not found");
-    }
+    const { answernumber, fake, runanswer, yes } = request.body;
 
     try {
-      await createAnswerUseCase.execute({
-        contestnumber: contest.contestnumber,
+      idValidator.isAnswerId(contestnumber);
+
+      const contest = await createAnswerUseCase.execute({
+        contestnumber,
+        answernumber,
         fake,
         runanswer,
         yes,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(contest);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error creating Answer" });
+      next(error);
     }
   }
 
-  async update(request: Request, response: Response): Promise<Response> {
+  async update(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const updateAnswerUseCase = container.resolve(UpdateAnswerUseCase);
 
     const { id_answer } = request.params;
@@ -100,16 +97,15 @@ class AnswerController {
 
       return response.status(201).send();
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error updating Answer" });
+      next(error);
     }
   }
 
-  async delete(request: Request, response: Response) {
+  async delete(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const { id_answer } = request.params;
     const idNumber = parseInt(id_answer, 10);
     const deleteAnswerUseCase = container.resolve(DeleteAnswerUseCase);
@@ -120,12 +116,7 @@ class AnswerController {
         .status(200)
         .json({ message: "Answer deleted successfully" });
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error deleting Answer" });
+      next(error);
     }
   }
 }

@@ -1,19 +1,19 @@
-import { getRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../database";
 
 import { Answer } from "../../entities/Answer";
-import { Contest } from "../../entities/Contest";
 import {
   IAnswersRepository,
-  ICountResult,
   ICreateAnswerDTO,
+  ILastIdResult,
   IUpdateAnswerDTO,
 } from "../IAnswersRepository";
 
 class AnswersRepository implements IAnswersRepository {
-  private repository: Repository<Contest>;
+  private repository: Repository<Answer>;
 
   constructor() {
-    this.repository = getRepository(Contest);
+    this.repository = AppDataSource.getRepository(Answer);
   }
 
   async list(contestNumber: number): Promise<Answer[]> {
@@ -23,62 +23,34 @@ class AnswersRepository implements IAnswersRepository {
     return answers;
   }
 
-  async getById(id: number): Promise<Answer | undefined> {
-    const answer: Answer[] = await this.repository.query(
-      `SELECT * FROM answertable WHERE answernumber = ${id}`
-    );
-    if (answer.length === 0) {
-      return undefined;
-    }
-    return answer[0];
-  }
-
-  async count(): Promise<number> {
-    const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(answernumber) FROM answertable`
-    );
-    if (count[0].max === null) {
-      return -1;
-    }
-
-    return count[0].max;
-  }
-
-  async create(createObject: ICreateAnswerDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
-
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(createObject).filter(([_, v]) => v != null)
-    );
-
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
-    }
-
-    KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
+  async getById(
+    contestnumber: number,
+    answernumber: number
+  ): Promise<Answer | undefined> {
+    const answer: Answer | null = await this.repository.findOneBy({
+      contestnumber: contestnumber,
+      answernumber: answernumber,
     });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
 
-    const query = `INSERT INTO answertable 
-      (
-        ${createColumns}
-      ) VALUES (
-        ${createValues}
-      );`;
+    return answer != null ? answer : undefined;
+  }
 
-    await this.repository.query(query);
-    return Promise.resolve();
+  async getLastId(contestnumber: number): Promise<number | undefined> {
+    const lastIdResult: ILastIdResult | undefined = await this.repository
+      .createQueryBuilder("answer")
+      .select("MAX(answer.answernumber)", "id")
+      .where("answer.contestnumber = :contestnumber", {
+        contestnumber: contestnumber,
+      })
+      .getRawOne();
+
+    return lastIdResult !== undefined ? lastIdResult.id : undefined;
+  }
+
+  async create(createObject: ICreateAnswerDTO): Promise<Answer> {
+    const answer = this.repository.create(createObject);
+    await this.repository.save(answer);
+    return answer;
   }
 
   async update(updateObject: IUpdateAnswerDTO): Promise<Answer> {
