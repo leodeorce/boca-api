@@ -3,7 +3,7 @@ import { ApiError } from "../../errors/ApiError";
 import { container, inject, injectable } from "tsyringe";
 
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
-import ContestValidator from "../../shared/validation/ContestValidator";
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {
   contestname: string;
