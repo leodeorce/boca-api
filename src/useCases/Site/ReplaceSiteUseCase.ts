@@ -146,31 +146,7 @@ class ReplaceSiteUseCase {
 
     await this.siteValidator.isValid(site);
 
-    return await this.sitesRepository.update({
-      contestnumber,
-      sitenumber,
-      siteip,
-      sitename,
-      siteactive,
-      sitepermitlogins,
-      sitelastmileanswer,
-      sitelastmilescore,
-      siteduration,
-      siteautoend,
-      sitejudging,
-      sitetasking,
-      siteglobalscore,
-      sitescorelevel,
-      sitenextuser,
-      sitenextclar,
-      sitenextrun,
-      sitenexttask,
-      sitemaxtask,
-      sitechiefname,
-      siteautojudge,
-      sitemaxruntime,
-      sitemaxjudgewaittime,
-    });
+    return await this.sitesRepository.update({ ...site });
   }
 }
 

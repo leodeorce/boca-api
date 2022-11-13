@@ -103,22 +103,7 @@ class CreateContestsUseCase {
 
     await this.contestValidator.isValid(contest);
 
-    return await this.contestsRepository.create({
-      contestnumber,
-      contestname,
-      conteststartdate,
-      contestduration,
-      contestlastmileanswer,
-      contestlastmilescore,
-      contestlocalsite,
-      contestpenalty,
-      contestmaxfilesize,
-      contestactive,
-      contestmainsite,
-      contestkeys,
-      contestunlockkey,
-      contestmainsiteurl,
-    });
+    return await this.contestsRepository.create({ ...contest });
   }
 }
 

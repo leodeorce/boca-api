@@ -125,26 +125,7 @@ class CreateUserUseCase {
 
     await this.userValidator.isValid(user);
 
-    return await this.usersRepository.create({
-      contestnumber,
-      usersitenumber,
-      usernumber,
-      username,
-      userfullname,
-      userdesc,
-      usertype,
-      userenabled,
-      usermultilogin,
-      userpassword,
-      userip,
-      userlastlogin,
-      usersession,
-      usersessionextra,
-      userlastlogout,
-      userpermitip,
-      userinfo,
-      usericpcid,
-    });
+    return await this.usersRepository.create({ ...user });
   }
 }
 

@@ -108,22 +108,7 @@ class ReplaceContestUseCase {
       }
     }
 
-    return await this.contestsRepository.update({
-      contestnumber: contest.contestnumber,
-      contestname: contest.contestname,
-      contestactive: contest.contestactive,
-      contestduration: contest.contestduration,
-      contestkeys: contest.contestkeys,
-      contestlastmileanswer: contest.contestlastmileanswer,
-      contestlastmilescore: contest.contestlastmilescore,
-      contestlocalsite: contest.contestlocalsite,
-      contestmainsite: contest.contestmainsite,
-      contestmainsiteurl: contest.contestmainsiteurl,
-      contestmaxfilesize: contest.contestmaxfilesize,
-      contestpenalty: contest.contestpenalty,
-      conteststartdate: contest.conteststartdate,
-      contestunlockkey: contest.contestunlockkey,
-    });
+    return await this.contestsRepository.update({ ...contest });
   }
 }
 

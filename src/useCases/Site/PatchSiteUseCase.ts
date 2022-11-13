@@ -120,31 +120,7 @@ class PatchSiteUseCase {
 
     await this.siteValidator.isValid(site);
 
-    return await this.sitesRepository.update({
-      contestnumber,
-      sitenumber,
-      siteip: site.siteip,
-      sitename: site.sitename,
-      siteactive: site.siteactive,
-      sitepermitlogins: site.sitepermitlogins,
-      sitelastmileanswer: site.sitelastmileanswer,
-      sitelastmilescore: site.sitelastmilescore,
-      siteduration: site.siteduration,
-      siteautoend: site.siteautoend,
-      sitejudging: site.sitejudging,
-      sitetasking: site.sitetasking,
-      siteglobalscore: site.siteglobalscore,
-      sitescorelevel: site.sitescorelevel,
-      sitenextuser: site.sitenextuser,
-      sitenextclar: site.sitenextclar,
-      sitenextrun: site.sitenextrun,
-      sitenexttask: site.sitenexttask,
-      sitemaxtask: site.sitemaxtask,
-      sitechiefname: site.sitechiefname,
-      siteautojudge: site.siteautojudge,
-      sitemaxruntime: site.sitemaxruntime,
-      sitemaxjudgewaittime: site.sitemaxjudgewaittime,
-    });
+    return await this.sitesRepository.update({ ...site });
   }
 }
 
