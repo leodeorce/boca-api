@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import request from "supertest";
 import { Answer } from "../../../src/entities/Answer";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 describe("Remoção de uma answer", () => {
   describe("Fluxo positivo", () => {

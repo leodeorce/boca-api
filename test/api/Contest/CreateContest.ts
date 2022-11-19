@@ -7,7 +7,7 @@ import {
   createCharlieFail,
   createDeltaFail,
 } from "../../entities/Contest";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 // TODO Explicar a equivalência do que é testado com o fluxo do usuário no BOCA
 

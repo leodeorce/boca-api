@@ -7,7 +7,7 @@ import {
   createAnswer4Fail,
   createAnswer2Pass,
 } from "../../entities/Answer";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 /**
  *  - Contest Beta deve existir

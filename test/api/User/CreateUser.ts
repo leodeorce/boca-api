@@ -6,7 +6,7 @@ import {
   createUser4Fail,
   createUser5Fail,
 } from "../../entities/User";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 /**
  *  - Site 1 já deve ter sido criado em Contest Beta

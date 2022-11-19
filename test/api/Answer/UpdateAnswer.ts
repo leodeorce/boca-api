@@ -12,7 +12,7 @@ import {
   patchAnswer2Fail,
   patchAnswer3Fail,
 } from "../../entities/Answer";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 describe("Modifica as answers criadas anteriormente", () => {
   let answer0: Answer;

@@ -6,7 +6,7 @@ import {
   createSite4Fail,
   createSite5Fail,
 } from "../../entities/Site";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 /**
  *  - Contest Beta deve existir ainda

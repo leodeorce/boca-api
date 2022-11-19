@@ -11,7 +11,7 @@ import {
   patchSite3Fail,
   patchSite4Fail,
 } from "../../entities/Site";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 describe("Modifica os sites criados anteriormente", () => {
   let site1: Site; // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
