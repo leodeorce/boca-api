@@ -1,14 +1,15 @@
 import { inject, injectable } from "tsyringe";
+
 import { Contest } from "../../../entities/Contest";
 import { ApiError } from "../../../errors/ApiError";
-import { ContestsRepository } from "../../../repositories/implementations/ContestsRepository";
+import { IContestsRepository } from "../../../repositories/IContestsRepository";
 import EntityValidator from "./EntityValidator";
 
 @injectable()
 class ContestValidator extends EntityValidator<Contest> {
   constructor(
     @inject("ContestsRepository")
-    private contestRepository: ContestsRepository
+    private contestRepository: IContestsRepository
   ) {
     super();
   }

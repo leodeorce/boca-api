@@ -1,14 +1,15 @@
 import { inject, injectable } from "tsyringe";
+
 import { User } from "../../../entities/User";
 import { ApiError } from "../../../errors/ApiError";
-import { UsersRepository } from "../../../repositories/implementations/UsersRepository";
+import { IUsersRepository } from "../../../repositories/IUsersRepository";
 import EntityValidator from "./EntityValidator";
 
 @injectable()
 class UserValidator extends EntityValidator<User> {
   constructor(
     @inject("UsersRepository")
-    private usersRepository: UsersRepository
+    private usersRepository: IUsersRepository
   ) {
     super();
   }

@@ -1,5 +1,6 @@
 import { validate } from "class-validator";
 import { injectable } from "tsyringe";
+
 import { ApiError } from "../../../errors/ApiError";
 
 @injectable()

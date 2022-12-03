@@ -14,21 +14,21 @@ interface IUpdadeLangDTO {
   langextension?: string;
 }
 
-interface ICountResult {
-  max: number;
+interface ILastIdResult {
+  id: number;
 }
 
 interface ILangRepository {
-  list(problemNumber: number): Promise<Lang[]>;
-  findById(id_lang: number): Promise<Lang | undefined>;
-  create(lang: ICreateLangDTO): Promise<void>;
-  count(): Promise<number>;
-  update(lang: IUpdadeLangDTO): Promise<void>;
-  delete(langnumber: number): Promise<void>;
+  list(contestnumber: number): Promise<Lang[]>;
+  getById(contestnumber: number, langnumber: number): Promise<Lang | undefined>;
+  create(lang: ICreateLangDTO): Promise<Lang>;
+  getLastId(contestnumber: number): Promise<number | undefined>;
+  update(lang: IUpdadeLangDTO): Promise<Lang>;
+  delete(contestnumber: number, langnumber: number): Promise<void>;
   findByName(
     langname: string,
     contestNumber: number
   ): Promise<Lang | undefined>;
 }
 
-export { ILangRepository, ICountResult, ICreateLangDTO, IUpdadeLangDTO };
+export { ILangRepository, ILastIdResult, ICreateLangDTO, IUpdadeLangDTO };

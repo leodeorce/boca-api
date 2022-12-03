@@ -8,12 +8,13 @@ import LangValidator from "../../shared/validation/entities/LangValidator";
 
 interface IRequest {
   contestnumber: number;
+  langnumber: number;
   langname: string;
   langextension: string;
 }
 
 @injectable()
-class CreateLangUseCase {
+class ReplaceLangUseCase {
   private contestValidator: ContestValidator;
   private langValidator: LangValidator;
 
@@ -27,18 +28,16 @@ class CreateLangUseCase {
 
   async execute({
     contestnumber,
+    langnumber,
     langname,
     langextension,
   }: IRequest): Promise<Lang> {
     await this.contestValidator.exists(contestnumber);
+    await this.langValidator.exists(contestnumber, langnumber);
 
     if (langname === undefined || langextension === undefined) {
       throw ApiError.badRequest("Missing properties");
     }
-
-    let lastId = await this.langRepository.getLastId(contestnumber);
-    lastId = lastId ? lastId : 0;
-    const langnumber = lastId + 1;
 
     const lang = new Lang();
     lang.contestnumber = contestnumber;
@@ -48,13 +47,8 @@ class CreateLangUseCase {
 
     await this.langValidator.isValid(lang);
 
-    return await this.langRepository.create({
-      contestnumber,
-      langnumber,
-      langname,
-      langextension,
-    });
+    return await this.langRepository.update({ ...lang });
   }
 }
 
-export { CreateLangUseCase };
+export { ReplaceLangUseCase };

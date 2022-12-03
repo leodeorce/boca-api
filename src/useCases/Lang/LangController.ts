@@ -1,138 +1,182 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { QueryFailedError } from "typeorm";
 
-import { GetContestsUseCase } from "../Contest/GetContestUseCase";
+import IdValidator from "../../shared/validation/utils/IdValidator";
 import { CreateLangUseCase } from "./CreateLangUseCase";
 import { DeleteLangUseCase } from "./DeleteLangUseCase";
 import { GetLangUseCase } from "./GetLangUseCase";
 import { ListLangUseCase } from "./ListLangUseCase";
-import { UpdateLangUseCase } from "./UpdateLangUseCase";
+import { PatchLangUseCase } from "./PatchLangUseCase";
+import { ReplaceLangUseCase } from "./ReplaceLangUseCase";
 
 class LangController {
-  async getOne(request: Request, response: Response): Promise<Response> {
+  async getOne(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const getLangUseCase = container.resolve(GetLangUseCase);
+    const idValidator = container.resolve(IdValidator);
 
-    const { id_language } = request.params;
+    const { id_c } = request.params;
+    const { id_l } = request.params;
+    const contestnumber = Number(id_c);
+    const langnumber = Number(id_l);
+
     try {
-      const language = await getLangUseCase.execute({
-        id: parseInt(id_language, 10),
+      idValidator.isContestId(contestnumber);
+      idValidator.isLangId(langnumber);
+
+      const lang = await getLangUseCase.execute({
+        contestnumber,
+        langnumber,
       });
-      return response.json(language);
+
+      return response.status(200).json(lang);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error getting Language" });
+      next(error);
     }
   }
 
-  async listAll(request: Request, response: Response): Promise<Response> {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const listLangUseCase = container.resolve(ListLangUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
     try {
-      const all = await listLangUseCase.execute(parseInt(id_c, 10));
-      return response.json(all);
+      idValidator.isContestId(contestnumber);
+
+      const all = await listLangUseCase.execute({ contestnumber });
+
+      return response.status(200).json(all);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error getting Language" });
+      next(error);
     }
   }
 
-  async create(request: Request, response: Response): Promise<Response> {
+  async create(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const createLangUseCase = container.resolve(CreateLangUseCase);
-    const getContestUseCase = container.resolve(GetContestsUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
     const { langname, langextension } = request.body;
 
-    const contest = await getContestUseCase.execute({ id: parseInt(id_c, 10) });
-
-    if (!contest) {
-      throw new Error("Contest not found");
-    }
-
     try {
-      await createLangUseCase.execute({
-        contestnumber: contest.contestnumber,
-        langname,
-        langextension,
-      });
+      idValidator.isContestId(contestnumber);
 
-      return response.status(201).send();
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error creating Language" });
-    }
-  }
-
-  async update(request: Request, response: Response): Promise<Response> {
-    const updateLangUseCase = container.resolve(UpdateLangUseCase);
-    const getLangUseCase = container.resolve(GetLangUseCase);
-
-    const { id_language } = request.params;
-
-    const { contestnumber, langname, langextension } = request.body;
-
-    const language = await getLangUseCase.execute({
-      id: parseInt(id_language, 10),
-    });
-
-    if (!language) {
-      return response.status(400).json({ error: "Language not found" });
-    }
-
-    try {
-      await updateLangUseCase.execute({
-        langnumber: parseInt(id_language, 10),
+      const lang = await createLangUseCase.execute({
         contestnumber,
         langname,
         langextension,
       });
 
-      return response.status(201).send();
+      return response.status(200).json(lang);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error Updating Language" });
+      next(error);
     }
   }
 
-  async delete(request: Request, response: Response) {
-    const { id_language } = request.params;
-    const idNumber = parseInt(id_language, 10);
-    const deleteLangUseCase = container.resolve(DeleteLangUseCase);
+  async updateFull(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const replaceLangUseCase = container.resolve(ReplaceLangUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const { id_l } = request.params;
+    const contestnumber = Number(id_c);
+    const langnumber = Number(id_l);
+
+    const { langname, langextension } = request.body;
 
     try {
-      await deleteLangUseCase.execute({ id: idNumber });
-      return response
-        .status(200)
-        .json({ message: "Language deleted successfully" });
+      idValidator.isContestId(contestnumber);
+      idValidator.isLangId(langnumber);
+
+      const updatedLang = await replaceLangUseCase.execute({
+        contestnumber,
+        langnumber,
+        langname,
+        langextension,
+      });
+
+      return response.status(200).json(updatedLang);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        return response
-          .status(400)
-          .json({ message: error.message, detail: error.driverError });
-      }
-      return response.status(400).json({ error: "Error deleting Language" });
+      next(error);
+    }
+  }
+
+  async updatePartial(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const patchLangUseCase = container.resolve(PatchLangUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const { id_l } = request.params;
+    const contestnumber = Number(id_c);
+    const langnumber = Number(id_l);
+
+    const { langname, langextension } = request.body;
+
+    try {
+      idValidator.isContestId(contestnumber);
+      idValidator.isLangId(langnumber);
+
+      const updatedLang = await patchLangUseCase.execute({
+        contestnumber,
+        langnumber,
+        langname,
+        langextension,
+      });
+
+      return response.status(200).json(updatedLang);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async delete(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const deleteLangUseCase = container.resolve(DeleteLangUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const { id_l } = request.params;
+    const contestnumber = Number(id_c);
+    const langnumber = Number(id_l);
+
+    try {
+      idValidator.isContestId(contestnumber);
+      idValidator.isLangId(langnumber);
+
+      await deleteLangUseCase.execute({ contestnumber, langnumber });
+
+      return response.status(204).json();
+    } catch (error) {
+      next(error);
     }
   }
 }
+
 export { LangController };

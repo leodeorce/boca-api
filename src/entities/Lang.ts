@@ -1,20 +1,38 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import {
+  IsPositive,
+  IsInt,
+  Min,
+  MaxLength,
+  MinLength,
+  IsString,
+} from "class-validator";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("langtable")
 class Lang {
-  @PrimaryColumn()
+  @PrimaryColumn("int4")
+  @IsPositive({ message: "contestnumber must be greater than zero" })
+  @IsInt()
   contestnumber!: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn("int4")
+  @Min(0)
+  @IsInt()
   langnumber!: number;
 
-  @Column()
+  @Column("varchar", { length: 50 })
+  @MaxLength(50)
+  @MinLength(1)
+  @IsString()
   langname!: string;
 
-  @Column()
+  @Column("varchar", { length: 20 })
+  @MaxLength(20)
+  @MinLength(1)
+  @IsString()
   langextension!: string;
 
-  @UpdateDateColumn()
+  @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
 }
 
