@@ -1,8 +1,8 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { User } from "../../entities/User";
 import { ApiError } from "../../errors/ApiError";
-
-import { UsersRepository } from "../../repositories/implementations/UsersRepository";
+import { IUsersRepository } from "../../repositories/IUsersRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 import UserValidator from "../../shared/validation/entities/UserValidator";
@@ -36,7 +36,7 @@ class ReplaceUserUseCase {
 
   constructor(
     @inject("UsersRepository")
-    private usersRepository: UsersRepository
+    private usersRepository: IUsersRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
     this.siteValidator = container.resolve(SiteValidator);

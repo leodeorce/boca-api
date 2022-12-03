@@ -1,8 +1,8 @@
 import { container, inject, injectable } from "tsyringe";
-import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
 import { Contest } from "../../entities/Contest";
 import { ApiError } from "../../errors/ApiError";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import { IContestsRepository } from "../../repositories/IContestsRepository";
 
 interface IRequest {
   contestnumber: number;
@@ -27,7 +27,7 @@ class ReplaceContestUseCase {
 
   constructor(
     @inject("ContestsRepository")
-    private contestsRepository: ContestsRepository
+    private contestsRepository: IContestsRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
   }

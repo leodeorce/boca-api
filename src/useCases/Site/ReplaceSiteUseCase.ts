@@ -1,7 +1,8 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { Site } from "../../entities/Site";
 import { ApiError } from "../../errors/ApiError";
-import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import { ISitesRepository } from "../../repositories/ISitesRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 
@@ -38,7 +39,7 @@ class ReplaceSiteUseCase {
 
   constructor(
     @inject("SitesRepository")
-    private sitesRepository: SitesRepository
+    private sitesRepository: ISitesRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
     this.siteValidator = container.resolve(SiteValidator);

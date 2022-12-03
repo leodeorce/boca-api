@@ -1,10 +1,11 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { ApiError } from "../../errors/ApiError";
-import { UsersRepository } from "../../repositories/implementations/UsersRepository";
 import { User } from "../../entities/User";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 import UserValidator from "../../shared/validation/entities/UserValidator";
+import { IUsersRepository } from "../../repositories/IUsersRepository";
 
 interface IRequest {
   contestnumber: number;
@@ -35,7 +36,7 @@ class CreateUserUseCase {
 
   constructor(
     @inject("UsersRepository")
-    private usersRepository: UsersRepository
+    private usersRepository: IUsersRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
     this.siteValidator = container.resolve(SiteValidator);

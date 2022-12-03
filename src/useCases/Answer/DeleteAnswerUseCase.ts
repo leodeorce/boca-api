@@ -1,6 +1,6 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { AnswersRepository } from "../../repositories/implementations/AnswersRepository";
+import { IAnswersRepository } from "../../repositories/IAnswersRepository";
 import AnswerValidator from "../../shared/validation/entities/AnswerValidator";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
@@ -16,7 +16,7 @@ class DeleteAnswerUseCase {
 
   constructor(
     @inject("AnswersRepository")
-    private answersRepository: AnswersRepository
+    private answersRepository: IAnswersRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
     this.answerValidator = container.resolve(AnswerValidator);

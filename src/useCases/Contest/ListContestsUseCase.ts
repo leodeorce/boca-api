@@ -1,13 +1,13 @@
 import { inject, injectable } from "tsyringe";
 
 import { Contest } from "../../entities/Contest";
-import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
+import { IContestsRepository } from "../../repositories/IContestsRepository";
 
 @injectable()
 class ListContestsUseCase {
   constructor(
     @inject("ContestsRepository")
-    private contestsRepository: ContestsRepository
+    private contestsRepository: IContestsRepository
   ) {}
 
   async execute(): Promise<Contest[]> {

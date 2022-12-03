@@ -1,5 +1,5 @@
 import { container, inject, injectable } from "tsyringe";
-import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
+import { IContestsRepository } from "../../repositories/IContestsRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {
@@ -12,7 +12,7 @@ class DeleteContestsUseCase {
 
   constructor(
     @inject("ContestsRepository")
-    private contestsRepository: ContestsRepository
+    private contestsRepository: IContestsRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
   }
