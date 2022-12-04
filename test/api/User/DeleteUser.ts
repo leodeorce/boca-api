@@ -1,6 +1,8 @@
 import { expect } from "chai";
 import request from "supertest";
+
 import { User } from "../../../src/entities/User";
+import { patchUser3Pass } from "../../entities/User";
 import { URL } from "../../utils/URL";
 
 describe("Remoção de um user", () => {
@@ -28,7 +30,7 @@ describe("Remoção de um user", () => {
       expect(time1).to.be.undefined;
       expect(time3).to.be.an("object");
       expect(time3).to.have.own.property("usernumber");
-      // expect(time3).to.deep.include(updateUser3Pass); // TODO Atualizar
+      expect(time3.userdesc).to.deep.equal(patchUser3Pass.userdesc);
     });
 
     describe("Fluxo negativo", () => {
@@ -41,7 +43,7 @@ describe("Remoção de um user", () => {
         expect(response.body).to.have.own.property("error");
         expect(response.body["error"]).to.include("User does not exist");
       });
-  
+
       it("Tenta deletar novamente o Time 1", async () => {
         const response = await request(URL)
           .delete("/api/contest/2/site/1/user/1")
@@ -51,7 +53,7 @@ describe("Remoção de um user", () => {
         expect(response.body).to.have.own.property("error");
         expect(response.body["error"]).to.include("User does not exist");
       });
-  
+
       it("Tenta deletar o Time 1 de um contest inexistente", async () => {
         const response = await request(URL)
           .delete("/api/contest/3/site/1/user/1")

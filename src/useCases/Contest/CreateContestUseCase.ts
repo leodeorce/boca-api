@@ -82,7 +82,7 @@ class CreateContestsUseCase {
     const contestactive = false;
 
     let lastId = await this.contestsRepository.getLastId();
-    lastId = lastId ? lastId : 0;
+    lastId = lastId !== undefined ? lastId : 0;
     const contestnumber = lastId + 1;
 
     const contest = new Contest();

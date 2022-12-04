@@ -37,7 +37,7 @@ class CreateLangUseCase {
     }
 
     let lastId = await this.langRepository.getLastId(contestnumber);
-    lastId = lastId ? lastId : 0;
+    lastId = lastId !== undefined ? lastId : 0;
     const langnumber = lastId + 1;
 
     const lang = new Lang();

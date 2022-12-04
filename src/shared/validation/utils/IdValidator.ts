@@ -27,7 +27,7 @@ class IdValidator {
   }
 
   isLangId(id: number) {
-    this.isId(id, "language", 0);
+    this.isId(id, "language", 1);
   }
 }
 

@@ -88,7 +88,7 @@ class CreateUserUseCase {
         contestnumber,
         usersitenumber
       );
-      lastId = lastId ? lastId : 0;
+      lastId = lastId !== undefined ? lastId : 0;
       usernumber = lastId + 1;
     } else {
       const existingUser = await this.usersRepository.getById(

@@ -27,13 +27,11 @@ createUser3Pass.usernumber = 3;
 createUser3Pass.username = "Time 3";
 createUser3Pass.userfullname = "Time 3";
 createUser3Pass.userdesc = "Time 3";
-createUser3Pass.userpassword =
-  "cbdee56541d98fc7f8d26ee25ffde3db8a80a853a10685158a039978a42a1b86";
+createUser3Pass.userpassword = "cbdee56541d98fc7f8d26ee25ffde3db";
 
 // Troca de senha
 const updateUser1Pass = { ...createNewUserPass };
-updateUser1Pass.userpassword =
-  "7ab2d6e73d6ed4fb40fc1f97f051a183d01c3f469255b841a1cb529699310d28";
+updateUser1Pass.userpassword = "7ab2d6e73d6ed4fb40fc1f97f051a183";
 
 // Modifica descrição
 const patchUser3Pass = new User();

@@ -97,7 +97,7 @@ class CreateSiteUseCase {
     // Caso especificado, devemos verificar se já não existe.
     if (sitenumber === undefined) {
       let lastId = await this.sitesRepository.getLastId(contestnumber);
-      lastId = lastId ? lastId : 0;
+      lastId = lastId !== undefined ? lastId : 0;
       sitenumber = lastId + 1;
     } else {
       const existingSite = await this.sitesRepository.getById(

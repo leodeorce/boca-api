@@ -19,7 +19,7 @@ class PatchLangUseCase {
   private langValidator: LangValidator;
 
   constructor(
-    @inject("AnswersRepository")
+    @inject("LangRepository")
     private langRepository: ILangRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);

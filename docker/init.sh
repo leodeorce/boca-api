@@ -14,17 +14,17 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-# 
+#
 # This program is released under license GNU GPL v3+ license.
 #
 #========================================================================
 
 until PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -c '\q'; do
-  >&2 echo "PostgreSQL server is unavailable - sleeping"
+  echo >&2 "PostgreSQL server is unavailable - sleeping"
   sleep 1
 done
 
->&2 echo "PostgreSQL server is up - executing command"
+echo >&2 "PostgreSQL server is up - executing command"
 
 # https://stackoverflow.com/questions/14549270/check-if-database-exists-in-postgresql-using-shell
 if PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
