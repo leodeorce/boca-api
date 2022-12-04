@@ -1,6 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { Answer } from "../../entities/Answer";
-import { AnswersRepository } from "../../repositories/implementations/AnswersRepository";
+import { IAnswersRepository } from "../../repositories/IAnswersRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {
@@ -13,7 +14,7 @@ class ListAnswersUseCase {
 
   constructor(
     @inject("AnswersRepository")
-    private answersRepository: AnswersRepository
+    private answersRepository: IAnswersRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
   }

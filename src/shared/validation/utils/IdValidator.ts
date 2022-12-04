@@ -1,4 +1,5 @@
 import { injectable } from "tsyringe";
+
 import { ApiError } from "../../../errors/ApiError";
 
 @injectable()
@@ -23,6 +24,10 @@ class IdValidator {
 
   isAnswerId(id: number) {
     this.isId(id, "answer", 0);
+  }
+
+  isLangId(id: number) {
+    this.isId(id, "language", 1);
   }
 }
 

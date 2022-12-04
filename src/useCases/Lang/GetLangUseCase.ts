@@ -1,26 +1,27 @@
-import { inject, injectable } from "tsyringe";
+import { container, injectable } from "tsyringe";
 
 import { Lang } from "../../entities/Lang";
-import { LangRepository } from "../../repositories/implementations/LangRepository";
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import LangValidator from "../../shared/validation/entities/LangValidator";
 
 interface IRequest {
-  id: number;
+  contestnumber: number;
+  langnumber: number;
 }
 
 @injectable()
 class GetLangUseCase {
-  constructor(
-    @inject("LangRepository")
-    private langRepository: LangRepository
-  ) {}
+  private contestValidator: ContestValidator;
+  private langValidator: LangValidator;
 
-  async execute({ id }: IRequest): Promise<Lang | undefined> {
-    try {
-      const lang = await this.langRepository.findById(id);
-      return lang;
-    } catch (error) {
-      return Promise.reject(error);
-    }
+  constructor() {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.langValidator = container.resolve(LangValidator);
+  }
+
+  async execute({ contestnumber, langnumber }: IRequest): Promise<Lang> {
+    await this.contestValidator.exists(contestnumber);
+    return await this.langValidator.exists(contestnumber, langnumber);
   }
 }
 

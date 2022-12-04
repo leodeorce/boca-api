@@ -2,7 +2,7 @@ import { expect } from "chai";
 import request from "supertest";
 import { Site } from "../../../src/entities/Site";
 import { updateSite1Pass } from "../../entities/Site";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 describe("Remoção de um site", () => {
   describe("Fluxo positivo", () => {

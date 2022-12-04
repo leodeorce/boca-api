@@ -1,6 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { Site } from "../../entities/Site";
-import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import { ISitesRepository } from "../../repositories/ISitesRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 
@@ -38,7 +39,7 @@ class PatchSiteUseCase {
 
   constructor(
     @inject("SitesRepository")
-    private sitesRepository: SitesRepository
+    private sitesRepository: ISitesRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
     this.siteValidator = container.resolve(SiteValidator);

@@ -12,7 +12,7 @@ import {
   updateBetaPass,
   updateBetaPass2,
 } from "../../entities/Contest";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 describe("Modifica os contests criados anteriormente", () => {
   let contestAlpha: Contest;

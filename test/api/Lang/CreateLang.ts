@@ -1,95 +1,94 @@
 import { expect } from "chai";
 import request from "supertest";
+
 import {
-  createAnswer0Pass,
-  createAnswer1Pass,
-  createAnswer3Fail,
-  createAnswer4Fail,
-  createAnswer2Pass,
-} from "../../entities/Answer";
+  createLang1Pass,
+  createLang2Pass,
+  createLang3Pass,
+  createLang4Fail,
+  createLang5Fail,
+} from "../../entities/Lang";
 import { URL } from "../../utils/URL";
 
 /**
  *  - Contest Beta deve existir
  */
 
-describe("Criação de uma answer", () => {
+describe("Criação de uma linguagem", () => {
   describe("Fluxo positivo", () => {
-    it('Cria a answer "Not answered yet" para o "Contest Beta"', async () => {
+    it('Cria a linguagem "C" para o "Contest Beta"', async () => {
       const response = await request(URL)
-        .post("/api/contest/2/answer")
+        .post("/api/contest/2/language")
         .set("Accept", "application/json")
-        .send(createAnswer0Pass);
+        .send(createLang1Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.deep.include(createAnswer0Pass);
+      expect(response.body).to.deep.include(createLang1Pass);
     });
 
-    it('Cria a answer "YES" para o "Contest Beta"', async () => {
+    it('Cria a linguagem "Java" para o "Contest Beta"', async () => {
       const response = await request(URL)
-        .post("/api/contest/2/answer")
+        .post("/api/contest/2/language")
         .set("Accept", "application/json")
-        .send(createAnswer1Pass);
+        .send(createLang2Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.deep.include(createAnswer1Pass);
+      expect(response.body).to.deep.include(createLang2Pass);
     });
 
-    it('Cria a answer "NO - Compilation error" para o "Contest Beta"', async () => {
+    it('Cria a linguagem "PostgreSQL_v10" para o "Contest Beta"', async () => {
       const response = await request(URL)
-        .post("/api/contest/2/answer")
+        .post("/api/contest/2/language")
         .set("Accept", "application/json")
-        .send(createAnswer2Pass);
+        .send(createLang3Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.deep.include(createAnswer2Pass);
+      expect(response.body).to.deep.include(createLang3Pass);
     });
 
-    it("Resgata a primeira das três answers criadas anteriormente", async () => {
+    it("Resgata a primeira das três linguagens criadas anteriormente", async () => {
       const response = await request(URL)
-        .get("/api/contest/2/answer/0")
+        .get("/api/contest/2/language/1")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("answernumber");
-      expect(response.body["answernumber"]).to.equal(0);
-      expect(response.body).to.deep.include(createAnswer0Pass);
+      expect(response.body).to.have.own.property("langnumber");
+      expect(response.body["langnumber"]).to.equal(1);
+      expect(response.body).to.deep.include(createLang1Pass);
     });
   });
 
   describe("Fluxo negativo", () => {
-    it("Tenta criar uma answer para um contest que não existe", async () => {
+    it("Tenta criar uma linguagem para um contest que não existe", async () => {
       const response = await request(URL)
-        .post("/api/contest/3/answer")
+        .post("/api/contest/3/language")
         .set("Accept", "application/json")
-        .send(createAnswer3Fail);
+        .send(createLang4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
       expect(response.body["error"]).to.include("Contest does not exist");
     });
 
-    it("Tenta criar uma answer de ID inválido", async () => {
+    it("Tenta criar uma linguagem com propriedades faltando", async () => {
       const response = await request(URL)
-        .post("/api/contest/2/answer")
+        .post("/api/contest/2/language")
         .set("Accept", "application/json")
-        .send(createAnswer4Fail);
+        .send(createLang5Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include(
-        "answernumber must not be less than 0"
-      );
+      expect(response.body["error"]).to.include("Missing properties");
     });
 
-    it("Tenta resgatar uma answer que não existe", async () => {
+    it("Tenta resgatar uma linguagem que não existe", async () => {
       const response = await request(URL)
-        .get("/api/contest/2/answer/4")
+        .get("/api/contest/2/language/4")
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Answer does not exist");
+      expect(response.body["error"]).to.include("Language does not exist");
     });
   });
 });

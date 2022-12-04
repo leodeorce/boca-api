@@ -13,7 +13,7 @@ services:
       - "3000:3000"
     environment:
       - LISTEN_PORT=3000
-      - DB_PORT=5431
+      - DB_PORT=5432
       - DB_HOST=boca-postgres-dev
       - DB_NAME=bocadb
       - DB_USER=bocauser
@@ -27,33 +27,22 @@ services:
     container_name: boca-postgres-dev
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - boca-api-dev:/var/lib/postgresql/data
     expose:
-      - "5431"
+      - "5432"
     ports:
-      - "5431:5431"
-    command: -p 5431
+      - "5432:5432"
     environment:
       # Database configuration
       # privileged boca user
       - POSTGRES_USER=bocauser
       - POSTGRES_PASSWORD=dAm0HAiC
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -p 5431 -U $${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 4
 
-  boca-adminer-dev:
-    image: adminer
-    container_name: boca-adminer-dev
-    restart: unless-stopped
-    depends_on:
-      boca-postgres-dev:
-        condition: service_healthy
-    ports:
-      - "8889:8080"
-
 volumes:
-  db-data:
+  boca-api-dev:
     driver: local

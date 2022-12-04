@@ -2,13 +2,13 @@ import { AppDataSource } from "../../database/index";
 import { Repository } from "typeorm";
 import { Contest } from "../../entities/Contest";
 import {
-  IContestRepository,
+  IContestsRepository,
   ICreateContestDTO,
   ILastIdResult,
   IUpdateContestDTO,
 } from "../IContestsRepository";
 
-class ContestsRepository implements IContestRepository {
+class ContestsRepository implements IContestsRepository {
   private repository: Repository<Contest>;
 
   constructor() {

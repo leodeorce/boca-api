@@ -1,14 +1,15 @@
 import { inject, injectable } from "tsyringe";
+
 import { Site } from "../../../entities/Site";
 import { ApiError } from "../../../errors/ApiError";
-import { SitesRepository } from "../../../repositories/implementations/SitesRepository";
+import { ISitesRepository } from "../../../repositories/ISitesRepository";
 import EntityValidator from "./EntityValidator";
 
 @injectable()
 class SiteValidator extends EntityValidator<Site> {
   constructor(
     @inject("SitesRepository")
-    private sitesRepository: SitesRepository
+    private sitesRepository: ISitesRepository
   ) {
     super();
   }

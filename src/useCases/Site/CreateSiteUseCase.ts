@@ -1,7 +1,8 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { Site } from "../../entities/Site";
 import { ApiError } from "../../errors/ApiError";
-import { SitesRepository } from "../../repositories/implementations/SitesRepository";
+import { ISitesRepository } from "../../repositories/ISitesRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 
@@ -38,7 +39,7 @@ class CreateSiteUseCase {
 
   constructor(
     @inject("SitesRepository")
-    private sitesRepository: SitesRepository
+    private sitesRepository: ISitesRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
     this.siteValidator = container.resolve(SiteValidator);
@@ -96,7 +97,7 @@ class CreateSiteUseCase {
     // Caso especificado, devemos verificar se já não existe.
     if (sitenumber === undefined) {
       let lastId = await this.sitesRepository.getLastId(contestnumber);
-      lastId = lastId ? lastId : 0;
+      lastId = lastId !== undefined ? lastId : 0;
       sitenumber = lastId + 1;
     } else {
       const existingSite = await this.sitesRepository.getById(

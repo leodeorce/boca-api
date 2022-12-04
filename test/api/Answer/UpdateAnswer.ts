@@ -12,7 +12,7 @@ import {
   patchAnswer2Fail,
   patchAnswer3Fail,
 } from "../../entities/Answer";
-import { URL } from "../URL";
+import { URL } from "../../utils/URL";
 
 describe("Modifica as answers criadas anteriormente", () => {
   let answer0: Answer;
@@ -97,7 +97,7 @@ describe("Modifica as answers criadas anteriormente", () => {
 
     it("Tenta modificar uma answer que não existe", async () => {
       const response = await request(URL)
-        .put(`/api/contest/2/answer/3`)
+        .put("/api/contest/2/answer/3")
         .set("Accept", "application/json")
         .send(patchAnswer3Fail);
       expect(response.statusCode).to.equal(404);

@@ -38,7 +38,7 @@ interface ILastIdResult {
   id: number;
 }
 
-interface IContestRepository {
+interface IContestsRepository {
   findByName(name: string): Promise<Contest | undefined>;
   list(): Promise<Contest[]>;
   create(contest: ICreateContestDTO): Promise<Contest>;
@@ -50,7 +50,7 @@ interface IContestRepository {
 }
 
 export {
-  IContestRepository,
+  IContestsRepository,
   ICreateContestDTO,
   ILastIdResult,
   IUpdateContestDTO,
