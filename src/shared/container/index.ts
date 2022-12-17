@@ -5,7 +5,7 @@ import { container } from "tsyringe";
 container.registerSingleton<ILogger>("ApiLogger", ApiLogger);
 
 import { IAnswersRepository } from "../../repositories/IAnswersRepository";
-import { IContestRepository } from "../../repositories/IContestsRepository";
+import { IContestsRepository } from "../../repositories/IContestsRepository";
 import { ILangRepository } from "../../repositories/ILangRepository";
 import { AnswersRepository } from "../../repositories/implementations/AnswersRepository";
 import { ContestsRepository } from "../../repositories/implementations/ContestsRepository";
@@ -25,7 +25,7 @@ import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { IWorkingsRepository } from "../../repositories/IWorkingsRepository";
 import { IWorkingsUserRepository } from "../../repositories/IWorkingsUserRepository";
 
-container.registerSingleton<IContestRepository>(
+container.registerSingleton<IContestsRepository>(
   "ContestsRepository",
   ContestsRepository
 );

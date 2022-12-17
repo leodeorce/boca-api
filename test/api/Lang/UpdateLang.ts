@@ -3,17 +3,17 @@ import { describe } from "mocha";
 import request from "supertest";
 
 import { Lang } from "../../../src/entities/Lang";
-import {
-  createLang1Pass,
-  createLang2Pass,
-  createLang3Pass,
-  patchLang2Fail,
-  patchLang2Pass,
-  patchLang4Fail,
-  updateLang1Fail,
-  updateLang1Pass,
-} from "../../entities/Lang";
 import { URL } from "../../utils/URL";
+
+import createLang1Pass from "../../entities/Lang/Pass/createLang1.json";
+import createLang2Pass from "../../entities/Lang/Pass/createLang2.json";
+import createLang3Pass from "../../entities/Lang/Pass/createLang3.json";
+import updateLang1Pass from "../../entities/Lang/Pass/updateLang1.json";
+import patchLang2Pass from "../../entities/Lang/Pass/patchLang2.json";
+
+import updateLang1Fail from "../../entities/Lang/Fail/updateLang1.json";
+import patchLang2Fail from "../../entities/Lang/Fail/patchLang2.json";
+import patchLang4Fail from "../../entities/Lang/Fail/patchLang4.json";
 
 describe("Modifica as linguagens criadas anteriormente", () => {
   let lang1: Lang;

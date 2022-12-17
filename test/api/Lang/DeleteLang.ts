@@ -2,8 +2,10 @@ import { expect } from "chai";
 import request from "supertest";
 
 import { Lang } from "../../../src/entities/Lang";
-import { updateLang1Pass, patchLang2Pass } from "../../entities/Lang";
 import { URL } from "../../utils/URL";
+
+import updateLang1Pass from "../../entities/Lang/Pass/updateLang1.json";
+import patchLang2Pass from "../../entities/Lang/Pass/patchLang2.json";
 
 describe("Remoção de uma linguagem", () => {
   describe("Fluxo positivo", () => {
