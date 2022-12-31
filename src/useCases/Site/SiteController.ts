@@ -132,7 +132,7 @@ class SiteController {
     }
   }
 
-  async updateFull(
+  async update(
     request: Request,
     response: Response,
     next: NextFunction

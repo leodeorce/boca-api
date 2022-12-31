@@ -16,12 +16,7 @@ usersRoutes.get(
 
 usersRoutes.put(
   "/contest/:id_c/site/:id_s/user/:id_user",
-  userController.updateFull
-);
-
-usersRoutes.patch(
-  "/contest/:id_c/site/:id_s/user/:id_user",
-  userController.updatePartial
+  userController.update
 );
 
 usersRoutes.delete(

@@ -66,21 +66,6 @@ class CreateUserUseCase {
     await this.contestValidator.exists(contestnumber);
     await this.siteValidator.exists(contestnumber, usersitenumber);
 
-    if (
-      username === undefined ||
-      userfullname === undefined ||
-      usertype === undefined ||
-      userenabled === undefined ||
-      usermultilogin === undefined ||
-      userpassword === undefined ||
-      usersession === undefined ||
-      usersessionextra === undefined ||
-      userinfo === undefined ||
-      usericpcid === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
-
     // usernumber é opcional. Caso não especificado, será o próximo ID disponível.
     // Caso especificado, devemos verificar se já não existe.
     if (usernumber === undefined) {

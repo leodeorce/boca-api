@@ -1,7 +1,6 @@
 import { container, inject, injectable } from "tsyringe";
 
 import { User } from "../../entities/User";
-import { ApiError } from "../../errors/ApiError";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
@@ -29,7 +28,7 @@ interface IRequest {
 }
 
 @injectable()
-class ReplaceUserUseCase {
+class UpdateUserUseCase {
   private contestValidator: ContestValidator;
   private siteValidator: SiteValidator;
   private userValidator: UserValidator;
@@ -67,21 +66,6 @@ class ReplaceUserUseCase {
     await this.siteValidator.exists(contestnumber, usersitenumber);
     await this.userValidator.exists(contestnumber, usersitenumber, usernumber);
 
-    if (
-      username === undefined ||
-      userfullname === undefined ||
-      usertype === undefined ||
-      userenabled === undefined ||
-      usermultilogin === undefined ||
-      userpassword === undefined ||
-      usersession === undefined ||
-      usersessionextra === undefined ||
-      userinfo === undefined ||
-      usericpcid === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
-
     const user = new User();
     user.contestnumber = contestnumber;
     user.usernumber = usernumber;
@@ -108,4 +92,4 @@ class ReplaceUserUseCase {
   }
 }
 
-export { ReplaceUserUseCase };
+export { UpdateUserUseCase };

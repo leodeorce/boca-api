@@ -2,13 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { ApiError } from "../../errors/ApiError";
+import { UserRequestValidator } from "../../shared/validation/requests/UserRequestValidator";
+import IdValidator from "../../shared/validation/utils/IdValidator";
 
 import { CreateUserUseCase } from "./CreateUserUseCase";
 import { DeleteUserUseCase } from "./DeleteUserUseCase";
 import { GetUserUseCase } from "./GetUserUseCase";
 import { ListUsersUseCase } from "./ListUserUseCase";
-import { PatchUserUseCase } from "./PatchUserUseCase";
-import { ReplaceUserUseCase } from "./ReplaceUserUseCase";
+import { UpdateUserUseCase } from "./UpdateUserUseCase";
 
 class UserController {
   async listAll(
@@ -17,23 +18,20 @@ class UserController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const listUsersUseCase = container.resolve(ListUsersUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
     const { id_s } = request.params;
     const contestnumber = Number(id_c);
-    const sitenumber = Number(id_s);
+    const usersitenumber = Number(id_s);
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(usersitenumber);
 
       const all = await listUsersUseCase.execute({
         contestnumber,
-        usersitenumber: sitenumber,
+        usersitenumber,
       });
 
       return response.status(200).json(all);
@@ -48,24 +46,19 @@ class UserController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const getUserUseCase = container.resolve(GetUserUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
     const { id_s } = request.params;
-    const { id_user } = request.params;
+    const { id_u } = request.params;
     const contestnumber = Number(id_c);
     const sitenumber = Number(id_s);
-    const usernumber = Number(id_user);
+    const usernumber = Number(id_u);
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
-      if (Number.isNaN(usernumber) || usernumber < 1) {
-        throw ApiError.badRequest("Invalid user ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(sitenumber);
+      idValidator.isUserId(usernumber);
 
       const user = await getUserUseCase.execute({
         contestnumber,
@@ -85,11 +78,13 @@ class UserController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const createUserUseCase = container.resolve(CreateUserUseCase);
+    const idValidator = container.resolve(IdValidator);
+    const userRequestValidator = container.resolve(UserRequestValidator);
 
     const { id_c } = request.params;
     const { id_s } = request.params;
     const contestnumber = Number(id_c);
-    const sitenumber = Number(id_s);
+    const usersitenumber = Number(id_s);
 
     const {
       username,
@@ -111,16 +106,13 @@ class UserController {
     } = request.body;
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(usersitenumber);
+      userRequestValidator.hasRequiredCreateProperties(request.body);
 
       const user = await createUserUseCase.execute({
-        contestnumber: contestnumber,
-        usersitenumber: sitenumber,
+        contestnumber,
+        usersitenumber,
         usernumber,
         username,
         userfullname,
@@ -145,19 +137,21 @@ class UserController {
     }
   }
 
-  async updateFull(
+  async update(
     request: Request,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const replaceUserUseCase = container.resolve(ReplaceUserUseCase);
+    const updateUserUseCase = container.resolve(UpdateUserUseCase);
+    const idValidator = container.resolve(IdValidator);
+    const userRequestValidator = container.resolve(UserRequestValidator);
 
     const { id_c } = request.params;
     const { id_s } = request.params;
-    const { id_user } = request.params;
+    const { id_u } = request.params;
     const contestnumber = Number(id_c);
-    const sitenumber = Number(id_s);
-    const usernumber = Number(id_user);
+    const usersitenumber = Number(id_s);
+    const usernumber = Number(id_u);
 
     const {
       username,
@@ -178,89 +172,14 @@ class UserController {
     } = request.body;
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
-      if (Number.isNaN(usernumber) || usernumber < 1) {
-        throw ApiError.badRequest("Invalid user ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(usersitenumber);
+      idValidator.isUserId(usernumber);
+      userRequestValidator.hasRequiredUpdateProperties(request.body);
 
-      const updatedUser = await replaceUserUseCase.execute({
+      const updatedUser = await updateUserUseCase.execute({
         contestnumber,
-        usersitenumber: sitenumber,
-        usernumber,
-        username,
-        userfullname,
-        userdesc,
-        usertype,
-        userenabled,
-        usermultilogin,
-        userpassword,
-        userip,
-        userlastlogin,
-        usersession,
-        usersessionextra,
-        userlastlogout,
-        userpermitip,
-        userinfo,
-        usericpcid,
-      });
-
-      return response.status(200).json(updatedUser);
-    } catch (error) {
-      next(error);
-    }
-  }
-  
-  async updatePartial(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const patchUserUseCase = container.resolve(PatchUserUseCase);
-
-    const { id_c } = request.params;
-    const { id_s } = request.params;
-    const { id_user } = request.params;
-    const contestnumber = Number(id_c);
-    const sitenumber = Number(id_s);
-    const usernumber = Number(id_user);
-
-    const {
-      username,
-      userfullname,
-      userdesc,
-      usertype,
-      userenabled,
-      usermultilogin,
-      userpassword,
-      userip,
-      userlastlogin,
-      usersession,
-      usersessionextra,
-      userlastlogout,
-      userpermitip,
-      userinfo,
-      usericpcid,
-    } = request.body;
-
-    try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
-      if (Number.isNaN(usernumber) || usernumber < 1) {
-        throw ApiError.badRequest("Invalid user ID");
-      }
-
-      const updatedUser = await patchUserUseCase.execute({
-        contestnumber,
-        usersitenumber: sitenumber,
+        usersitenumber,
         usernumber,
         username,
         userfullname,
