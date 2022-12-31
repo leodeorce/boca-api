@@ -1,27 +1,29 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { Contest } from "../../entities/Contest";
+import { ApiError } from "../../errors/ApiError";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import { IContestsRepository } from "../../repositories/IContestsRepository";
 
 interface IRequest {
   contestnumber: number;
-  contestname?: string;
-  conteststartdate?: number;
-  contestduration?: number;
+  contestname: string;
+  conteststartdate: number;
+  contestduration: number;
   contestlastmileanswer?: number;
   contestlastmilescore?: number;
-  contestlocalsite?: number;
-  contestpenalty?: number;
-  contestmaxfilesize?: number;
-  contestactive?: boolean;
-  contestmainsite?: number;
-  contestkeys?: string;
-  contestunlockkey?: string;
-  contestmainsiteurl?: string;
+  contestlocalsite: number;
+  contestpenalty: number;
+  contestmaxfilesize: number;
+  contestactive: boolean;
+  contestmainsite: number;
+  contestkeys: string;
+  contestunlockkey: string;
+  contestmainsiteurl: string;
 }
 
 @injectable()
-class PatchContestUseCase {
+class UpdateContestUseCase {
   private contestValidator: ContestValidator;
 
   constructor(
@@ -47,51 +49,32 @@ class PatchContestUseCase {
     contestunlockkey,
     contestmainsiteurl,
   }: IRequest): Promise<Contest> {
-    const existingContest = await this.contestValidator.exists(contestnumber);
+    await this.contestValidator.exists(contestnumber);
 
-    // TODO Checar se novo nome não é uma string vazia
+    contestname = contestname ? contestname.trim() : "";
+    if (contestname.length === 0) {
+      throw ApiError.badRequest("Contest name must not be empty");
+    }
 
     const contest = new Contest();
     contest.contestnumber = contestnumber;
-    contest.contestname = contestname
-      ? contestname
-      : existingContest.contestname;
-    contest.conteststartdate = conteststartdate
-      ? conteststartdate
-      : existingContest.conteststartdate;
-    contest.contestduration = contestduration
-      ? contestduration
-      : existingContest.contestduration;
+    contest.contestname = contestname;
+    contest.conteststartdate = conteststartdate;
+    contest.contestduration = contestduration;
     contest.contestlastmileanswer = contestlastmileanswer
       ? contestlastmileanswer
-      : existingContest.contestlastmileanswer;
+      : contestduration;
     contest.contestlastmilescore = contestlastmilescore
       ? contestlastmilescore
-      : existingContest.contestlastmilescore;
-    contest.contestlocalsite = contestlocalsite
-      ? contestlocalsite
-      : existingContest.contestlocalsite;
-    contest.contestpenalty = contestpenalty
-      ? contestpenalty
-      : existingContest.contestpenalty;
-    contest.contestmaxfilesize = contestmaxfilesize
-      ? contestmaxfilesize
-      : existingContest.contestmaxfilesize;
-    contest.contestactive = contestactive
-      ? contestactive
-      : existingContest.contestactive;
-    contest.contestmainsite = contestmainsite
-      ? contestmainsite
-      : existingContest.contestmainsite;
-    contest.contestkeys = contestkeys
-      ? contestkeys
-      : existingContest.contestkeys;
-    contest.contestunlockkey = contestunlockkey
-      ? contestunlockkey
-      : existingContest.contestunlockkey;
-    contest.contestmainsiteurl = contestmainsiteurl
-      ? contestmainsiteurl
-      : existingContest.contestmainsiteurl;
+      : contestduration;
+    contest.contestlocalsite = contestlocalsite;
+    contest.contestpenalty = contestpenalty;
+    contest.contestmaxfilesize = contestmaxfilesize;
+    contest.contestactive = contestactive;
+    contest.contestmainsite = contestmainsite;
+    contest.contestkeys = contestkeys;
+    contest.contestunlockkey = contestunlockkey;
+    contest.contestmainsiteurl = contestmainsiteurl;
 
     await this.contestValidator.isValid(contest);
 
@@ -99,7 +82,7 @@ class PatchContestUseCase {
      *     Se a desativação do contest ativo falhar, mas a ativação do novo ocorrer,
      *   existirão dois contests ativos.
      *     Se o contest ativo for desativado com sucesso, mas a ativação do novo contest falhar,
-     *   a desativação do primeiro foi em vão.
+     *   a desativação do primeiro gera inconsistência com o BOCA web.
      */
 
     if (contestactive) {
@@ -117,4 +100,4 @@ class PatchContestUseCase {
   }
 }
 
-export { PatchContestUseCase };
+export { UpdateContestUseCase };

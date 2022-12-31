@@ -47,26 +47,7 @@ class CreateContestsUseCase {
   }: IRequest): Promise<Contest> {
     contestname = contestname ? contestname.trim() : "";
     if (contestname.length === 0) {
-      throw ApiError.badRequest("Contest name must be specified");
-    }
-
-    const existingContest = await this.contestsRepository.findByName(
-      contestname
-    );
-
-    if (existingContest) {
-      throw ApiError.alreadyExists("Contest name already exists");
-    }
-
-    if (
-      conteststartdate === undefined ||
-      contestduration === undefined ||
-      contestlocalsite === undefined ||
-      contestmainsite === undefined ||
-      contestpenalty === undefined ||
-      contestmaxfilesize === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
+      throw ApiError.badRequest("Contest name must not be empty");
     }
 
     contestlastmileanswer = contestlastmileanswer

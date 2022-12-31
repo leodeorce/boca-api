@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { container } from "tsyringe";
+import { LangRequestValidator } from "../../shared/validation/requests/LangRequestValidator";
 
 import IdValidator from "../../shared/validation/utils/IdValidator";
 import { CreateLangUseCase } from "./CreateLangUseCase";
 import { DeleteLangUseCase } from "./DeleteLangUseCase";
 import { GetLangUseCase } from "./GetLangUseCase";
 import { ListLangUseCase } from "./ListLangUseCase";
-import { PatchLangUseCase } from "./PatchLangUseCase";
-import { ReplaceLangUseCase } from "./ReplaceLangUseCase";
+import { UpdateLangUseCase } from "./UpdateLangUseCase";
 
 class LangController {
   async getOne(
@@ -68,6 +68,7 @@ class LangController {
   ): Promise<Response | undefined> {
     const createLangUseCase = container.resolve(CreateLangUseCase);
     const idValidator = container.resolve(IdValidator);
+    const langRequestValidator = container.resolve(LangRequestValidator);
 
     const { id_c } = request.params;
     const contestnumber = Number(id_c);
@@ -76,6 +77,7 @@ class LangController {
 
     try {
       idValidator.isContestId(contestnumber);
+      langRequestValidator.hasRequiredCreateProperties(request.body);
 
       const lang = await createLangUseCase.execute({
         contestnumber,
@@ -89,13 +91,14 @@ class LangController {
     }
   }
 
-  async updateFull(
+  async update(
     request: Request,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const replaceLangUseCase = container.resolve(ReplaceLangUseCase);
+    const updateLangUseCase = container.resolve(UpdateLangUseCase);
     const idValidator = container.resolve(IdValidator);
+    const langRequestValidator = container.resolve(LangRequestValidator);
 
     const { id_c } = request.params;
     const { id_l } = request.params;
@@ -107,40 +110,9 @@ class LangController {
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isLangId(langnumber);
+      langRequestValidator.hasRequiredUpdateProperties(request.body);
 
-      const updatedLang = await replaceLangUseCase.execute({
-        contestnumber,
-        langnumber,
-        langname,
-        langextension,
-      });
-
-      return response.status(200).json(updatedLang);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async updatePartial(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const patchLangUseCase = container.resolve(PatchLangUseCase);
-    const idValidator = container.resolve(IdValidator);
-
-    const { id_c } = request.params;
-    const { id_l } = request.params;
-    const contestnumber = Number(id_c);
-    const langnumber = Number(id_l);
-
-    const { langname, langextension } = request.body;
-
-    try {
-      idValidator.isContestId(contestnumber);
-      idValidator.isLangId(langnumber);
-
-      const updatedLang = await patchLangUseCase.execute({
+      const updatedLang = await updateLangUseCase.execute({
         contestnumber,
         langnumber,
         langname,

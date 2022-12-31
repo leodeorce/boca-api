@@ -1,7 +1,6 @@
 import { container, inject, injectable } from "tsyringe";
 
 import { Lang } from "../../entities/Lang";
-import { ApiError } from "../../errors/ApiError";
 import { ILangRepository } from "../../repositories/ILangRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import LangValidator from "../../shared/validation/entities/LangValidator";
@@ -31,10 +30,6 @@ class CreateLangUseCase {
     langextension,
   }: IRequest): Promise<Lang> {
     await this.contestValidator.exists(contestnumber);
-
-    if (langname === undefined || langextension === undefined) {
-      throw ApiError.badRequest("Missing properties");
-    }
 
     let lastId = await this.langRepository.getLastId(contestnumber);
     lastId = lastId !== undefined ? lastId : 0;

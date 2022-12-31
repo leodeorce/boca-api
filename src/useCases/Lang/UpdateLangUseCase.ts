@@ -1,7 +1,6 @@
 import { container, inject, injectable } from "tsyringe";
 
 import { Lang } from "../../entities/Lang";
-import { ApiError } from "../../errors/ApiError";
 import { ILangRepository } from "../../repositories/ILangRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import LangValidator from "../../shared/validation/entities/LangValidator";
@@ -14,7 +13,7 @@ interface IRequest {
 }
 
 @injectable()
-class ReplaceLangUseCase {
+class UpdateLangUseCase {
   private contestValidator: ContestValidator;
   private langValidator: LangValidator;
 
@@ -35,10 +34,6 @@ class ReplaceLangUseCase {
     await this.contestValidator.exists(contestnumber);
     await this.langValidator.exists(contestnumber, langnumber);
 
-    if (langname === undefined || langextension === undefined) {
-      throw ApiError.badRequest("Missing properties");
-    }
-
     const lang = new Lang();
     lang.contestnumber = contestnumber;
     lang.langnumber = langnumber;
@@ -51,4 +46,4 @@ class ReplaceLangUseCase {
   }
 }
 
-export { ReplaceLangUseCase };
+export { UpdateLangUseCase };
