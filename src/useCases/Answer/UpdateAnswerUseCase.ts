@@ -1,8 +1,9 @@
 import { container, inject, injectable } from "tsyringe";
 
 import { Answer } from "../../entities/Answer";
-import { ApiError } from "../../errors/ApiError";
+
 import { IAnswersRepository } from "../../repositories/IAnswersRepository";
+
 import AnswerValidator from "../../shared/validation/entities/AnswerValidator";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
@@ -15,7 +16,7 @@ interface IRequest {
 }
 
 @injectable()
-class ReplaceAnswerUseCase {
+class UpdateAnswerUseCase {
   private contestValidator: ContestValidator;
   private answerValidator: AnswerValidator;
 
@@ -37,15 +38,6 @@ class ReplaceAnswerUseCase {
     await this.contestValidator.exists(contestnumber);
     await this.answerValidator.exists(contestnumber, answernumber);
 
-    if (
-      fake === undefined ||
-      runanswer === undefined ||
-      yes === undefined ||
-      answernumber === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
-
     const answer = new Answer();
     answer.contestnumber = contestnumber;
     answer.answernumber = answernumber;
@@ -59,4 +51,4 @@ class ReplaceAnswerUseCase {
   }
 }
 
-export { ReplaceAnswerUseCase };
+export { UpdateAnswerUseCase };

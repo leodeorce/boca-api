@@ -1,8 +1,11 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { Answer } from "../../entities/Answer";
 import { ApiError } from "../../errors/ApiError";
+
+import { Answer } from "../../entities/Answer";
+
 import { IAnswersRepository } from "../../repositories/IAnswersRepository";
+
 import AnswerValidator from "../../shared/validation/entities/AnswerValidator";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
@@ -35,15 +38,6 @@ class CreateAnswerUseCase {
     yes,
   }: IRequest): Promise<Answer> {
     await this.contestValidator.exists(contestnumber);
-
-    if (
-      fake === undefined ||
-      runanswer === undefined ||
-      yes === undefined ||
-      answernumber === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
 
     const existingAnswer = await this.answersRepository.getById(
       contestnumber,
