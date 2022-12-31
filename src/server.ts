@@ -1,4 +1,5 @@
 import express from "express";
+
 import { router } from "./routes";
 import { AppDataSource } from "./database/index";
 import "./shared/container";

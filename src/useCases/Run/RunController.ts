@@ -3,7 +3,6 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { QueryFailedError } from "typeorm";
 
-import { GetProblemUseCase } from "../Problem/GetProblemUseCase";
 import { CreateRunUseCase } from "./CreateRunUseCase";
 import { DeleteRunUseCase } from "./DeleteRunUseCase";
 import { GetRunUseCase } from "./GetRunUseCase";
@@ -50,8 +49,8 @@ class RunController {
 
   async create(request: Request, response: Response): Promise<Response> {
     const createRunUseCase = container.resolve(CreateRunUseCase);
-    const getProblemUseCase = container.resolve(GetProblemUseCase);
 
+    const { id_c } = request.params;
     const { id_p } = request.params;
 
     const {
@@ -81,18 +80,10 @@ class RunController {
       autostderr,
     } = request.body;
 
-    const problem = await getProblemUseCase.execute({ id: parseInt(id_p, 10) });
-
-    if (!problem) {
-      return response
-        .status(400)
-        .json({ error: "Problem with this ID not found" });
-    }
-
     try {
       await createRunUseCase.execute({
-        contestnumber: problem.contestnumber,
-        runproblem: problem.problemnumber,
+        contestnumber: Number(id_c),
+        runproblem: Number(id_p),
         runsitenumber,
         usernumber,
         rundate,
