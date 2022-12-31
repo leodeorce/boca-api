@@ -72,27 +72,6 @@ class CreateSiteUseCase {
   }: IRequest): Promise<Site> {
     const existingContest = await this.contestValidator.exists(contestnumber);
 
-    if (
-      contestnumber === undefined ||
-      siteip === undefined ||
-      sitename === undefined ||
-      siteactive === undefined ||
-      sitepermitlogins === undefined ||
-      siteglobalscore === undefined ||
-      sitescorelevel === undefined ||
-      sitenextuser === undefined ||
-      sitenextclar === undefined ||
-      sitenextrun === undefined ||
-      sitenexttask === undefined ||
-      sitemaxtask === undefined ||
-      sitechiefname === undefined ||
-      siteautojudge === undefined ||
-      sitemaxruntime === undefined ||
-      sitemaxjudgewaittime === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
-
     // sitenumber é opcional. Caso não especificado, será o próximo ID disponível.
     // Caso especificado, devemos verificar se já não existe.
     if (sitenumber === undefined) {

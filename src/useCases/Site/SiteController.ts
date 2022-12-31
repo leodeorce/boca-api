@@ -1,13 +1,15 @@
-import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
+
+import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
-import { ApiError } from "../../errors/ApiError";
+
+import IdValidator from "../../shared/validation/utils/IdValidator";
 import { CreateSiteUseCase } from "./CreateSiteUseCase";
 import { DeleteSiteUseCase } from "./DeleteSiteUseCase";
 import { GetSiteUseCase } from "./GetSiteUseCase";
 import { ListSitesUseCase } from "./ListSitesUseCase";
-import { PatchSiteUseCase } from "./PatchSiteUseCase";
-import { ReplaceSiteUseCase } from "./ReplaceSiteUseCase";
+import { SiteRequestValidator } from "../../shared/validation/requests/SiteRequestValidator";
+import { UpdateSiteUseCase } from "./UpdateSiteUseCase";
 
 class SiteController {
   async listAll(
@@ -16,18 +18,15 @@ class SiteController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const listSitesUseCase = container.resolve(ListSitesUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
     const contestnumber = Number(id_c);
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
+      idValidator.isContestId(contestnumber);
 
-      const all = await listSitesUseCase.execute({
-        contestnumber: contestnumber,
-      });
+      const all = await listSitesUseCase.execute({ contestnumber });
 
       return response.status(200).json(all);
     } catch (error) {
@@ -41,24 +40,18 @@ class SiteController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const getSiteUseCase = container.resolve(GetSiteUseCase);
+    const idValidator = container.resolve(IdValidator);
 
-    const { id_site } = request.params;
+    const { id_s } = request.params;
     const { id_c } = request.params;
-    const sitenumber = Number(id_site);
+    const sitenumber = Number(id_s);
     const contestnumber = Number(id_c);
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(sitenumber);
 
-      const site = await getSiteUseCase.execute({
-        sitenumber: sitenumber,
-        contestnumber: contestnumber,
-      });
+      const site = await getSiteUseCase.execute({ sitenumber, contestnumber });
 
       return response.status(200).json(site);
     } catch (error) {
@@ -72,6 +65,8 @@ class SiteController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const createSiteUseCase = container.resolve(CreateSiteUseCase);
+    const idValidator = container.resolve(IdValidator);
+    const siteRequestValidator = container.resolve(SiteRequestValidator);
 
     const { id_c } = request.params;
     const contestnumber = Number(id_c);
@@ -102,12 +97,11 @@ class SiteController {
     } = request.body;
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
+      idValidator.isContestId(contestnumber);
+      siteRequestValidator.hasRequiredCreateProperties(request.body);
 
       const site = await createSiteUseCase.execute({
-        contestnumber: contestnumber,
+        contestnumber,
         sitenumber,
         siteip,
         sitename,
@@ -143,11 +137,13 @@ class SiteController {
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const replaceSiteUseCase = container.resolve(ReplaceSiteUseCase);
+    const updateSiteUseCase = container.resolve(UpdateSiteUseCase);
+    const idValidator = container.resolve(IdValidator);
+    const siteRequestValidator = container.resolve(SiteRequestValidator);
 
-    const { id_site } = request.params;
+    const { id_s } = request.params;
     const { id_c } = request.params;
-    const sitenumber = Number(id_site);
+    const sitenumber = Number(id_s);
     const contestnumber = Number(id_c);
 
     const {
@@ -175,90 +171,11 @@ class SiteController {
     } = request.body;
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(sitenumber);
+      siteRequestValidator.hasRequiredUpdateProperties(request.body);
 
-      const updatedSite = await replaceSiteUseCase.execute({
-        contestnumber: contestnumber,
-        sitenumber: sitenumber,
-        siteip,
-        sitename,
-        siteactive,
-        sitepermitlogins,
-        sitelastmileanswer,
-        sitelastmilescore,
-        siteduration,
-        siteautoend,
-        sitejudging,
-        sitetasking,
-        siteglobalscore,
-        sitescorelevel,
-        sitenextuser,
-        sitenextclar,
-        sitenextrun,
-        sitenexttask,
-        sitemaxtask,
-        sitechiefname,
-        siteautojudge,
-        sitemaxruntime,
-        sitemaxjudgewaittime,
-      });
-
-      return response.status(200).json(updatedSite);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async updatePartial(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const patchSiteUseCase = container.resolve(PatchSiteUseCase);
-
-    const { id_site } = request.params;
-    const { id_c } = request.params;
-    const sitenumber = Number(id_site);
-    const contestnumber = Number(id_c);
-
-    const {
-      siteip,
-      sitename,
-      siteactive,
-      sitepermitlogins,
-      sitelastmileanswer,
-      sitelastmilescore,
-      siteduration,
-      siteautoend,
-      sitejudging,
-      sitetasking,
-      siteglobalscore,
-      sitescorelevel,
-      sitenextuser,
-      sitenextclar,
-      sitenextrun,
-      sitenexttask,
-      sitemaxtask,
-      sitechiefname,
-      siteautojudge,
-      sitemaxruntime,
-      sitemaxjudgewaittime,
-    } = request.body;
-
-    try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
-
-      const updatedSite = await patchSiteUseCase.execute({
+      const updatedSite = await updateSiteUseCase.execute({
         contestnumber: contestnumber,
         sitenumber: sitenumber,
         siteip,
@@ -296,24 +213,18 @@ class SiteController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const deleteSiteUseCase = container.resolve(DeleteSiteUseCase);
+    const idValidator = container.resolve(IdValidator);
 
-    const { id_site } = request.params;
+    const { id_s } = request.params;
     const { id_c } = request.params;
-    const sitenumber = Number(id_site);
+    const sitenumber = Number(id_s);
     const contestnumber = Number(id_c);
 
     try {
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(sitenumber);
 
-      await deleteSiteUseCase.execute({
-        sitenumber: sitenumber,
-        contestnumber: contestnumber,
-      });
+      await deleteSiteUseCase.execute({ sitenumber, contestnumber });
 
       return response.status(204).json();
     } catch (error) {

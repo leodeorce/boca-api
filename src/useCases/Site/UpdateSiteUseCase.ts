@@ -1,7 +1,6 @@
 import { container, inject, injectable } from "tsyringe";
 
 import { Site } from "../../entities/Site";
-import { ApiError } from "../../errors/ApiError";
 import { ISitesRepository } from "../../repositories/ISitesRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
@@ -33,7 +32,7 @@ interface IRequest {
 }
 
 @injectable()
-class ReplaceSiteUseCase {
+class UpdateSiteUseCase {
   private contestValidator: ContestValidator;
   private siteValidator: SiteValidator;
 
@@ -72,27 +71,6 @@ class ReplaceSiteUseCase {
   }: IRequest): Promise<Site> {
     const existingContest = await this.contestValidator.exists(contestnumber);
     await this.siteValidator.exists(contestnumber, sitenumber);
-
-    if (
-      contestnumber === undefined ||
-      siteip === undefined ||
-      sitename === undefined ||
-      siteactive === undefined ||
-      sitepermitlogins === undefined ||
-      siteglobalscore === undefined ||
-      sitescorelevel === undefined ||
-      sitenextuser === undefined ||
-      sitenextclar === undefined ||
-      sitenextrun === undefined ||
-      sitenexttask === undefined ||
-      sitemaxtask === undefined ||
-      sitechiefname === undefined ||
-      siteautojudge === undefined ||
-      sitemaxruntime === undefined ||
-      sitemaxjudgewaittime === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
 
     siteautoend = siteautoend !== undefined ? siteautoend : true;
     siteduration =
@@ -151,4 +129,4 @@ class ReplaceSiteUseCase {
   }
 }
 
-export { ReplaceSiteUseCase };
+export { UpdateSiteUseCase };

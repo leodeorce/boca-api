@@ -1,8 +1,9 @@
-import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
-import { container } from "tsyringe";
-import { LangRequestValidator } from "../../shared/validation/requests/LangRequestValidator";
 
+import { NextFunction, Request, Response } from "express";
+import { container } from "tsyringe";
+
+import { LangRequestValidator } from "../../shared/validation/requests/LangRequestValidator";
 import IdValidator from "../../shared/validation/utils/IdValidator";
 import { CreateLangUseCase } from "./CreateLangUseCase";
 import { DeleteLangUseCase } from "./DeleteLangUseCase";
@@ -11,6 +12,28 @@ import { ListLangUseCase } from "./ListLangUseCase";
 import { UpdateLangUseCase } from "./UpdateLangUseCase";
 
 class LangController {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const listLangUseCase = container.resolve(ListLangUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const contestnumber = Number(id_c);
+
+    try {
+      idValidator.isContestId(contestnumber);
+
+      const all = await listLangUseCase.execute({ contestnumber });
+
+      return response.status(200).json(all);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getOne(
     request: Request,
     response: Response,
@@ -34,28 +57,6 @@ class LangController {
       });
 
       return response.status(200).json(lang);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async listAll(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const listLangUseCase = container.resolve(ListLangUseCase);
-    const idValidator = container.resolve(IdValidator);
-
-    const { id_c } = request.params;
-    const contestnumber = Number(id_c);
-
-    try {
-      idValidator.isContestId(contestnumber);
-
-      const all = await listLangUseCase.execute({ contestnumber });
-
-      return response.status(200).json(all);
     } catch (error) {
       next(error);
     }
