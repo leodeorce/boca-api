@@ -67,8 +67,8 @@ describe("Criação de uma linguagem", () => {
         .send(createLang4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest does not exist");
     });
 
     it("Tenta criar uma linguagem com propriedades faltando", async () => {
@@ -78,8 +78,8 @@ describe("Criação de uma linguagem", () => {
         .send(createLang5Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Missing properties");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Missing");
     });
 
     it("Tenta resgatar uma linguagem que não existe", async () => {
@@ -88,8 +88,8 @@ describe("Criação de uma linguagem", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Language does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Language does not exist");
     });
 
     it("Tenta criar um linguagem com uma propriedade de tipo errado", async () => {
@@ -99,8 +99,8 @@ describe("Criação de uma linguagem", () => {
         .send(createLang6Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      // expect(response.body["error"]).to.include(""); // TODO Adicionar verificação
+      expect(response.body).to.have.own.property("message");
+      // expect(response.body["message"]).to.include(""); // TODO Adicionar verificação
     });
   });
 });

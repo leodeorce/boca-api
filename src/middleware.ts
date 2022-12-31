@@ -29,12 +29,15 @@ function errorHandler(
   next: NextFunction
 ): void {
   if (err instanceof ApiError) {
-    res.status(err.status).json({ error: err.message }).end();
+    res
+      .status(err.status)
+      .json({ error: err.name, message: err.message })
+      .end();
     return;
   } else if (err instanceof QueryFailedError) {
     res
       .status(HttpStatus.INTERNAL_ERROR)
-      .json({ error: "Database query error" })
+      .json({ error: err.name, message: "Database query error" })
       .end();
     return;
   }

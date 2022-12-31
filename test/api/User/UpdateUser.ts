@@ -72,8 +72,8 @@ describe("Modifica os usuários criados anteriormente", () => {
     //     .send(updateUser3Fail);
     //   expect(response.statusCode).to.equal(400);
     //   expect(response.headers["content-type"]).to.contain("application/json");
-    //   expect(response.body).to.have.own.property("error");
-    //   expect(response.body["error"]).to.include("userdesc must be longer than");
+    //   expect(response.body).to.have.own.property("message");
+    //   expect(response.body["message"]).to.include("userdesc must be longer than");
     // });
 
     it("Tenta modificar o contest ao qual o Time 3 pertence", async () => {
@@ -98,8 +98,8 @@ describe("Modifica os usuários criados anteriormente", () => {
         .send(patchUser4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("User does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("User does not exist");
     });
   });
 });

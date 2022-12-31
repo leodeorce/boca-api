@@ -9,11 +9,10 @@ import createLang1Pass from "../../entities/Lang/Pass/createLang1.json";
 import createLang2Pass from "../../entities/Lang/Pass/createLang2.json";
 import createLang3Pass from "../../entities/Lang/Pass/createLang3.json";
 import updateLang1Pass from "../../entities/Lang/Pass/updateLang1.json";
-import patchLang2Pass from "../../entities/Lang/Pass/patchLang2.json";
+import updateLang2Pass from "../../entities/Lang/Pass/updateLang2.json";
 
 import updateLang1Fail from "../../entities/Lang/Fail/updateLang1.json";
-import patchLang2Fail from "../../entities/Lang/Fail/patchLang2.json";
-import patchLang4Fail from "../../entities/Lang/Fail/patchLang4.json";
+import updateLang4Fail from "../../entities/Lang/Fail/updateLang4.json";
 
 describe("Modifica as linguagens criadas anteriormente", () => {
   let lang1: Lang;
@@ -55,15 +54,15 @@ describe("Modifica as linguagens criadas anteriormente", () => {
 
     it('Modifica o nome da linguagem 2 em "Contest Beta"', async () => {
       const response = await request(URL)
-        .patch("/api/contest/2/language/2")
+        .put("/api/contest/2/language/2")
         .set("Accept", "application/json")
-        .send(patchLang2Pass);
+        .send(updateLang2Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("langnumber");
       expect(response.body["langnumber"]).to.equal(2);
       expect(response.body).to.have.own.property("langname");
-      expect(response.body["langname"]).to.equal(patchLang2Pass.langname);
+      expect(response.body["langname"]).to.equal(updateLang2Pass.langname);
     });
   });
 
@@ -75,34 +74,19 @@ describe("Modifica as linguagens criadas anteriormente", () => {
         .send(updateLang1Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Missing properties");
-    });
-
-    it("Tenta modificar o contest da linguagem 2", async () => {
-      const response = await request(URL)
-        .patch("/api/contest/2/language/2")
-        .set("Accept", "application/json")
-        .send(patchLang2Fail);
-      expect(response.statusCode).to.equal(200); // TODO Modificar para 400
-      expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("langnumber");
-      expect(response.body["langnumber"]).to.equal(2);
-      expect(response.body).to.have.own.property("contestnumber");
-      expect(response.body["contestnumber"]).to.not.equal(
-        patchLang2Fail.contestnumber
-      );
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Missing");
     });
 
     it("Tenta modificar uma linguagem que não existe", async () => {
       const response = await request(URL)
         .put("/api/contest/2/language/4")
         .set("Accept", "application/json")
-        .send(patchLang4Fail);
+        .send(updateLang4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Language does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Language does not exist");
     });
   });
 });

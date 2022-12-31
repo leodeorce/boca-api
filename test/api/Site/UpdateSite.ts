@@ -73,8 +73,8 @@ describe("Modifica os sites criados anteriormente", () => {
         .send(updateSite3Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include(
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include(
         "siteduration must be greater than zero"
       );
     });
@@ -101,8 +101,8 @@ describe("Modifica os sites criados anteriormente", () => {
         .send(patchSite4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Site does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Site does not exist");
     });
   });
 });

@@ -58,8 +58,8 @@ describe("Criação de um site", () => {
         .send(createSite4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest does not exist");
     });
 
     it("Tenta criar um site de nome inválido", async () => {
@@ -69,8 +69,8 @@ describe("Criação de um site", () => {
         .send(createSite5Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("sitename must be longer than");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("sitename must be longer than");
     });
 
     it("Tenta resgatar um site que não existe", async () => {
@@ -79,8 +79,8 @@ describe("Criação de um site", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Site does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Site does not exist");
     });
   });
 });

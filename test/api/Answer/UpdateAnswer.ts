@@ -74,8 +74,8 @@ describe("Modifica as answers criadas anteriormente", () => {
         .send(updateAnswer0Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include(
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include(
         "runanswer must be longer than"
       );
     });
@@ -102,8 +102,8 @@ describe("Modifica as answers criadas anteriormente", () => {
         .send(patchAnswer3Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Answer does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Answer does not exist");
     });
   });
 });

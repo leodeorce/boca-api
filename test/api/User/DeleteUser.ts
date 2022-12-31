@@ -40,8 +40,8 @@ describe("Remoção de um user", () => {
           .set("Accept", "application/json");
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("error");
-        expect(response.body["error"]).to.include("User does not exist");
+        expect(response.body).to.have.own.property("message");
+        expect(response.body["message"]).to.include("User does not exist");
       });
 
       it("Tenta deletar novamente o Time 1", async () => {
@@ -50,8 +50,8 @@ describe("Remoção de um user", () => {
           .set("Accept", "application/json");
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("error");
-        expect(response.body["error"]).to.include("User does not exist");
+        expect(response.body).to.have.own.property("message");
+        expect(response.body["message"]).to.include("User does not exist");
       });
 
       it("Tenta deletar o Time 1 de um contest inexistente", async () => {
@@ -60,8 +60,8 @@ describe("Remoção de um user", () => {
           .set("Accept", "application/json");
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
-        expect(response.body).to.have.own.property("error");
-        expect(response.body["error"]).to.include("Contest does not exist");
+        expect(response.body).to.have.own.property("message");
+        expect(response.body["message"]).to.include("Contest does not exist");
       });
     });
   });

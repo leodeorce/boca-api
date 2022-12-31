@@ -57,8 +57,8 @@ describe("Criação de um contest", () => {
         .send(createAlphaFail);
       expect(response.statusCode).to.equal(409);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest name already exists");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest name already exists");
     });
 
     it("Tenta criar um contest de duração inválida", async () => {
@@ -68,8 +68,8 @@ describe("Criação de um contest", () => {
         .send(createCharlieFail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("contestduration must be greater than zero");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("contestduration must be greater than zero");
     });
 
     it("Tenta criar um contest sem especificar alguma propriedade obrigatória", async () => {
@@ -79,8 +79,8 @@ describe("Criação de um contest", () => {
         .send(createDeltaFail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Missing properties");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Missing");
     });
 
     it('Tenta resgatar um contest que não existe', async () => {
@@ -89,8 +89,8 @@ describe("Criação de um contest", () => {
         .set("Accept", "application/json")
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest does not exist");
     });
   });
 });

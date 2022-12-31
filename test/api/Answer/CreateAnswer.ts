@@ -65,8 +65,8 @@ describe("Criação de uma answer", () => {
         .send(createAnswer3Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest does not exist");
     });
 
     it("Tenta criar uma answer de ID inválido", async () => {
@@ -76,8 +76,8 @@ describe("Criação de uma answer", () => {
         .send(createAnswer4Fail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include(
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include(
         "answernumber must not be less than 0"
       );
     });
@@ -88,8 +88,8 @@ describe("Criação de uma answer", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Answer does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Answer does not exist");
     });
   });
 });
