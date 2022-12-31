@@ -43,7 +43,7 @@ interface IProblemsRepository {
     problemnumber: number
   ): Promise<Problem | undefined>;
   update(problem: IUpdateProblemDTO): Promise<Problem>;
-  delete(contestnumber: number): Promise<void>;
+  delete(contestnumber: number, problemnumber: number): Promise<void>;
 }
 
 export {

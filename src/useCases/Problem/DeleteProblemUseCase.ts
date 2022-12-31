@@ -1,6 +1,9 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 
-import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
+import { IProblemsRepository } from "../../repositories/IProblemsRepository";
+
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
 
 interface IRequest {
   contestnumber: number;
@@ -9,26 +12,21 @@ interface IRequest {
 
 @injectable()
 class DeleteProblemUseCase {
+  private contestValidator: ContestValidator;
+  private problemValidator: ProblemValidator;
+
   constructor(
     @inject("ProblemsRepository")
-    private problemsRepository: ProblemsRepository
-  ) {}
+    private problemsRepository: IProblemsRepository
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.problemValidator = container.resolve(ProblemValidator);
+  }
 
   async execute({ contestnumber, problemnumber }: IRequest): Promise<void> {
-    const problemAlreadyExists = await this.problemsRepository.getById(
-      contestnumber,
-      problemnumber
-    );
-
-    if (!problemAlreadyExists) {
-      throw new Error("Problem does not exists");
-    }
-
-    try {
-      await this.problemsRepository.delete(0);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    await this.contestValidator.exists(contestnumber);
+    await this.problemValidator.exists(contestnumber, problemnumber);
+    await this.problemsRepository.delete(contestnumber, problemnumber);
   }
 }
 

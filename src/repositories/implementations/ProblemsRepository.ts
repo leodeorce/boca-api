@@ -112,13 +112,16 @@ class ProblemsRepository implements IProblemsRepository {
     return this.repository.create(updatedProblem);
   }
 
-  async delete(problemnumber: number): Promise<void> {
-    const query = `DELETE FROM problemtable WHERE problemnumber=${problemnumber}`;
-    try {
-      await this.repository.query(query);
-    } catch (err) {
-      return Promise.reject(err);
-    }
+  async delete(contestnumber: number, problemnumber: number): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Problem)
+      .where("contestnumber = :contestnumber", { contestnumber: contestnumber })
+      .andWhere("problemnumber = :problemnumber", {
+        problemnumber: problemnumber,
+      })
+      .execute();
   }
 }
 

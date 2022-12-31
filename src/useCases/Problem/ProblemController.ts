@@ -1,6 +1,7 @@
+import "reflect-metadata";
+
 import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
-import "reflect-metadata";
 import { container } from "tsyringe";
 
 import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
@@ -12,6 +13,7 @@ import { GetProblemUseCase } from "./GetProblemUseCase";
 import { ListProblemsUseCase } from "./ListProblemsUseCase";
 import { UpdateProblemFileUseCase } from "./UpdateProblemFileUseCase";
 import { UpdateProblemsUseCase } from "./UpdateProblemUseCase";
+import { ProblemRequestValidator } from "../../shared/validation/requests/ProblemRequestValidator";
 
 class ProblemController {
   async listAll(
@@ -71,28 +73,30 @@ class ProblemController {
   ): Promise<Response | undefined> {
     const createProblemUseCase = container.resolve(CreateProblemUseCase);
     const idValidator = container.resolve(IdValidator);
+    const problemRequestValidator = container.resolve(ProblemRequestValidator);
 
     const { id_c } = request.params;
     const contestnumber = Number(id_c);
 
+    const {
+      problemnumber: problemnumberString,
+      fake: fakeString,
+      problemname,
+      problemfullname,
+      problembasefilename,
+      problemcolorname,
+      problemcolor,
+    } = request.body;
+
+    const problemnumber = Number(problemnumberString);
+    const fake = Boolean(fakeString);
+
     try {
-      const probleminputfile = request.files?.probleminputfile as UploadedFile;
-
-      const {
-        problemnumber: problemnumberString,
-        fake: fakeString,
-        problemname,
-        problemfullname,
-        problembasefilename,
-        problemcolorname,
-        problemcolor,
-      } = request.body;
-
-      const problemnumber = Number(problemnumberString);
-      const fake = Boolean(fakeString);
-
       idValidator.isContestId(contestnumber);
       idValidator.isProblemId(problemnumber);
+      problemRequestValidator.hasRequiredCreateProperties(request.body);
+
+      const probleminputfile = request.files?.probleminputfile as UploadedFile;
 
       const problem = await createProblemUseCase.execute({
         contestnumber,
@@ -117,8 +121,11 @@ class ProblemController {
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const updateProblemFileUseCase = container.resolve(UpdateProblemFileUseCase);
+    const updateProblemFileUseCase = container.resolve(
+      UpdateProblemFileUseCase
+    );
     const idValidator = container.resolve(IdValidator);
+    const problemRequestValidator = container.resolve(ProblemRequestValidator);
 
     const { id_c } = request.params;
     const { id_p } = request.params;
@@ -126,10 +133,11 @@ class ProblemController {
     const problemnumber = Number(id_p);
 
     try {
-      const probleminputfile = request.files?.probleminputfile as UploadedFile;
-
       idValidator.isContestId(contestnumber);
       idValidator.isProblemId(problemnumber);
+      problemRequestValidator.hasRequiredUpdateFileProperties(request.body);
+
+      const probleminputfile = request.files?.probleminputfile as UploadedFile;
 
       const problem = await updateProblemFileUseCase.execute({
         contestnumber,
@@ -150,6 +158,7 @@ class ProblemController {
   ): Promise<Response | undefined> {
     const updateProblemUseCase = container.resolve(UpdateProblemsUseCase);
     const idValidator = container.resolve(IdValidator);
+    const problemRequestValidator = container.resolve(ProblemRequestValidator);
 
     const { id_c } = request.params;
     const { id_p } = request.params;
@@ -160,9 +169,7 @@ class ProblemController {
       problemname,
       problemfullname,
       problembasefilename,
-      probleminputfilename,
       probleminputfile,
-      probleminputfilehash,
       fake,
       problemcolorname,
       problemcolor,
@@ -171,6 +178,7 @@ class ProblemController {
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isProblemId(problemnumber);
+      problemRequestValidator.hasRequiredUpdateProperties(request.body);
 
       const updatedProblem = await updateProblemUseCase.execute({
         contestnumber,
@@ -178,9 +186,7 @@ class ProblemController {
         problemname,
         problemfullname,
         problembasefilename,
-        probleminputfilename,
         probleminputfile,
-        probleminputfilehash,
         fake,
         problemcolorname,
         problemcolor,

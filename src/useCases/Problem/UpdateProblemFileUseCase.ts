@@ -38,10 +38,6 @@ class UpdateProblemFileUseCase {
       problemnumber
     );
 
-    if (probleminputfile === undefined) {
-      throw ApiError.badRequest("Missing properties");
-    }
-
     const probleminputfilename = probleminputfile.name;
 
     let oid = null;
@@ -79,7 +75,11 @@ class UpdateProblemFileUseCase {
 
     await this.problemValidator.isValid(problem);
 
-    return await this.problemsRepository.update({ ...problem });
+    const updatedProblem = await this.problemsRepository.update({ ...problem });
+
+    // TODO Apagar arquivo antigo
+
+    return updatedProblem;
   }
 }
 
