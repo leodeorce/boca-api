@@ -3,7 +3,8 @@ import { inject, injectable } from "tsyringe";
 import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
 
 interface IRequest {
-  id: number;
+  contestnumber: number;
+  problemnumber: number;
 }
 
 @injectable()
@@ -13,15 +14,18 @@ class DeleteProblemUseCase {
     private problemsRepository: ProblemsRepository
   ) {}
 
-  async execute({ id }: IRequest): Promise<void> {
-    const problemAlreadyExists = await this.problemsRepository.getById(id);
+  async execute({ contestnumber, problemnumber }: IRequest): Promise<void> {
+    const problemAlreadyExists = await this.problemsRepository.getById(
+      contestnumber,
+      problemnumber
+    );
 
     if (!problemAlreadyExists) {
       throw new Error("Problem does not exists");
     }
 
     try {
-      await this.problemsRepository.delete(id);
+      await this.problemsRepository.delete(0);
     } catch (error) {
       return Promise.reject(error);
     }

@@ -1,5 +1,6 @@
-import { getRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
 
+import { AppDataSource } from "../../database";
 import { Problem } from "../../entities/Problem";
 import {
   ICountResult,
@@ -12,7 +13,7 @@ class ProblemsRepository implements IProblemsRepository {
   private repository: Repository<Problem>;
 
   constructor() {
-    this.repository = getRepository(Problem);
+    this.repository = AppDataSource.getRepository(Problem);
   }
 
   async list(contestnumber?: number): Promise<Problem[]> {
@@ -47,88 +48,68 @@ class ProblemsRepository implements IProblemsRepository {
     return count[0].max;
   }
 
-  async getById(id: number): Promise<Problem | undefined> {
-    const contest: Problem[] = await this.repository.query(
-      `SELECT * FROM problemtable WHERE problemnumber = ${id}`
-    );
-    if (contest.length === 0) {
-      return undefined;
-    }
-    return contest[0];
+  async getById(
+    contestnumber: number,
+    problemnumber: number
+  ): Promise<Problem | undefined> {
+    const problem: Problem | null = await this.repository.findOneBy({
+      contestnumber: contestnumber,
+      problemnumber: problemnumber,
+    });
+
+    return problem != null ? problem : undefined;
   }
 
-  async create(createObject: ICreateProblemDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
+  async create(createObject: ICreateProblemDTO): Promise<Problem> {
+    const problem = this.repository.create(createObject);
+    await this.repository.save(problem);
+    return problem;
+  }
 
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(createObject).filter(([_, v]) => v != null)
+  async createBlob(file: Buffer): Promise<number> {
+    const createLoResult = await this.repository.query(
+      "SELECT pg_catalog.lo_create('0');"
     );
+    const oid = createLoResult[0].lo_create;
 
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
-    }
+    let query = `SELECT pg_catalog.lo_open('${oid}', 131072);`;
 
-    KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
-    });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
+    const fileHex = file.toString("hex");
+    const CHUNK_SIZE = 32768;
+    const numWrites = Math.floor(fileHex.length / CHUNK_SIZE) + 1;
 
-    const query = `INSERT INTO problemtable 
-      (
-        ${createColumns}
-      ) VALUES (
-        ${createValues}
+    for (let i = 0; i < numWrites; i += 1) {
+      query = query.concat(
+        "\n",
+        `SELECT pg_catalog.lowrite(0, '\\x${fileHex.slice(
+          CHUNK_SIZE * i,
+          CHUNK_SIZE * (i + 1)
+        )}');`
       );
-      `;
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (err) {
-      return Promise.reject(err);
     }
+
+    query = query.concat("\n", "SELECT pg_catalog.lo_close(0);");
+    await this.repository.query(query);
+
+    return oid;
   }
 
   async update(updateObject: IUpdateProblemDTO): Promise<Problem> {
-    // Remover parâmetros vazios (string vazia ou nulos, etc)
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(updateObject).filter(([_, v]) => v != null)
-    );
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Problem)
+      .set(updateObject)
+      .where("contestnumber = :contestnumber", {
+        contestnumber: updateObject.contestnumber,
+      })
+      .andWhere("problemnumber = :problemnumber", {
+        problemnumber: updateObject.problemnumber,
+      })
+      .returning("*")
+      .execute();
 
-    let query = `UPDATE problemtable\n`;
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length > 0) {
-      query = query.concat(`
-      SET `);
-    }
-
-    KeysAndValues.forEach((object) => {
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}'` : object[1];
-      query = query.concat(`${object[0]} = ${value}, `);
-    });
-    query = query.trim(); // Remove espaços em branco desnecessarios
-    query = query.slice(0, query.length - 1); // Retira a ultima virgula
-    query = query.concat(
-      `\nWHERE problemnumber = ${updateObject.problemnumber};`
-    );
-
-    try {
-      const updatedProblem: Problem[] = await this.repository.query(query);
-      return updatedProblem[0];
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    const updatedProblem: Record<string, unknown> = result.raw[0];
+    return this.repository.create(updatedProblem);
   }
 
   async delete(problemnumber: number): Promise<void> {

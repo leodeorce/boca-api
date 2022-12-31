@@ -1,33 +1,28 @@
 import { Router } from "express";
+// import multer from "multer";
+import fileUpload from "express-fileupload";
 
 import { ProblemController } from "../useCases/Problem/ProblemController";
-import { ProblemLanguageController } from "../useCases/ProblemLanguage/ProblemLanguageController";
 
 const problemsRoutes = Router();
 
 const problemController = new ProblemController();
-const problemLanguageController = new ProblemLanguageController();
 
 problemsRoutes.get("/contest/:id_c/problem", problemController.listAll);
-problemsRoutes.post("/contest/:id_c/problem", problemController.create);
+problemsRoutes.get("/contest/:id_c/problem/:id_p", problemController.getOne);
+problemsRoutes.put("/contest/:id_c/problem/:id_p", problemController.update);
+problemsRoutes.delete("/contest/:id_c/problem/:id_p", problemController.delete);
 
-problemsRoutes.get("/problem/:id_problem", problemController.getOne);
-problemsRoutes.put("/problem/:id_problem", problemController.update);
-problemsRoutes.delete("/problem/:id_problem", problemController.delete);
-
-// Rotas de link com as linguagens
-
-problemsRoutes.get(
-  "/problem/:id_problem/language",
-  problemLanguageController.listLanguagesByProblem
-);
 problemsRoutes.post(
-  "/problem/:id_problem/language",
-  problemLanguageController.addLanguagesToProblem
+  "/contest/:id_c/problem",
+  fileUpload(),
+  problemController.create
 );
-problemsRoutes.delete(
-  "/problem/:id_problem/language",
-  problemLanguageController.deleteLanguagesFromProblem
+
+problemsRoutes.put(
+  "/contest/:id_c/problem/:id_p/file",
+  fileUpload(),
+  problemController.updateFile
 );
 
 export { problemsRoutes };

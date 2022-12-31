@@ -3,6 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
 
 interface IRequest {
+  contestnumber: number;
   problemnumber: number;
   problemname: string;
   problemfullname: string;
@@ -13,7 +14,6 @@ interface IRequest {
   fake: boolean;
   problemcolorname: string;
   problemcolor: string;
-  working_id?: number;
 }
 
 @injectable()
@@ -24,6 +24,7 @@ class UpdateProblemsUseCase {
   ) {}
 
   async execute({
+    contestnumber,
     problemnumber,
     problemname,
     problemfullname,
@@ -34,9 +35,9 @@ class UpdateProblemsUseCase {
     fake,
     problemcolorname,
     problemcolor,
-    working_id,
   }: IRequest): Promise<void> {
     const problemAlreadyExists = await this.problemsRepository.getById(
+      contestnumber,
       problemnumber
     );
 
@@ -45,6 +46,7 @@ class UpdateProblemsUseCase {
     }
     try {
       await this.problemsRepository.update({
+        contestnumber,
         problemnumber,
         problemname,
         problemfullname,
@@ -55,7 +57,6 @@ class UpdateProblemsUseCase {
         fake,
         problemcolorname,
         problemcolor,
-        working_id,
       });
     } catch (error) {
       return Promise.reject(error);

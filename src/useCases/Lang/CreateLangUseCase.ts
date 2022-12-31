@@ -48,12 +48,7 @@ class CreateLangUseCase {
 
     await this.langValidator.isValid(lang);
 
-    return await this.langRepository.create({
-      contestnumber,
-      langnumber,
-      langname,
-      langextension,
-    });
+    return await this.langRepository.create({ ...lang });
   }
 }
 

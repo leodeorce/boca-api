@@ -29,6 +29,10 @@ class IdValidator {
   isLangId(id: number) {
     this.isId(id, "language", 1);
   }
+
+  isProblemId(id: number) {
+    this.isId(id, "problem", 0);
+  }
 }
 
 export default IdValidator;
