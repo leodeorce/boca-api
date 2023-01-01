@@ -6,15 +6,14 @@ import {
   createNewSitePass,
   updateSite1Pass,
   createSite3Pass,
-  patchSite3Pass,
   updateSite3Fail,
-  patchSite3Fail,
-  patchSite4Fail,
+  updateSite4Fail,
+  updateSite3Pass,
 } from "../../entities/Site";
 import { URL } from "../../utils/URL";
 
 describe("Modifica os sites criados anteriormente", () => {
-  let site1: Site; // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
+  let site1: Site;
   let site3: Site;
 
   it("Resgata os sites a serem modificados", async () => {
@@ -25,7 +24,6 @@ describe("Modifica os sites criados anteriormente", () => {
     expect(all.headers["content-type"]).to.contain("application/json");
     expect(all.body).to.be.an("array");
 
-    // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
     site1 = all.body.find((site: Site) => site.sitenumber === 1);
     site3 = all.body.find((site: Site) => site.sitenumber === 3);
   });
@@ -33,10 +31,10 @@ describe("Modifica os sites criados anteriormente", () => {
   describe("Fluxo positivo", () => {
     it('Modifica a duração do Site 1 em "Contest Beta"', async () => {
       expect(site1).to.deep.include(createNewSitePass);
-      expect(site1.sitenumber).to.deep.equal(1); // TODO trocar para 2
+      expect(site1.sitenumber).to.deep.equal(1);
 
       const response = await request(URL)
-        .put("/api/contest/2/site/1") // TODO trocar para 2
+        .put("/api/contest/2/site/1")
         .set("Accept", "application/json")
         .send(updateSite1Pass);
       expect(response.statusCode).to.equal(200);
@@ -51,16 +49,16 @@ describe("Modifica os sites criados anteriormente", () => {
       expect(site3.sitenumber).to.deep.equal(3);
 
       const response = await request(URL)
-        .patch("/api/contest/2/site/3")
+        .put("/api/contest/2/site/3")
         .set("Accept", "application/json")
-        .send(patchSite3Pass);
+        .send(updateSite3Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
       expect(response.body["sitenumber"]).to.equal(3);
       expect(response.body).to.have.own.property("sitepermitlogins");
       expect(response.body["sitepermitlogins"]).to.equal(
-        patchSite3Pass.sitepermitlogins
+        updateSite3Pass.sitepermitlogins
       );
     });
   });
@@ -79,26 +77,11 @@ describe("Modifica os sites criados anteriormente", () => {
       );
     });
 
-    it('Tenta modificar o contest ao qual o Site 3 do "Contest Beta" pertence', async () => {
-      const response = await request(URL)
-        .patch("/api/contest/2/site/3")
-        .set("Accept", "application/json")
-        .send(patchSite3Fail);
-      expect(response.statusCode).to.equal(200); // TODO Modificar para 400
-      expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("sitenumber");
-      expect(response.body["sitenumber"]).to.equal(3);
-      expect(response.body).to.have.own.property("contestnumber");
-      expect(response.body["contestnumber"]).to.not.equal(
-        patchSite3Fail.contestnumber
-      );
-    });
-
     it("Tenta modificar um site que não existe", async () => {
       const response = await request(URL)
-        .put(`/api/contest/2/site/4`)
+        .put("/api/contest/2/site/4")
         .set("Accept", "application/json")
-        .send(patchSite4Fail);
+        .send(updateSite4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

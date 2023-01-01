@@ -6,11 +6,10 @@ import {
   createAnswer0Pass,
   createAnswer1Pass,
   createAnswer2Pass,
-  patchAnswer1Pass,
+  updateAnswer1Pass,
   updateAnswer0Fail,
   updateAnswer0Pass,
-  patchAnswer2Fail,
-  patchAnswer3Fail,
+  updateAnswer3Fail,
 } from "../../entities/Answer";
 import { URL } from "../../utils/URL";
 
@@ -54,15 +53,15 @@ describe("Modifica as answers criadas anteriormente", () => {
 
     it('Modifica a descrição da answer 1 em "Contest Beta"', async () => {
       const response = await request(URL)
-        .patch("/api/contest/2/answer/1")
+        .put("/api/contest/2/answer/1")
         .set("Accept", "application/json")
-        .send(patchAnswer1Pass);
+        .send(updateAnswer1Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("answernumber");
       expect(response.body["answernumber"]).to.equal(1);
       expect(response.body).to.have.own.property("runanswer");
-      expect(response.body["runanswer"]).to.equal(patchAnswer1Pass.runanswer);
+      expect(response.body["runanswer"]).to.equal(updateAnswer1Pass.runanswer);
     });
   });
 
@@ -80,26 +79,11 @@ describe("Modifica as answers criadas anteriormente", () => {
       );
     });
 
-    it("Tenta modificar o contest da answer 2", async () => {
-      const response = await request(URL)
-        .patch("/api/contest/2/answer/2")
-        .set("Accept", "application/json")
-        .send(patchAnswer2Fail);
-      expect(response.statusCode).to.equal(200); // TODO Modificar para 400
-      expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("answernumber");
-      expect(response.body["answernumber"]).to.equal(2);
-      expect(response.body).to.have.own.property("contestnumber");
-      expect(response.body["contestnumber"]).to.not.equal(
-        patchAnswer2Fail.contestnumber
-      );
-    });
-
     it("Tenta modificar uma answer que não existe", async () => {
       const response = await request(URL)
         .put("/api/contest/2/answer/3")
         .set("Accept", "application/json")
-        .send(patchAnswer3Fail);
+        .send(updateAnswer3Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

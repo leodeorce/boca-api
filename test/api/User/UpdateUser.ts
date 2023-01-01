@@ -5,16 +5,15 @@ import { User } from "../../../src/entities/User";
 import {
   createNewUserPass,
   createUser3Pass,
-  patchUser3Fail,
-  patchUser3Pass,
-  patchUser4Fail,
+  updateUser3Pass,
+  updateUser4Fail,
   updateUser1Pass,
-  // updateUser3Fail,
+  updateUser3Fail,
 } from "../../entities/User";
 import { URL } from "../../utils/URL";
 
 describe("Modifica os usuários criados anteriormente", () => {
-  let time1: User; // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
+  let time1: User;
   let time3: User;
 
   it("Resgata os users a serem modificados", async () => {
@@ -32,10 +31,10 @@ describe("Modifica os usuários criados anteriormente", () => {
   describe("Fluxo positivo", () => {
     it("Modifica a senha do Time 1", async () => {
       expect(time1).to.deep.include(createNewUserPass);
-      expect(time1.usernumber).to.deep.equal(1); // TODO trocar para 2
+      expect(time1.usernumber).to.deep.equal(1);
 
       const response = await request(URL)
-        .put("/api/contest/2/site/1/user/1") // TODO trocar para 2
+        .put("/api/contest/2/site/1/user/1")
         .set("Accept", "application/json")
         .send(updateUser1Pass);
       expect(response.statusCode).to.equal(200);
@@ -50,44 +49,29 @@ describe("Modifica os usuários criados anteriormente", () => {
       expect(time3.usernumber).to.deep.equal(3);
 
       const response = await request(URL)
-        .patch("/api/contest/2/site/1/user/3")
+        .put("/api/contest/2/site/1/user/3")
         .set("Accept", "application/json")
-        .send(patchUser3Pass);
+        .send(updateUser3Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
       expect(response.body["usernumber"]).to.equal(3);
       expect(response.body).to.have.own.property("userdesc");
-      expect(response.body["userdesc"]).to.equal(patchUser3Pass.userdesc);
+      expect(response.body["userdesc"]).to.equal(updateUser3Pass.userdesc);
     });
   });
 
   describe("Fluxo negativo", () => {
-    // TODO Habilitar quando existir validação manual
-
-    // it("Tenta modificar a descrição do Time 3 para um valor inválido", async () => {
-    //   const response = await request(URL)
-    //     .put("/api/contest/2/site/1/user/3")
-    //     .set("Accept", "application/json")
-    //     .send(updateUser3Fail);
-    //   expect(response.statusCode).to.equal(400);
-    //   expect(response.headers["content-type"]).to.contain("application/json");
-    //   expect(response.body).to.have.own.property("message");
-    //   expect(response.body["message"]).to.include("userdesc must be longer than");
-    // });
-
-    it("Tenta modificar o contest ao qual o Time 3 pertence", async () => {
+    it("Tenta modificar a descrição do Time 3 para um valor inválido", async () => {
       const response = await request(URL)
-        .patch("/api/contest/2/site/1/user/3")
+        .put("/api/contest/2/site/1/user/3")
         .set("Accept", "application/json")
-        .send(patchUser3Fail);
-      expect(response.statusCode).to.equal(200); // TODO Modificar para 400
+        .send(updateUser3Fail);
+      expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("usernumber");
-      expect(response.body["usernumber"]).to.equal(3);
-      expect(response.body).to.have.own.property("contestnumber");
-      expect(response.body["contestnumber"]).to.not.equal(
-        patchUser3Fail.contestnumber
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include(
+        "If specified, userdesc must be a string"
       );
     });
 
@@ -95,7 +79,7 @@ describe("Modifica os usuários criados anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/site/1/user/4")
         .set("Accept", "application/json")
-        .send(patchUser4Fail);
+        .send(updateUser4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

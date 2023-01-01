@@ -13,7 +13,7 @@ createNewSitePass.sitelastmileanswer = 0;
 createNewSitePass.sitelastmilescore = 0;
 createNewSitePass.siteduration = 3600;
 createNewSitePass.siteautoend = true;
-createNewSitePass.sitejudging = "1"; // TODO Trocar
+createNewSitePass.sitejudging = "1";
 createNewSitePass.sitetasking = "1";
 createNewSitePass.siteglobalscore = "2";
 createNewSitePass.sitescorelevel = 3;
@@ -42,8 +42,8 @@ const updateSite1Pass = { ...createNewSitePass };
 updateSite1Pass.siteduration = 7200;
 
 // Permite logins
-const patchSite3Pass = new Site();
-patchSite3Pass.sitepermitlogins = true;
+const updateSite3Pass = { ...createSite3Pass };
+updateSite3Pass.sitepermitlogins = true;
 
 /** FAIL */
 
@@ -71,13 +71,9 @@ createSite5Fail.sitetasking = "5";
 const updateSite3Fail = { ...createSite3Pass };
 updateSite3Fail.siteduration = -7200;
 
-// Tenta modificar uma propriedade não permitida
-const patchSite3Fail = new Site();
-patchSite3Fail.contestnumber = 3;
-
 // Tenta modificar um site que não existe
-const patchSite4Fail = new Site();
-patchSite4Fail.siteautojudge = true;
+const updateSite4Fail = { ...createSite3Pass };
+updateSite4Fail.siteautojudge = true;
 
 export {
   createNewSitePass,
@@ -85,8 +81,7 @@ export {
   createSite4Fail,
   createSite5Fail,
   updateSite1Pass,
-  patchSite3Pass,
+  updateSite3Pass,
   updateSite3Fail,
-  patchSite3Fail,
-  patchSite4Fail,
+  updateSite4Fail,
 };

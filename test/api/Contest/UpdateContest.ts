@@ -41,7 +41,7 @@ describe("Modifica os contests criados anteriormente", () => {
       expect(contestAlpha.contestnumber).to.deep.equal(1);
 
       const response = await request(URL)
-        .patch("/api/contest/1")
+        .put("/api/contest/1")
         .set("Accept", "application/json")
         .send(updateAlphaPass);
       expect(response.statusCode).to.equal(200);
@@ -68,7 +68,7 @@ describe("Modifica os contests criados anteriormente", () => {
 
     it('Ativa "Contest Beta", desativando "Contest Alpha" por consequência', async () => {
       let response = await request(URL)
-        .patch("/api/contest/2")
+        .put("/api/contest/2")
         .set("Accept", "application/json")
         .send(updateBetaPass2);
       expect(response.statusCode).to.equal(200);
@@ -92,7 +92,7 @@ describe("Modifica os contests criados anteriormente", () => {
   describe("Fluxo negativo", () => {
     it('Tenta modificar a duração de "Contest Alpha" para um valor inválido', async () => {
       const response = await request(URL)
-        .patch("/api/contest/1")
+        .put("/api/contest/1")
         .set("Accept", "application/json")
         .send(updateAlphaFail);
       expect(response.statusCode).to.equal(400);

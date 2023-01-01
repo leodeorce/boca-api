@@ -23,7 +23,6 @@ describe("Remoção de um site", () => {
       expect(all.headers["content-type"]).to.contain("application/json");
       expect(all.body).to.be.an("array");
 
-      // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
       const site1 = all.body.find((site: Site) => site.sitenumber === 1);
       const site3 = all.body.find((site: Site) => site.sitenumber === 3);
 

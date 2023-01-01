@@ -20,7 +20,6 @@ const createRequiredProperties = [
 ];
 
 const updateRequiredProperties = [
-  "contestnumber",
   "siteip",
   "sitename",
   "siteactive",

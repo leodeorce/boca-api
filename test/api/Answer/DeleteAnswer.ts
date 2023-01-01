@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import request from "supertest";
 import { Answer } from "../../../src/entities/Answer";
-import { patchAnswer1Pass, updateAnswer0Pass } from "../../entities/Answer";
+import { updateAnswer1Pass, updateAnswer0Pass } from "../../entities/Answer";
 import { URL } from "../../utils/URL";
 
 describe("Remoção de uma answer", () => {
@@ -41,7 +41,7 @@ describe("Remoção de uma answer", () => {
 
       expect(answer1).to.be.an("object");
       expect(answer1).to.have.own.property("answernumber");
-      expect(answer1).to.deep.include(patchAnswer1Pass);
+      expect(answer1).to.deep.include(updateAnswer1Pass);
     });
   });
 

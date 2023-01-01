@@ -22,7 +22,7 @@ describe("Criação de um site", () => {
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
-      expect(response.body["sitenumber"]).to.equal(1); // TODO Alterar para 2 quando o contest estiver criando o site automaticamente
+      expect(response.body["sitenumber"]).to.equal(1);
       expect(response.body).to.deep.include(createNewSitePass);
     });
 
@@ -70,7 +70,9 @@ describe("Criação de um site", () => {
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
-      expect(response.body["message"]).to.include("sitename must be longer than");
+      expect(response.body["message"]).to.include(
+        "sitename must be longer than"
+      );
     });
 
     it("Tenta resgatar um site que não existe", async () => {

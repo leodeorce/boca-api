@@ -216,10 +216,10 @@ class UserController {
 
     const { id_c } = request.params;
     const { id_s } = request.params;
-    const { id_user } = request.params;
+    const { id_u } = request.params;
     const contestnumber = Number(id_c);
     const usersitenumber = Number(id_s);
-    const usernumber = Number(id_user);
+    const usernumber = Number(id_u);
 
     try {
       idValidator.isContestId(contestnumber);

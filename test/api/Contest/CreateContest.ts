@@ -50,15 +50,15 @@ describe("Criação de um contest", () => {
   });
 
   describe("Fluxo negativo", () => {
-    it("Tenta criar um contest com um nome já existente", async () => {
+    it("Tenta criar um contest com um nome inválido", async () => {
       const response = await request(URL)
         .post("/api/contest")
         .set("Accept", "application/json")
         .send(createAlphaFail);
-      expect(response.statusCode).to.equal(409);
+      expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
-      expect(response.body["message"]).to.include("Contest name already exists");
+      expect(response.body["message"]).to.include("Contest name must not be empty");
     });
 
     it("Tenta criar um contest de duração inválida", async () => {

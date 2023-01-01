@@ -43,9 +43,7 @@ class ContestController {
     try {
       idValidator.isContestId(contestnumber);
 
-      const contest = await getContestsUseCase.execute({
-        contestnumber: contestnumber,
-      });
+      const contest = await getContestsUseCase.execute({ contestnumber });
 
       return response.status(HttpStatus.SUCCESS).json(contest);
     } catch (error) {
