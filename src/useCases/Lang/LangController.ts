@@ -5,11 +5,13 @@ import { container } from "tsyringe";
 
 import { LangRequestValidator } from "../../shared/validation/requests/LangRequestValidator";
 import IdValidator from "../../shared/validation/utils/IdValidator";
+
 import { CreateLangUseCase } from "./CreateLangUseCase";
 import { DeleteLangUseCase } from "./DeleteLangUseCase";
 import { GetLangUseCase } from "./GetLangUseCase";
 import { ListLangUseCase } from "./ListLangUseCase";
 import { UpdateLangUseCase } from "./UpdateLangUseCase";
+import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
 
 class LangController {
   async listAll(
@@ -28,7 +30,7 @@ class LangController {
 
       const all = await listLangUseCase.execute({ contestnumber });
 
-      return response.status(200).json(all);
+      return response.status(HttpStatus.SUCCESS).json(all);
     } catch (error) {
       next(error);
     }
@@ -56,7 +58,7 @@ class LangController {
         langnumber,
       });
 
-      return response.status(200).json(lang);
+      return response.status(HttpStatus.SUCCESS).json(lang);
     } catch (error) {
       next(error);
     }
@@ -86,7 +88,7 @@ class LangController {
         langextension,
       });
 
-      return response.status(200).json(lang);
+      return response.status(HttpStatus.CREATED).json(lang);
     } catch (error) {
       next(error);
     }
@@ -120,7 +122,7 @@ class LangController {
         langextension,
       });
 
-      return response.status(200).json(updatedLang);
+      return response.status(HttpStatus.UPDATED).json(updatedLang);
     } catch (error) {
       next(error);
     }
@@ -145,7 +147,7 @@ class LangController {
 
       await deleteLangUseCase.execute({ contestnumber, langnumber });
 
-      return response.status(204).json();
+      return response.status(HttpStatus.DELETED).json();
     } catch (error) {
       next(error);
     }

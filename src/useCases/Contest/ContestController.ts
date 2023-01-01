@@ -1,13 +1,16 @@
 import "reflect-metadata";
+
 import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
+
+import { ContestRequestValidator } from "../../shared/validation/requests/ContestRequestValidator";
+import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
+import IdValidator from "../../shared/validation/utils/IdValidator";
 
 import { CreateContestsUseCase } from "./CreateContestUseCase";
 import { DeleteContestsUseCase } from "./DeleteContestUseCase";
 import { GetContestsUseCase } from "./GetContestUseCase";
 import { ListContestsUseCase } from "./ListContestsUseCase";
-import { ContestRequestValidator } from "../../shared/validation/requests/ContestRequestValidator";
-import IdValidator from "../../shared/validation/utils/IdValidator";
 import { UpdateContestUseCase } from "./UpdateContestUseCase";
 
 class ContestController {
@@ -44,7 +47,7 @@ class ContestController {
         contestnumber: contestnumber,
       });
 
-      return response.status(200).json(contest);
+      return response.status(HttpStatus.SUCCESS).json(contest);
     } catch (error) {
       next(error);
     }
@@ -91,7 +94,7 @@ class ContestController {
         contestmainsiteurl,
       });
 
-      return response.status(200).json(contest);
+      return response.status(HttpStatus.CREATED).json(contest);
     } catch (error) {
       next(error);
     }
@@ -146,7 +149,7 @@ class ContestController {
         contestunlockkey,
       });
 
-      return response.status(200).json(updatedContest);
+      return response.status(HttpStatus.UPDATED).json(updatedContest);
     } catch (error) {
       next(error);
     }
@@ -168,7 +171,7 @@ class ContestController {
 
       await deleteContestsUseCase.execute({ contestnumber: contestnumber });
 
-      return response.status(204).json();
+      return response.status(HttpStatus.DELETED).json();
     } catch (error) {
       next(error);
     }

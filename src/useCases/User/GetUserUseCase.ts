@@ -1,5 +1,7 @@
 import { container, injectable } from "tsyringe";
+
 import { User } from "../../entities/User";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 import UserValidator from "../../shared/validation/entities/UserValidator";

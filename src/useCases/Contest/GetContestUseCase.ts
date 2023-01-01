@@ -1,6 +1,7 @@
 import { container, injectable } from "tsyringe";
 
 import { Contest } from "../../entities/Contest";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {

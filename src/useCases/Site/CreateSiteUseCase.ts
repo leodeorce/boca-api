@@ -1,8 +1,11 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { Site } from "../../entities/Site";
 import { ApiError } from "../../errors/ApiError";
+
+import { Site } from "../../entities/Site";
+
 import { ISitesRepository } from "../../repositories/ISitesRepository";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 

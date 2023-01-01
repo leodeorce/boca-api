@@ -3,13 +3,15 @@ import "reflect-metadata";
 import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
 
+import { SiteRequestValidator } from "../../shared/validation/requests/SiteRequestValidator";
 import IdValidator from "../../shared/validation/utils/IdValidator";
+
 import { CreateSiteUseCase } from "./CreateSiteUseCase";
 import { DeleteSiteUseCase } from "./DeleteSiteUseCase";
 import { GetSiteUseCase } from "./GetSiteUseCase";
 import { ListSitesUseCase } from "./ListSitesUseCase";
-import { SiteRequestValidator } from "../../shared/validation/requests/SiteRequestValidator";
 import { UpdateSiteUseCase } from "./UpdateSiteUseCase";
+import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
 
 class SiteController {
   async listAll(
@@ -28,7 +30,7 @@ class SiteController {
 
       const all = await listSitesUseCase.execute({ contestnumber });
 
-      return response.status(200).json(all);
+      return response.status(HttpStatus.SUCCESS).json(all);
     } catch (error) {
       next(error);
     }
@@ -53,7 +55,7 @@ class SiteController {
 
       const site = await getSiteUseCase.execute({ sitenumber, contestnumber });
 
-      return response.status(200).json(site);
+      return response.status(HttpStatus.SUCCESS).json(site);
     } catch (error) {
       next(error);
     }
@@ -126,7 +128,7 @@ class SiteController {
         sitemaxjudgewaittime,
       });
 
-      return response.status(200).json(site);
+      return response.status(HttpStatus.CREATED).json(site);
     } catch (error) {
       next(error);
     }
@@ -201,7 +203,7 @@ class SiteController {
         sitemaxjudgewaittime,
       });
 
-      return response.status(200).json(updatedSite);
+      return response.status(HttpStatus.UPDATED).json(updatedSite);
     } catch (error) {
       next(error);
     }
@@ -226,7 +228,7 @@ class SiteController {
 
       await deleteSiteUseCase.execute({ sitenumber, contestnumber });
 
-      return response.status(204).json();
+      return response.status(HttpStatus.DELETED).json();
     } catch (error) {
       next(error);
     }

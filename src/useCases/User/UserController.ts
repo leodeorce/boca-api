@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
+
+import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
-import { ApiError } from "../../errors/ApiError";
+
 import { UserRequestValidator } from "../../shared/validation/requests/UserRequestValidator";
 import IdValidator from "../../shared/validation/utils/IdValidator";
 
@@ -10,6 +11,7 @@ import { DeleteUserUseCase } from "./DeleteUserUseCase";
 import { GetUserUseCase } from "./GetUserUseCase";
 import { ListUsersUseCase } from "./ListUserUseCase";
 import { UpdateUserUseCase } from "./UpdateUserUseCase";
+import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
 
 class UserController {
   async listAll(
@@ -34,7 +36,7 @@ class UserController {
         usersitenumber,
       });
 
-      return response.status(200).json(all);
+      return response.status(HttpStatus.SUCCESS).json(all);
     } catch (error) {
       next(error);
     }
@@ -66,7 +68,7 @@ class UserController {
         usernumber,
       });
 
-      return response.status(200).json(user);
+      return response.status(HttpStatus.SUCCESS).json(user);
     } catch (error) {
       next(error);
     }
@@ -131,7 +133,7 @@ class UserController {
         usericpcid,
       });
 
-      return response.status(200).json(user);
+      return response.status(HttpStatus.CREATED).json(user);
     } catch (error) {
       next(error);
     }
@@ -198,7 +200,7 @@ class UserController {
         usericpcid,
       });
 
-      return response.status(200).json(updatedUser);
+      return response.status(HttpStatus.UPDATED).json(updatedUser);
     } catch (error) {
       next(error);
     }
@@ -210,32 +212,27 @@ class UserController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const deleteUserUseCase = container.resolve(DeleteUserUseCase);
+    const idValidator = container.resolve(IdValidator);
 
     const { id_c } = request.params;
     const { id_s } = request.params;
     const { id_user } = request.params;
     const contestnumber = Number(id_c);
-    const sitenumber = Number(id_s);
+    const usersitenumber = Number(id_s);
     const usernumber = Number(id_user);
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-      if (Number.isNaN(sitenumber) || sitenumber < 1) {
-        throw ApiError.badRequest("Invalid site ID");
-      }
-      if (Number.isNaN(usernumber) || usernumber < 1) {
-        throw ApiError.badRequest("Invalid user ID");
-      }
+      idValidator.isContestId(contestnumber);
+      idValidator.isSiteId(usersitenumber);
+      idValidator.isUserId(usernumber);
 
       await deleteUserUseCase.execute({
         contestnumber,
-        usersitenumber: sitenumber,
+        usersitenumber,
         usernumber,
       });
 
-      return response.status(204).json();
+      return response.status(HttpStatus.DELETED).json();
     } catch (error) {
       next(error);
     }

@@ -1,7 +1,9 @@
 import { container, inject, injectable } from "tsyringe";
 
 import { Lang } from "../../entities/Lang";
+
 import { ILangRepository } from "../../repositories/ILangRepository";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import LangValidator from "../../shared/validation/entities/LangValidator";
 
@@ -35,6 +37,7 @@ class UpdateLangUseCase {
     await this.langValidator.exists(contestnumber, langnumber);
 
     const lang = new Lang();
+    
     lang.contestnumber = contestnumber;
     lang.langnumber = langnumber;
     lang.langname = langname;

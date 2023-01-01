@@ -1,9 +1,12 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { Contest } from "../../entities/Contest";
 import { ApiError } from "../../errors/ApiError";
-import ContestValidator from "../../shared/validation/entities/ContestValidator";
+
+import { Contest } from "../../entities/Contest";
+
 import { IContestsRepository } from "../../repositories/IContestsRepository";
+
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {
   contestnumber: number;

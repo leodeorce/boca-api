@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 
 import { Contest } from "../../entities/Contest";
+
 import { IContestsRepository } from "../../repositories/IContestsRepository";
 
 @injectable()

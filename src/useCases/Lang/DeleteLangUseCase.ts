@@ -1,6 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { LangRepository } from "../../repositories/implementations/LangRepository";
+import { ILangRepository } from "../../repositories/ILangRepository";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import LangValidator from "../../shared/validation/entities/LangValidator";
 
@@ -16,7 +17,7 @@ class DeleteLangUseCase {
 
   constructor(
     @inject("LangRepository")
-    private langRepository: LangRepository
+    private langRepository: ILangRepository
   ) {
     this.contestValidator = container.resolve(ContestValidator);
     this.langValidator = container.resolve(LangValidator);
