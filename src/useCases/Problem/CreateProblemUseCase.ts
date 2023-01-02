@@ -1,8 +1,4 @@
 import { container, inject, injectable } from "tsyringe";
-import { UploadedFile } from "express-fileupload";
-import { createHash } from "node:crypto";
-
-import { ApiError } from "../../errors/ApiError";
 
 import { Problem } from "../../entities/Problem";
 
@@ -17,7 +13,6 @@ interface IRequest {
   problemname: string;
   problemfullname?: string;
   problembasefilename?: string;
-  probleminputfile?: UploadedFile;
   fake: boolean;
   problemcolorname?: string;
   problemcolor?: string;
@@ -42,28 +37,11 @@ class CreateProblemUseCase {
     problemname,
     problemfullname,
     problembasefilename,
-    probleminputfile,
     fake,
     problemcolorname,
     problemcolor,
   }: IRequest): Promise<Problem> {
     await this.contestValidator.exists(contestnumber);
-
-    let oid = null;
-    let hash = null;
-
-    if (probleminputfile !== undefined) {
-      const arrayBuffer = probleminputfile.data;
-
-      if (arrayBuffer == null || typeof arrayBuffer === "string") {
-        throw ApiError.badRequest("File is invalid");
-      }
-
-      const data = new Uint8Array(arrayBuffer);
-      hash = createHash("SHA1").update(data);
-
-      oid = await this.problemsRepository.createBlob(arrayBuffer);
-    }
 
     const problem = new Problem();
 
@@ -72,6 +50,9 @@ class CreateProblemUseCase {
     problem.problemname = problemname;
     problem.problembasefilename = problembasefilename;
     problem.fake = fake;
+    problem.probleminputfilename = "";
+    problem.probleminputfile = undefined;
+    problem.probleminputfilehash = undefined;
 
     problem.problemfullname =
       problemfullname !== undefined ? problemfullname : "";
@@ -80,14 +61,6 @@ class CreateProblemUseCase {
       problemcolorname !== undefined ? problemcolorname : "";
 
     problem.problemcolor = problemcolor !== undefined ? problemcolor : "";
-
-    problem.probleminputfilename =
-      probleminputfile !== undefined ? probleminputfile.name : "";
-
-    problem.probleminputfile = oid != null ? oid : undefined;
-
-    problem.probleminputfilehash =
-      hash != null ? hash.digest("hex") : undefined;
 
     await this.problemValidator.isValid(problem);
 

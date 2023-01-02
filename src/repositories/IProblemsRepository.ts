@@ -33,10 +33,12 @@ interface ICountResult {
 }
 
 interface IProblemsRepository {
+  getFileByOid(oid: number): Promise<Buffer | undefined>;
   findByName(name: string): Promise<Problem | undefined>;
   list(contestnumber?: number): Promise<Problem[]>;
   create(problem: ICreateProblemDTO): Promise<Problem>;
   createBlob(file: Buffer): Promise<number>;
+  deleteBlob(oid: number): Promise<void>;
   count(): Promise<number>;
   getById(
     contestnumber: number,

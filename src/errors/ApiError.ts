@@ -31,6 +31,14 @@ class ApiError extends Error {
       message
     );
   }
+
+  static inconsistency(message: string): ApiError {
+    return new ApiError(
+      "InconsistencyError",
+      HttpStatus.INCONSISTENCY,
+      message
+    );
+  }
 }
 
 export { ApiError };

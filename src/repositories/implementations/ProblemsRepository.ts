@@ -60,6 +60,17 @@ class ProblemsRepository implements IProblemsRepository {
     return problem != null ? problem : undefined;
   }
 
+  async getFileByOid(oid: number): Promise<Buffer | undefined> {
+    const result = await this.repository.query(
+      `SELECT pg_catalog.lo_get(${oid});`
+    );
+
+    if (result.length === 0 || result[0].lo_get == null) {
+      return undefined;
+    }
+    return result[0].lo_get as Buffer;
+  }
+
   async create(createObject: ICreateProblemDTO): Promise<Problem> {
     const problem = this.repository.create(createObject);
     await this.repository.save(problem);
@@ -92,6 +103,10 @@ class ProblemsRepository implements IProblemsRepository {
     await this.repository.query(query);
 
     return oid;
+  }
+
+  async deleteBlob(oid: number): Promise<void> {
+    await this.repository.query(`SELECT pg_catalog.lo_unlink(${oid});`);
   }
 
   async update(updateObject: IUpdateProblemDTO): Promise<Problem> {

@@ -58,26 +58,36 @@ class UpdateProblemFileUseCase {
     problem.contestnumber = contestnumber;
     problem.problemnumber = problemnumber;
     problem.problemname = existingProblem.problemname;
+    problem.probleminputfilename = probleminputfilename;
+    problem.probleminputfile = oid;
+    problem.fake = existingProblem.fake;
+    problem.problemcolorname = existingProblem.problemcolorname;
+    problem.problemcolor = existingProblem.problemcolor;
+
+    problem.probleminputfilehash = hash.digest("hex");
+
     problem.problemfullname =
       existingProblem.problemfullname !== undefined
         ? existingProblem.problemfullname
         : "";
+
     problem.problembasefilename =
       existingProblem.problembasefilename != null
         ? existingProblem.problembasefilename
-        : "";
-    problem.probleminputfilename = probleminputfilename;
-    problem.probleminputfile = oid;
-    problem.probleminputfilehash = hash.digest("hex");
-    problem.fake = existingProblem.fake;
-    problem.problemcolorname = existingProblem.problemcolorname;
-    problem.problemcolor = existingProblem.problemcolor;
+        : undefined;
 
     await this.problemValidator.isValid(problem);
 
     const updatedProblem = await this.problemsRepository.update({ ...problem });
 
-    // TODO Apagar arquivo antigo
+    if (
+      existingProblem.probleminputfile !== undefined &&
+      existingProblem.probleminputfile != null
+    ) {
+      await this.problemsRepository.deleteBlob(
+        existingProblem.probleminputfile
+      );
+    }
 
     return updatedProblem;
   }

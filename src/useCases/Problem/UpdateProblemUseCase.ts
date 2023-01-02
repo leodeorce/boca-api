@@ -1,8 +1,4 @@
-import { createHash } from "crypto";
-import { UploadedFile } from "express-fileupload";
 import { container, inject, injectable } from "tsyringe";
-
-import { ApiError } from "../../errors/ApiError";
 
 import { Problem } from "../../entities/Problem";
 
@@ -17,7 +13,6 @@ interface IRequest {
   problemname: string;
   problemfullname?: string;
   problembasefilename?: string;
-  probleminputfile?: UploadedFile;
   fake: boolean;
   problemcolorname?: string;
   problemcolor?: string;
@@ -42,28 +37,12 @@ class UpdateProblemsUseCase {
     problemname,
     problemfullname,
     problembasefilename,
-    probleminputfile,
     fake,
     problemcolorname,
     problemcolor,
   }: IRequest): Promise<Problem> {
     await this.contestValidator.exists(contestnumber);
-
-    let oid = null;
-    let hash = null;
-
-    if (probleminputfile !== undefined) {
-      const arrayBuffer = probleminputfile.data;
-
-      if (arrayBuffer == null || typeof arrayBuffer === "string") {
-        throw ApiError.badRequest("File is invalid");
-      }
-
-      const data = new Uint8Array(arrayBuffer);
-      hash = createHash("SHA1").update(data);
-
-      oid = await this.problemsRepository.createBlob(arrayBuffer);
-    }
+    await this.problemValidator.exists(contestnumber, problemnumber);
 
     const problem = new Problem();
 
@@ -72,14 +51,9 @@ class UpdateProblemsUseCase {
     problem.problemname = problemname;
     problem.fake = fake;
     problem.problembasefilename = problembasefilename;
-
-    problem.probleminputfilename =
-      probleminputfile !== undefined ? probleminputfile.name : "";
-
-    problem.probleminputfilehash =
-      hash === null ? undefined : hash.digest("hex");
-
-    problem.probleminputfile = oid === null ? undefined : oid;
+    problem.probleminputfilename = "";
+    problem.probleminputfile = undefined;
+    problem.probleminputfilehash = undefined;
 
     problem.problemcolorname =
       problemcolorname === undefined ? "" : problemcolorname;

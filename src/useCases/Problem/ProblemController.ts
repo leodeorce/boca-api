@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 import { container } from "tsyringe";
+import * as fs from "fs";
 
 import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
 import IdValidator from "../../shared/validation/utils/IdValidator";
@@ -14,6 +15,7 @@ import { ListProblemsUseCase } from "./ListProblemsUseCase";
 import { UpdateProblemFileUseCase } from "./UpdateProblemFileUseCase";
 import { UpdateProblemsUseCase } from "./UpdateProblemUseCase";
 import { ProblemRequestValidator } from "../../shared/validation/requests/ProblemRequestValidator";
+import { GetProblemFileUseCase } from "./GetProblemFileUseCase";
 
 class ProblemController {
   async listAll(
@@ -66,6 +68,51 @@ class ProblemController {
     }
   }
 
+  async getFile(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<void | undefined> {
+    const getProblemFileUseCase = container.resolve(GetProblemFileUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const { id_p } = request.params;
+    const contestnumber = Number(id_c);
+    const problemnumber = Number(id_p);
+
+    let filepath = "";
+
+    try {
+      idValidator.isContestId(contestnumber);
+      idValidator.isProblemId(problemnumber);
+
+      const file = await getProblemFileUseCase.execute({
+        contestnumber,
+        problemnumber,
+      });
+
+      // Cria diretório para arquivos temporários
+      const tempDir = "./temp";
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir);
+      }
+
+      // Arquivo a ser enviado é escrito em tempDir temporariamente
+      filepath = tempDir + `/${file.oid}_${file.filename}`;
+      fs.writeFileSync(filepath, file.buffer);
+
+      // Envia arquivo e chama callback em seguida, excluindo arquivo temporário
+      return response.download(filepath, file.filename, () => {
+        if (filepath.length > 0) {
+          fs.rmSync(filepath);
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async create(
     request: Request,
     response: Response,
@@ -79,8 +126,8 @@ class ProblemController {
     const contestnumber = Number(id_c);
 
     const {
-      problemnumber: problemnumberString,
-      fake: fakeString,
+      problemnumber,
+      fake,
       problemname,
       problemfullname,
       problembasefilename,
@@ -88,15 +135,10 @@ class ProblemController {
       problemcolor,
     } = request.body;
 
-    const problemnumber = Number(problemnumberString);
-    const fake = Boolean(fakeString);
-
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isProblemId(problemnumber);
       problemRequestValidator.hasRequiredCreateProperties(request.body);
-
-      const probleminputfile = request.files?.probleminputfile as UploadedFile;
 
       const problem = await createProblemUseCase.execute({
         contestnumber,
@@ -104,7 +146,6 @@ class ProblemController {
         problemname,
         problemfullname,
         problembasefilename,
-        probleminputfile,
         fake,
         problemcolorname,
         problemcolor,
@@ -135,7 +176,9 @@ class ProblemController {
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isProblemId(problemnumber);
-      problemRequestValidator.hasRequiredUpdateFileProperties(request.body);
+      problemRequestValidator.hasRequiredUpdateFileProperties(
+        request.files as object
+      );
 
       const probleminputfile = request.files?.probleminputfile as UploadedFile;
 
@@ -169,7 +212,6 @@ class ProblemController {
       problemname,
       problemfullname,
       problembasefilename,
-      probleminputfile,
       fake,
       problemcolorname,
       problemcolor,
@@ -186,7 +228,6 @@ class ProblemController {
         problemname,
         problemfullname,
         problembasefilename,
-        probleminputfile,
         fake,
         problemcolorname,
         problemcolor,

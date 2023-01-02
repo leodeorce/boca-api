@@ -100,7 +100,7 @@ describe("Criação de uma linguagem", () => {
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
-      // expect(response.body["message"]).to.include(""); // TODO Adicionar verificação
+      expect(response.body["message"]).to.include("langname");
     });
   });
 });

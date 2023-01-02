@@ -3,9 +3,9 @@ import { RequestValidator } from "./RequestValidator";
 
 const createRequiredProperties = ["problemname", "fake", "problemnumber"];
 
-const updateRequiredProperties = ["probleminputfile"];
+const updateFileRequiredProperties = ["probleminputfile"];
 
-const updateFileRequiredProperties = ["problemname", "fake", "problemnumber"];
+const updateRequiredProperties = ["problemname", "fake", "problemnumber"];
 
 @injectable()
 class ProblemRequestValidator extends RequestValidator {

@@ -9,8 +9,6 @@ import {
 } from "../../entities/Contest";
 import { URL } from "../../utils/URL";
 
-// TODO Explicar a equivalência do que é testado com o fluxo do usuário no BOCA
-
 describe("Criação de um contest", () => {
   describe("Fluxo positivo", () => {
     it("Cria um contest (conjunto de valores aceitáveis)", async () => {
@@ -40,7 +38,7 @@ describe("Criação de um contest", () => {
     it('Resgata o "Contest Alpha" criado anteriormente', async () => {
       const response = await request(URL)
         .get("/api/contest/1")
-        .set("Accept", "application/json")
+        .set("Accept", "application/json");
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("contestnumber");
@@ -58,7 +56,9 @@ describe("Criação de um contest", () => {
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
-      expect(response.body["message"]).to.include("Contest name must not be empty");
+      expect(response.body["message"]).to.include(
+        "Contest name must not be empty"
+      );
     });
 
     it("Tenta criar um contest de duração inválida", async () => {
@@ -69,7 +69,9 @@ describe("Criação de um contest", () => {
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
-      expect(response.body["message"]).to.include("contestduration must be greater than zero");
+      expect(response.body["message"]).to.include(
+        "contestduration must be greater than zero"
+      );
     });
 
     it("Tenta criar um contest sem especificar alguma propriedade obrigatória", async () => {
@@ -83,10 +85,10 @@ describe("Criação de um contest", () => {
       expect(response.body["message"]).to.include("Missing");
     });
 
-    it('Tenta resgatar um contest que não existe', async () => {
+    it("Tenta resgatar um contest que não existe", async () => {
       const response = await request(URL)
         .get("/api/contest/3")
-        .set("Accept", "application/json")
+        .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

@@ -25,7 +25,21 @@ class DeleteProblemUseCase {
 
   async execute({ contestnumber, problemnumber }: IRequest): Promise<void> {
     await this.contestValidator.exists(contestnumber);
-    await this.problemValidator.exists(contestnumber, problemnumber);
+
+    const existingProblem = await this.problemValidator.exists(
+      contestnumber,
+      problemnumber
+    );
+
+    if (
+      existingProblem.probleminputfile !== undefined &&
+      existingProblem.probleminputfile != null
+    ) {
+      await this.problemsRepository.deleteBlob(
+        existingProblem.probleminputfile
+      );
+    }
+
     await this.problemsRepository.delete(contestnumber, problemnumber);
   }
 }
