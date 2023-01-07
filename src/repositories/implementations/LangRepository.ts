@@ -16,20 +16,6 @@ class LangRepository implements ILangRepository {
     this.repository = AppDataSource.getRepository(Lang);
   }
 
-  // TODO Verificar se o BOCA permite duas linguagens de mesmo nome embora o banco permita
-  async findByName(
-    langname: string,
-    contestNumber: number
-  ): Promise<Lang | undefined> {
-    const lang: Lang[] = await this.repository.query(
-      `SELECT * FROM langtable WHERE langname = '${langname} AND contestnumber=${contestNumber}'`
-    );
-    if (lang.length === 0) {
-      return undefined;
-    }
-    return lang[0];
-  }
-
   async getById(
     contestnumber: number,
     langnumber: number

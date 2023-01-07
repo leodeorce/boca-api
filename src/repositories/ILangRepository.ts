@@ -25,10 +25,6 @@ interface ILangRepository {
   getLastId(contestnumber: number): Promise<number | undefined>;
   update(lang: IUpdadeLangDTO): Promise<Lang>;
   delete(contestnumber: number, langnumber: number): Promise<void>;
-  findByName(
-    langname: string,
-    contestNumber: number
-  ): Promise<Lang | undefined>;
 }
 
 export { ILangRepository, ILastIdResult, ICreateLangDTO, IUpdadeLangDTO };

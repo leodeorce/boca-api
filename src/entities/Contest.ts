@@ -9,37 +9,37 @@ import {
   MinLength,
 } from "class-validator";
 
+import { IsType } from "../shared/validation/utils/IsType";
+
 @Entity("contesttable")
 class Contest {
   @PrimaryColumn("int4")
-  @IsInt()
   @IsPositive({ message: "contestnumber must be greater than zero" })
+  @IsInt()
   contestnumber!: number;
 
   @Column("varchar", { length: 100 })
-  @IsString()
-  @MinLength(1)
   @MaxLength(100)
+  @MinLength(1)
+  @IsString()
   contestname!: string;
 
   @Column("int4")
-  @IsInt()
   @IsPositive({ message: "conteststartdate must be greater than zero" })
+  @IsInt()
   conteststartdate!: number;
 
   @Column("int4")
-  @IsInt()
   @IsPositive({ message: "contestduration must be greater than zero" })
+  @IsInt()
   contestduration!: number;
 
   @Column("int4", { nullable: true })
-  @IsInt()
-  @Min(0)
+  @IsType(["number", "undefined"])
   contestlastmileanswer?: number;
 
   @Column("int4", { nullable: true })
-  @IsInt()
-  @Min(0)
+  @IsType(["number", "undefined"])
   contestlastmilescore?: number;
 
   @Column("int4")

@@ -7,6 +7,7 @@ import {
   MinLength,
 } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
+
 import { IsType } from "../shared/validation/utils/IsType";
 
 @Entity("usertable")
@@ -64,16 +65,11 @@ class User {
   @IsString()
   userpassword = "";
 
-  // TODO Validar manualmente
   @Column("varchar", { length: 300 })
-  // @MaxLength(300)
-  // @MinLength(8)
   @IsType(["string", "undefined"])
   userip?: string;
 
-  // TODO Validar manualmente
   @Column("int4")
-  // @IsPositive({ message: "userlastlogin must be greater than zero" })
   @IsType(["number", "undefined"], {
     message: "If specified, userlastlogin must be greater than zero",
   })
@@ -91,18 +87,13 @@ class User {
   @IsString()
   usersessionextra = "";
 
-  // TODO Validar manualmente
   @Column("int4")
-  // @IsPositive({ message: "userlastlogout must be greater than zero" })
   @IsType(["number", "undefined"], {
     message: "If specified, userlastlogout must be greater than zero",
   })
   userlastlogout?: number;
 
-  // TODO Validar manualmente
   @Column("varchar", { length: 300 })
-  // @MaxLength(300)
-  // @MinLength(8)
   @IsType(["string", "undefined"])
   userpermitip?: string;
 

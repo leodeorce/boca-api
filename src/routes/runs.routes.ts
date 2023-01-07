@@ -1,4 +1,5 @@
 import { Router } from "express";
+import fileUpload from "express-fileupload";
 
 import { RunController } from "../useCases/Run/RunController";
 
@@ -6,10 +7,24 @@ const runsRoutes = Router();
 
 const runController = new RunController();
 
-runsRoutes.get("/problem/:id_p/run", runController.listAll);
-runsRoutes.post("/problem/:id_p/run", runController.create);
-runsRoutes.get("/run/:id_run", runController.getOne);
-runsRoutes.put("/run/:id_run", runController.update);
-runsRoutes.delete("/run/:id_run", runController.delete);
+runsRoutes.get("contest/:id_c/problem/:id_p/run", runController.listAll);
+runsRoutes.get("contest/:id_c/problem/:id_p/run/:id_r", runController.getOne);
+runsRoutes.put("contest/:id_c/problem/:id_p/run/:id_r", runController.update);
+
+runsRoutes.post(
+  "contest/:id_c/problem/:id_p/run",
+  fileUpload(),
+  runController.create
+);
+
+runsRoutes.delete(
+  "contest/:id_c/problem/:id_p/run/:id_r",
+  runController.delete
+);
+
+runsRoutes.get(
+  "contest/:id_c/problem/:id_p/run/:id_r/file",
+  runController.getFile
+);
 
 export { runsRoutes };

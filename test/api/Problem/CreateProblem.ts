@@ -103,6 +103,17 @@ describe("Criação de um problema", () => {
       expect(response.body["message"]).to.include("Missing");
     });
 
+    it("Tenta criar um problema com ID já existente", async () => {
+      const response = await request(URL)
+        .post("/api/contest/2/problem")
+        .set("Accept", "application/json")
+        .send(createProblem4Fail);
+      expect(response.statusCode).to.equal(409);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("already in use");
+    });
+
     it("Tenta resgatar um problema que não existe", async () => {
       const response = await request(URL)
         .get("/api/contest/2/problem/2022105")

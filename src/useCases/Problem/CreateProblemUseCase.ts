@@ -1,5 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
 
+import { ApiError } from "../../errors/ApiError";
+
 import { Problem } from "../../entities/Problem";
 
 import { IProblemsRepository } from "../../repositories/IProblemsRepository";
@@ -42,6 +44,15 @@ class CreateProblemUseCase {
     problemcolor,
   }: IRequest): Promise<Problem> {
     await this.contestValidator.exists(contestnumber);
+
+    const existingProblem = this.problemsRepository.getById(
+      contestnumber,
+      problemnumber
+    );
+
+    if (existingProblem !== undefined) {
+      throw ApiError.alreadyExists("Problem number is already in use");
+    }
 
     const problem = new Problem();
 

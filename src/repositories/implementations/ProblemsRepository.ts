@@ -3,7 +3,6 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../../database";
 import { Problem } from "../../entities/Problem";
 import {
-  ICountResult,
   ICreateProblemDTO,
   IProblemsRepository,
   IUpdateProblemDTO,
@@ -16,36 +15,10 @@ class ProblemsRepository implements IProblemsRepository {
     this.repository = AppDataSource.getRepository(Problem);
   }
 
-  async list(contestnumber?: number): Promise<Problem[]> {
-    if (contestnumber !== undefined) {
-      const problems = await this.repository.query(
-        `SELECT * FROM problemtable WHERE contestnumber=${contestnumber}`
-      );
-      return problems;
-    }
-    const contests = await this.repository.query(`SELECT * FROM problemtable`);
-    return contests;
-  }
-
-  async findByName(name: string): Promise<Problem | undefined> {
-    const query = `
-      SELECT * FROM problemtable WHERE problemname = '${name}'
-    `;
-    const contest: Problem[] = await this.repository.query(query);
-    if (contest.length === 0) {
-      return undefined;
-    }
-    return contest[0];
-  }
-
-  async count(): Promise<number> {
-    const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(problemnumber) FROM problemtable`
-    );
-    if (count[0].max === null) {
-      return -1;
-    }
-    return count[0].max;
+  async list(contestnumber: number): Promise<Problem[]> {
+    return await this.repository.find({
+      where: { contestnumber: contestnumber },
+    });
   }
 
   async getById(

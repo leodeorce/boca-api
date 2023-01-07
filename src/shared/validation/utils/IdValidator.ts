@@ -33,6 +33,10 @@ class IdValidator {
   isProblemId(id: number) {
     this.isId(id, "problem", 0);
   }
+
+  isRunId(id: number) {
+    this.isId(id, "run", 1);
+  }
 }
 
 export default IdValidator;

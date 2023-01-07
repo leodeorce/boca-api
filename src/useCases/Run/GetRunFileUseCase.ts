@@ -1,5 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
 
+import { ApiError } from "../../errors/ApiError";
+
 import { IRunsRepository } from "../../repositories/IRunsRepository";
 
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
@@ -12,8 +14,14 @@ interface IRequest {
   runnumber: number;
 }
 
+interface IFile {
+  filename: string;
+  oid: number;
+  buffer: Buffer;
+}
+
 @injectable()
-class DeleteRunUseCase {
+class GetRunFileUseCase {
   private contestValidator: ContestValidator;
   private problemValidator: ProblemValidator;
   private runValidator: RunValidator;
@@ -31,21 +39,39 @@ class DeleteRunUseCase {
     contestnumber,
     runproblem,
     runnumber,
-  }: IRequest): Promise<void> {
+  }: IRequest): Promise<IFile> {
     await this.contestValidator.exists(contestnumber);
     await this.problemValidator.exists(contestnumber, runproblem);
+
     const existingRun = await this.runValidator.exists(
       contestnumber,
       runproblem,
       runnumber
     );
 
-    if (existingRun.rundata !== undefined && existingRun.rundata != null) {
-      await this.runsRepository.deleteBlob(existingRun.rundata);
+    if (typeof existingRun.rundata !== "number") {
+      throw ApiError.notFound("Run has no file");
     }
 
-    await this.runsRepository.delete(contestnumber, runproblem, runnumber);
+    if (
+      existingRun.runfilename === undefined ||
+      existingRun.runfilename === null
+    ) {
+      throw ApiError.inconsistency("Run file name is invalid");
+    }
+
+    const buffer = await this.runsRepository.getFileByOid(existingRun.rundata);
+
+    if (buffer === undefined) {
+      throw ApiError.inconsistency("Run file is missing");
+    }
+
+    return {
+      filename: existingRun.runfilename,
+      oid: existingRun.rundata,
+      buffer: buffer,
+    };
   }
 }
 
-export { DeleteRunUseCase };
+export { GetRunFileUseCase };
