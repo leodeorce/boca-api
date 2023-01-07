@@ -5,7 +5,7 @@ const createRequiredProperties = ["problemname", "fake", "problemnumber"];
 
 const updateFileRequiredProperties = ["probleminputfile"];
 
-const updateRequiredProperties = ["problemname", "fake", "problemnumber"];
+const updateRequiredProperties = ["problemname", "fake"];
 
 @injectable()
 class ProblemRequestValidator extends RequestValidator {

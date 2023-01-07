@@ -67,7 +67,7 @@ describe("Modifica as linguagens criadas anteriormente", () => {
   });
 
   describe("Fluxo negativo", () => {
-    it("Tenta modificar o nome da linguagem 1 para um valor inválido", async () => {
+    it("Tenta modificar o nome da linguagem 1 com propriedades obrigatórias faltando", async () => {
       const response = await request(URL)
         .put("/api/contest/2/language/1")
         .set("Accept", "application/json")

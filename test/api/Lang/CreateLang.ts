@@ -92,7 +92,7 @@ describe("Criação de uma linguagem", () => {
       expect(response.body["message"]).to.include("Language does not exist");
     });
 
-    it("Tenta criar um linguagem com uma propriedade de tipo errado", async () => {
+    it("Tenta criar uma linguagem com uma propriedade de tipo errado", async () => {
       const response = await request(URL)
         .post("/api/contest/2/language")
         .set("Accept", "application/json")
