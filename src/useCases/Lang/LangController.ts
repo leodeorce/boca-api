@@ -1,16 +1,41 @@
-import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
+
+import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
 
+import { LangRequestValidator } from "../../shared/validation/requests/LangRequestValidator";
 import IdValidator from "../../shared/validation/utils/IdValidator";
+
 import { CreateLangUseCase } from "./CreateLangUseCase";
 import { DeleteLangUseCase } from "./DeleteLangUseCase";
 import { GetLangUseCase } from "./GetLangUseCase";
 import { ListLangUseCase } from "./ListLangUseCase";
-import { PatchLangUseCase } from "./PatchLangUseCase";
-import { ReplaceLangUseCase } from "./ReplaceLangUseCase";
+import { UpdateLangUseCase } from "./UpdateLangUseCase";
+import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
 
 class LangController {
+  async listAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
+    const listLangUseCase = container.resolve(ListLangUseCase);
+    const idValidator = container.resolve(IdValidator);
+
+    const { id_c } = request.params;
+    const contestnumber = Number(id_c);
+
+    try {
+      idValidator.isContestId(contestnumber);
+
+      const all = await listLangUseCase.execute({ contestnumber });
+
+      return response.status(HttpStatus.SUCCESS).json(all);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getOne(
     request: Request,
     response: Response,
@@ -33,29 +58,7 @@ class LangController {
         langnumber,
       });
 
-      return response.status(200).json(lang);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async listAll(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const listLangUseCase = container.resolve(ListLangUseCase);
-    const idValidator = container.resolve(IdValidator);
-
-    const { id_c } = request.params;
-    const contestnumber = Number(id_c);
-
-    try {
-      idValidator.isContestId(contestnumber);
-
-      const all = await listLangUseCase.execute({ contestnumber });
-
-      return response.status(200).json(all);
+      return response.status(HttpStatus.SUCCESS).json(lang);
     } catch (error) {
       next(error);
     }
@@ -68,6 +71,7 @@ class LangController {
   ): Promise<Response | undefined> {
     const createLangUseCase = container.resolve(CreateLangUseCase);
     const idValidator = container.resolve(IdValidator);
+    const langRequestValidator = container.resolve(LangRequestValidator);
 
     const { id_c } = request.params;
     const contestnumber = Number(id_c);
@@ -76,6 +80,7 @@ class LangController {
 
     try {
       idValidator.isContestId(contestnumber);
+      langRequestValidator.hasRequiredCreateProperties(request.body);
 
       const lang = await createLangUseCase.execute({
         contestnumber,
@@ -83,19 +88,20 @@ class LangController {
         langextension,
       });
 
-      return response.status(200).json(lang);
+      return response.status(HttpStatus.CREATED).json(lang);
     } catch (error) {
       next(error);
     }
   }
 
-  async updateFull(
+  async update(
     request: Request,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const replaceLangUseCase = container.resolve(ReplaceLangUseCase);
+    const updateLangUseCase = container.resolve(UpdateLangUseCase);
     const idValidator = container.resolve(IdValidator);
+    const langRequestValidator = container.resolve(LangRequestValidator);
 
     const { id_c } = request.params;
     const { id_l } = request.params;
@@ -107,47 +113,16 @@ class LangController {
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isLangId(langnumber);
+      langRequestValidator.hasRequiredUpdateProperties(request.body);
 
-      const updatedLang = await replaceLangUseCase.execute({
+      const updatedLang = await updateLangUseCase.execute({
         contestnumber,
         langnumber,
         langname,
         langextension,
       });
 
-      return response.status(200).json(updatedLang);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async updatePartial(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const patchLangUseCase = container.resolve(PatchLangUseCase);
-    const idValidator = container.resolve(IdValidator);
-
-    const { id_c } = request.params;
-    const { id_l } = request.params;
-    const contestnumber = Number(id_c);
-    const langnumber = Number(id_l);
-
-    const { langname, langextension } = request.body;
-
-    try {
-      idValidator.isContestId(contestnumber);
-      idValidator.isLangId(langnumber);
-
-      const updatedLang = await patchLangUseCase.execute({
-        contestnumber,
-        langnumber,
-        langname,
-        langextension,
-      });
-
-      return response.status(200).json(updatedLang);
+      return response.status(HttpStatus.UPDATED).json(updatedLang);
     } catch (error) {
       next(error);
     }
@@ -172,7 +147,7 @@ class LangController {
 
       await deleteLangUseCase.execute({ contestnumber, langnumber });
 
-      return response.status(204).json();
+      return response.status(HttpStatus.DELETED).json();
     } catch (error) {
       next(error);
     }

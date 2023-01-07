@@ -23,8 +23,9 @@ createAnswer2Pass.fake = false;
 const updateAnswer0Pass = { ...createAnswer0Pass };
 updateAnswer0Pass.runanswer = "No answer";
 
-const patchAnswer1Pass = new Answer();
-patchAnswer1Pass.runanswer = "Yes";
+const updateAnswer1Pass = { ...createAnswer0Pass };
+updateAnswer1Pass.answernumber = 1;
+updateAnswer1Pass.runanswer = "Yes";
 
 /** FAIL */
 
@@ -43,11 +44,8 @@ createAnswer4Fail.fake = false;
 const updateAnswer0Fail = { ...createAnswer0Pass };
 updateAnswer0Fail.runanswer = "";
 
-const patchAnswer2Fail = new Answer();
-patchAnswer2Fail.contestnumber = 3;
-
-const patchAnswer3Fail = new Answer();
-patchAnswer3Fail.yes = true;
+const updateAnswer3Fail = { ...createAnswer0Pass };
+updateAnswer3Fail.yes = true;
 
 export {
   createAnswer0Pass,
@@ -56,8 +54,7 @@ export {
   createAnswer3Fail,
   createAnswer4Fail,
   updateAnswer0Pass,
-  patchAnswer1Pass,
+  updateAnswer1Pass,
   updateAnswer0Fail,
-  patchAnswer2Fail,
-  patchAnswer3Fail,
+  updateAnswer3Fail,
 };

@@ -1,26 +1,27 @@
-import { inject, injectable } from "tsyringe";
+import { container, injectable } from "tsyringe";
 
 import { Problem } from "../../entities/Problem";
-import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
 
 interface IRequest {
-  id: number;
+  contestnumber: number;
+  problemnumber: number;
 }
 
 @injectable()
 class GetProblemUseCase {
-  constructor(
-    @inject("ProblemsRepository")
-    private problemsRepository: ProblemsRepository
-  ) {}
+  private contestValidator: ContestValidator;
+  private problemValidator: ProblemValidator;
 
-  async execute({ id }: IRequest): Promise<Problem | undefined> {
-    try {
-      const problem = await this.problemsRepository.getById(id);
-      return problem;
-    } catch (error) {
-      return Promise.reject(error);
-    }
+  constructor() {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.problemValidator = container.resolve(ProblemValidator);
+  }
+
+  async execute({ contestnumber, problemnumber }: IRequest): Promise<Problem> {
+    await this.contestValidator.exists(contestnumber);
+    return await this.problemValidator.exists(contestnumber, problemnumber);
   }
 }
 

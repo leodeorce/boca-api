@@ -34,8 +34,8 @@ const updateUser1Pass = { ...createNewUserPass };
 updateUser1Pass.userpassword = "7ab2d6e73d6ed4fb40fc1f97f051a183";
 
 // Modifica descrição
-const patchUser3Pass = new User();
-patchUser3Pass.userdesc = "Escola do Time 3";
+const updateUser3Pass = { ...createUser3Pass };
+updateUser3Pass.userdesc = "Escola do Time 3";
 
 /** FAIL */
 
@@ -53,15 +53,11 @@ createUser5Fail.userfullname = "";
 
 // Tenta modificar a descrição do usuário para valor inválido
 const updateUser3Fail = { ...createUser3Pass };
-updateUser3Fail.userdesc = "";
-
-// Tenta modificar uma propriedade não permitida
-const patchUser3Fail = new User();
-patchUser3Fail.contestnumber = 3;
+updateUser3Fail.userdesc = 2 as unknown as string;
 
 // Tenta modificar um usuário que não existe
-const patchUser4Fail = new User();
-patchUser4Fail.userenabled = false;
+const updateUser4Fail = { ...createUser3Pass };
+updateUser4Fail.userenabled = false;
 
 export {
   createNewUserPass,
@@ -69,8 +65,7 @@ export {
   createUser4Fail,
   createUser5Fail,
   updateUser1Pass,
-  patchUser3Pass,
+  updateUser3Pass,
   updateUser3Fail,
-  patchUser3Fail,
-  patchUser4Fail,
+  updateUser4Fail,
 };

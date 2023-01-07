@@ -1,14 +1,17 @@
-import { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
+
+import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
+
+import { AnswerRequestValidator } from "../../shared/validation/requests/AnswerRequestValidator";
+import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
 import IdValidator from "../../shared/validation/utils/IdValidator";
 
 import { CreateAnswerUseCase } from "./CreateAnswerUseCase";
 import { DeleteAnswerUseCase } from "./DeleteAnswerUseCase";
 import { GetAnswerUseCase } from "./GetAnswerUseCase";
 import { ListAnswersUseCase } from "./ListAnswersUseCase";
-import { PatchAnswerUseCase } from "./PatchAnswerUseCase";
-import { ReplaceAnswerUseCase } from "./ReplaceAnswerUseCase";
+import { UpdateAnswerUseCase } from "./UpdateAnswerUseCase";
 
 class AnswerController {
   async listAll(
@@ -27,7 +30,7 @@ class AnswerController {
 
       const all = await listAnswersUseCase.execute({ contestnumber });
 
-      return response.status(200).json(all);
+      return response.status(HttpStatus.SUCCESS).json(all);
     } catch (error) {
       next(error);
     }
@@ -55,7 +58,7 @@ class AnswerController {
         answernumber,
       });
 
-      return response.status(200).json(answer);
+      return response.status(HttpStatus.SUCCESS).json(answer);
     } catch (error) {
       next(error);
     }
@@ -68,6 +71,7 @@ class AnswerController {
   ): Promise<Response | undefined> {
     const createAnswerUseCase = container.resolve(CreateAnswerUseCase);
     const idValidator = container.resolve(IdValidator);
+    const answerRequestValidator = container.resolve(AnswerRequestValidator);
 
     const { id_c } = request.params;
     const contestnumber = Number(id_c);
@@ -76,6 +80,7 @@ class AnswerController {
 
     try {
       idValidator.isContestId(contestnumber);
+      answerRequestValidator.hasRequiredCreateProperties(request.body);
 
       const contest = await createAnswerUseCase.execute({
         contestnumber,
@@ -85,19 +90,20 @@ class AnswerController {
         yes,
       });
 
-      return response.status(200).json(contest);
+      return response.status(HttpStatus.CREATED).json(contest);
     } catch (error) {
       next(error);
     }
   }
 
-  async updateFull(
+  async update(
     request: Request,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const replaceAnswerUseCase = container.resolve(ReplaceAnswerUseCase);
+    const updateAnswerUseCase = container.resolve(UpdateAnswerUseCase);
     const idValidator = container.resolve(IdValidator);
+    const answerRequestValidator = container.resolve(AnswerRequestValidator);
 
     const { id_c } = request.params;
     const { id_a } = request.params;
@@ -109,8 +115,9 @@ class AnswerController {
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isAnswerId(answernumber);
+      answerRequestValidator.hasRequiredUpdateProperties(request.body);
 
-      const updatedAnswer = await replaceAnswerUseCase.execute({
+      const updatedAnswer = await updateAnswerUseCase.execute({
         contestnumber,
         answernumber,
         fake,
@@ -118,40 +125,7 @@ class AnswerController {
         yes,
       });
 
-      return response.status(200).json(updatedAnswer);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async updatePartial(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const patchAnswerUseCase = container.resolve(PatchAnswerUseCase);
-    const idValidator = container.resolve(IdValidator);
-
-    const { id_c } = request.params;
-    const { id_a } = request.params;
-    const contestnumber = Number(id_c);
-    const answernumber = Number(id_a);
-
-    const { fake, runanswer, yes } = request.body;
-
-    try {
-      idValidator.isContestId(contestnumber);
-      idValidator.isAnswerId(answernumber);
-
-      const updatedAnswer = await patchAnswerUseCase.execute({
-        contestnumber,
-        answernumber,
-        fake,
-        runanswer,
-        yes,
-      });
-
-      return response.status(200).json(updatedAnswer);
+      return response.status(HttpStatus.UPDATED).json(updatedAnswer);
     } catch (error) {
       next(error);
     }
@@ -176,7 +150,7 @@ class AnswerController {
 
       await deleteAnswerUseCase.execute({ contestnumber, answernumber });
 
-      return response.status(204).json();
+      return response.status(HttpStatus.DELETED).json();
     } catch (error) {
       next(error);
     }

@@ -2,8 +2,10 @@ import { expect } from "chai";
 import request from "supertest";
 
 import { Lang } from "../../../src/entities/Lang";
-import { updateLang1Pass, patchLang2Pass } from "../../entities/Lang";
 import { URL } from "../../utils/URL";
+
+import updateLang1Pass from "../../entities/Lang/Pass/updateLang1.json";
+import updateLang2Pass from "../../entities/Lang/Pass/updateLang2.json";
 
 describe("Remoção de uma linguagem", () => {
   describe("Fluxo positivo", () => {
@@ -36,7 +38,7 @@ describe("Remoção de uma linguagem", () => {
 
       expect(lang2).to.be.an("object");
       expect(lang2).to.have.own.property("langnumber");
-      expect(lang2).to.deep.include(patchLang2Pass);
+      expect(lang2).to.deep.include(updateLang2Pass);
     });
   });
 
@@ -47,8 +49,8 @@ describe("Remoção de uma linguagem", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Language does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Language does not exist");
     });
 
     it("Tenta deletar novamente a linguagem de ID 3", async () => {
@@ -57,8 +59,8 @@ describe("Remoção de uma linguagem", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Language does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Language does not exist");
     });
 
     it("Tenta deletar a linguagem de ID 1 de um contest inexistente", async () => {
@@ -67,8 +69,8 @@ describe("Remoção de uma linguagem", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest does not exist");
     });
   });
 });

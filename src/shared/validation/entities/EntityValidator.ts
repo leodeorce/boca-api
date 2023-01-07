@@ -6,7 +6,7 @@ import { ApiError } from "../../../errors/ApiError";
 @injectable()
 class EntityValidator<T> {
   async isValid(entity: T): Promise<void> {
-    const validation = await validate(entity as object);
+    const validation = await validate(entity as unknown as object);
 
     if (validation.length > 0) {
       const errors = validation[0].constraints as Record<string, string>;

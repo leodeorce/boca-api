@@ -1,68 +1,70 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 
-import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
+import { Problem } from "../../entities/Problem";
+
+import { IProblemsRepository } from "../../repositories/IProblemsRepository";
+
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
 
 interface IRequest {
   contestnumber: number;
+  problemnumber: number;
   problemname: string;
-  problemfullname: string;
+  problemfullname?: string;
   problembasefilename?: string;
-  probleminputfilename?: string;
-  probleminputfile: number;
-  probleminputfilehash: string;
   fake: boolean;
-  problemcolorname: string;
-  problemcolor: string;
-  working_id?: number;
+  problemcolorname?: string;
+  problemcolor?: string;
 }
 
 @injectable()
 class CreateProblemUseCase {
+  private contestValidator: ContestValidator;
+  private problemValidator: ProblemValidator;
+
   constructor(
     @inject("ProblemsRepository")
-    private problemsRepository: ProblemsRepository
-  ) {}
+    private problemsRepository: IProblemsRepository
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.problemValidator = container.resolve(ProblemValidator);
+  }
 
   async execute({
     contestnumber,
+    problemnumber,
     problemname,
     problemfullname,
     problembasefilename,
-    probleminputfilename,
-    probleminputfile,
-    probleminputfilehash,
     fake,
     problemcolorname,
     problemcolor,
-    working_id,
-  }: IRequest): Promise<void> {
-    const contestAlreadyExists = await this.problemsRepository.findByName(
-      problemname
-    );
+  }: IRequest): Promise<Problem> {
+    await this.contestValidator.exists(contestnumber);
 
-    if (contestAlreadyExists) {
-      throw new Error("Problem with that name already exists");
-    }
-    const count = (await this.problemsRepository.count()) + 1;
+    const problem = new Problem();
 
-    try {
-      await this.problemsRepository.create({
-        contestnumber,
-        problemnumber: count,
-        problemname,
-        problemfullname,
-        problembasefilename,
-        probleminputfilename,
-        probleminputfile,
-        probleminputfilehash,
-        fake,
-        problemcolorname,
-        problemcolor,
-        working_id,
-      });
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    problem.contestnumber = contestnumber;
+    problem.problemnumber = problemnumber;
+    problem.problemname = problemname;
+    problem.problembasefilename = problembasefilename;
+    problem.fake = fake;
+    problem.probleminputfilename = "";
+    problem.probleminputfile = undefined;
+    problem.probleminputfilehash = undefined;
+
+    problem.problemfullname =
+      problemfullname !== undefined ? problemfullname : "";
+
+    problem.problemcolorname =
+      problemcolorname !== undefined ? problemcolorname : "";
+
+    problem.problemcolor = problemcolor !== undefined ? problemcolor : "";
+
+    await this.problemValidator.isValid(problem);
+
+    return await this.problemsRepository.create({ ...problem });
   }
 }
 

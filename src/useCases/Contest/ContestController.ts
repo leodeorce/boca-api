@@ -1,13 +1,17 @@
 import "reflect-metadata";
+
 import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
+
+import { ContestRequestValidator } from "../../shared/validation/requests/ContestRequestValidator";
+import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
+import IdValidator from "../../shared/validation/utils/IdValidator";
+
 import { CreateContestsUseCase } from "./CreateContestUseCase";
 import { DeleteContestsUseCase } from "./DeleteContestUseCase";
 import { GetContestsUseCase } from "./GetContestUseCase";
 import { ListContestsUseCase } from "./ListContestsUseCase";
-import { PatchContestUseCase } from "./PatchContestUseCase";
-import { ReplaceContestUseCase } from "./ReplaceContestUseCase";
-import { ApiError } from "../../errors/ApiError";
+import { UpdateContestUseCase } from "./UpdateContestUseCase";
 
 class ContestController {
   async listAll(
@@ -31,20 +35,17 @@ class ContestController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const getContestsUseCase = container.resolve(GetContestsUseCase);
+    const idValidator = container.resolve(IdValidator);
 
-    const { id } = request.params;
-    const contestnumber = Number(id);
+    const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
+      idValidator.isContestId(contestnumber);
 
-      const contest = await getContestsUseCase.execute({
-        contestnumber: contestnumber,
-      });
+      const contest = await getContestsUseCase.execute({ contestnumber });
 
-      return response.json(contest);
+      return response.status(HttpStatus.SUCCESS).json(contest);
     } catch (error) {
       next(error);
     }
@@ -55,23 +56,26 @@ class ContestController {
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    try {
-      const createContestsUseCase = container.resolve(CreateContestsUseCase);
+    const createContestsUseCase = container.resolve(CreateContestsUseCase);
+    const contestRequestValidator = container.resolve(ContestRequestValidator);
 
-      const {
-        contestname,
-        conteststartdate,
-        contestduration,
-        contestlastmileanswer,
-        contestlastmilescore,
-        contestlocalsite,
-        contestpenalty,
-        contestmaxfilesize,
-        contestmainsite,
-        contestkeys,
-        contestunlockkey,
-        contestmainsiteurl,
-      } = request.body;
+    const {
+      contestname,
+      conteststartdate,
+      contestduration,
+      contestlastmileanswer,
+      contestlastmilescore,
+      contestlocalsite,
+      contestpenalty,
+      contestmaxfilesize,
+      contestmainsite,
+      contestkeys,
+      contestunlockkey,
+      contestmainsiteurl,
+    } = request.body;
+
+    try {
+      contestRequestValidator.hasRequiredCreateProperties(request.body);
 
       const contest = await createContestsUseCase.execute({
         contestname,
@@ -88,21 +92,23 @@ class ContestController {
         contestmainsiteurl,
       });
 
-      return response.status(200).json(contest);
+      return response.status(HttpStatus.CREATED).json(contest);
     } catch (error) {
       next(error);
     }
   }
 
-  async updatePartial(
+  async update(
     request: Request,
     response: Response,
     next: NextFunction
   ): Promise<Response | undefined> {
-    const patchContestUseCase = container.resolve(PatchContestUseCase);
+    const updateContestUseCase = container.resolve(UpdateContestUseCase);
+    const idValidator = container.resolve(IdValidator);
+    const contestRequestValidator = container.resolve(ContestRequestValidator);
 
-    const { id } = request.params;
-    const contestnumber = Number(id);
+    const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
     const {
       contestname,
@@ -121,12 +127,11 @@ class ContestController {
     } = request.body;
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
+      idValidator.isContestId(contestnumber);
+      contestRequestValidator.hasRequiredUpdateProperties(request.body);
 
-      const updatedContest = await patchContestUseCase.execute({
-        contestnumber: contestnumber,
+      const updatedContest = await updateContestUseCase.execute({
+        contestnumber,
         contestname,
         contestactive,
         contestduration,
@@ -142,61 +147,7 @@ class ContestController {
         contestunlockkey,
       });
 
-      return response.status(200).json(updatedContest);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async updateFull(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): Promise<Response | undefined> {
-    const replaceContestUseCase = container.resolve(ReplaceContestUseCase);
-
-    const { id } = request.params;
-    const contestnumber = Number(id);
-
-    const {
-      contestname,
-      contestactive,
-      contestduration,
-      contestkeys,
-      contestlastmileanswer,
-      contestlastmilescore,
-      contestlocalsite,
-      contestmainsite,
-      contestmainsiteurl,
-      contestmaxfilesize,
-      contestpenalty,
-      conteststartdate,
-      contestunlockkey,
-    } = request.body;
-
-    try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
-
-      const updatedContest = await replaceContestUseCase.execute({
-        contestnumber: contestnumber,
-        contestname,
-        contestactive,
-        contestduration,
-        contestkeys,
-        contestlastmileanswer,
-        contestlastmilescore,
-        contestlocalsite,
-        contestmainsite,
-        contestmainsiteurl,
-        contestmaxfilesize,
-        contestpenalty,
-        conteststartdate,
-        contestunlockkey,
-      });
-
-      return response.status(200).json(updatedContest);
+      return response.status(HttpStatus.UPDATED).json(updatedContest);
     } catch (error) {
       next(error);
     }
@@ -208,18 +159,17 @@ class ContestController {
     next: NextFunction
   ): Promise<Response | undefined> {
     const deleteContestsUseCase = container.resolve(DeleteContestsUseCase);
+    const idValidator = container.resolve(IdValidator);
 
-    const { id } = request.params;
-    const contestnumber = Number(id);
+    const { id_c } = request.params;
+    const contestnumber = Number(id_c);
 
     try {
-      if (Number.isNaN(contestnumber) || contestnumber < 1) {
-        throw ApiError.badRequest("Invalid contest ID");
-      }
+      idValidator.isContestId(contestnumber);
 
       await deleteContestsUseCase.execute({ contestnumber: contestnumber });
 
-      return response.status(204).json();
+      return response.status(HttpStatus.DELETED).json();
     } catch (error) {
       next(error);
     }

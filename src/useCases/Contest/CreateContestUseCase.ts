@@ -1,9 +1,12 @@
-import { Contest } from "../../entities/Contest";
-import { ApiError } from "../../errors/ApiError";
 import { container, inject, injectable } from "tsyringe";
 
-import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import { ApiError } from "../../errors/ApiError";
+
+import { Contest } from "../../entities/Contest";
+
 import { IContestsRepository } from "../../repositories/IContestsRepository";
+
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {
   contestname: string;
@@ -47,26 +50,7 @@ class CreateContestsUseCase {
   }: IRequest): Promise<Contest> {
     contestname = contestname ? contestname.trim() : "";
     if (contestname.length === 0) {
-      throw ApiError.badRequest("Contest name must be specified");
-    }
-
-    const existingContest = await this.contestsRepository.findByName(
-      contestname
-    );
-
-    if (existingContest) {
-      throw ApiError.alreadyExists("Contest name already exists");
-    }
-
-    if (
-      conteststartdate === undefined ||
-      contestduration === undefined ||
-      contestlocalsite === undefined ||
-      contestmainsite === undefined ||
-      contestpenalty === undefined ||
-      contestmaxfilesize === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
+      throw ApiError.badRequest("Contest name must not be empty");
     }
 
     contestlastmileanswer = contestlastmileanswer

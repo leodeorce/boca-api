@@ -1,53 +1,67 @@
 import {
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryColumn,
-  UpdateDateColumn,
-} from "typeorm";
+  IsPositive,
+  IsInt,
+  Min,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsBoolean,
+} from "class-validator";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
-import { Contest } from "./Contest";
+import { IsType } from "../shared/validation/utils/IsType";
 
 @Entity("problemtable")
 class Problem {
-  @ManyToOne(() => Contest, (contest) => contest.contestnumber)
-  @PrimaryColumn()
+  @PrimaryColumn("int4")
+  @IsPositive({ message: "contestnumber must be greater than zero" })
+  @IsInt()
   contestnumber!: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn("int4")
+  @Min(0)
+  @IsInt()
   problemnumber!: number;
 
-  @Column()
+  @Column("varchar", { length: 20 })
+  @MaxLength(20)
+  @MinLength(1)
+  @IsString()
   problemname!: string;
 
-  @Column()
+  @Column("varchar", { length: 100 })
+  @IsType(["string", "undefined"])
   problemfullname?: string;
 
-  @Column()
+  @Column("varchar", { length: 100 })
+  @IsType(["string", "undefined"])
   problembasefilename?: string;
 
-  @Column()
+  @Column("varchar", { length: 100 })
+  @IsType(["string", "undefined"])
   probleminputfilename?: string;
 
-  @Column()
+  @Column("bigint")
+  @IsType(["number", "undefined"])
   probleminputfile?: number;
 
-  @Column()
+  @Column("varchar", { length: 50 })
+  @IsType(["string", "undefined"])
   probleminputfilehash?: string;
 
-  @Column()
+  @Column("bool")
+  @IsBoolean()
   fake!: boolean;
 
-  @Column()
+  @Column("varchar", { length: 100 })
+  @IsType(["string", "undefined"])
   problemcolorname?: string;
 
-  @Column()
+  @Column("varchar", { length: 6 })
+  @IsType(["string", "undefined"])
   problemcolor?: string;
 
-  @Column()
-  working_id?: number;
-
-  @UpdateDateColumn()
+  @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
 }
 

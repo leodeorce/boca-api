@@ -1,5 +1,7 @@
 import { container, injectable } from "tsyringe";
+
 import { Answer } from "../../entities/Answer";
+
 import AnswerValidator from "../../shared/validation/entities/AnswerValidator";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 

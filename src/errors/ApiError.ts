@@ -1,3 +1,5 @@
+import { HttpStatus } from "../shared/definitions/HttpStatusCodes";
+
 class ApiError extends Error {
   status: number;
   message: string;
@@ -11,19 +13,31 @@ class ApiError extends Error {
   }
 
   static badRequest(message: string): ApiError {
-    return new ApiError("BadRequestError", 400, message);
+    return new ApiError("BadRequestError", HttpStatus.BAD_REQUEST, message);
   }
 
   static internal(message: string): ApiError {
-    return new ApiError("InternalError", 500, message);
+    return new ApiError("InternalError", HttpStatus.INTERNAL_ERROR, message);
   }
 
   static notFound(message: string): ApiError {
-    return new ApiError("NotFoundError", 404, message);
+    return new ApiError("NotFoundError", HttpStatus.NOT_FOUND, message);
   }
 
   static alreadyExists(message: string): ApiError {
-    return new ApiError("AlreadyExistsError", 409, message);
+    return new ApiError(
+      "AlreadyExistsError",
+      HttpStatus.ALREADY_EXISTS,
+      message
+    );
+  }
+
+  static inconsistency(message: string): ApiError {
+    return new ApiError(
+      "InconsistencyError",
+      HttpStatus.INCONSISTENCY,
+      message
+    );
   }
 }
 

@@ -1,30 +1,46 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 
-import { ProblemsRepository } from "../../repositories/implementations/ProblemsRepository";
+import { IProblemsRepository } from "../../repositories/IProblemsRepository";
+
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
 
 interface IRequest {
-  id: number;
+  contestnumber: number;
+  problemnumber: number;
 }
 
 @injectable()
 class DeleteProblemUseCase {
+  private contestValidator: ContestValidator;
+  private problemValidator: ProblemValidator;
+
   constructor(
     @inject("ProblemsRepository")
-    private problemsRepository: ProblemsRepository
-  ) {}
+    private problemsRepository: IProblemsRepository
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.problemValidator = container.resolve(ProblemValidator);
+  }
 
-  async execute({ id }: IRequest): Promise<void> {
-    const problemAlreadyExists = await this.problemsRepository.getById(id);
+  async execute({ contestnumber, problemnumber }: IRequest): Promise<void> {
+    await this.contestValidator.exists(contestnumber);
 
-    if (!problemAlreadyExists) {
-      throw new Error("Problem does not exists");
+    const existingProblem = await this.problemValidator.exists(
+      contestnumber,
+      problemnumber
+    );
+
+    if (
+      existingProblem.probleminputfile !== undefined &&
+      existingProblem.probleminputfile != null
+    ) {
+      await this.problemsRepository.deleteBlob(
+        existingProblem.probleminputfile
+      );
     }
 
-    try {
-      await this.problemsRepository.delete(id);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    await this.problemsRepository.delete(contestnumber, problemnumber);
   }
 }
 

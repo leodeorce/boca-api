@@ -4,29 +4,28 @@ interface ICreateProblemDTO {
   contestnumber: number;
   problemnumber: number;
   problemname: string;
-  problemfullname: string;
+  problemfullname?: string;
   problembasefilename?: string;
   probleminputfilename?: string;
-  probleminputfile: number;
-  probleminputfilehash: string;
+  probleminputfile?: number;
+  probleminputfilehash?: string;
   fake: boolean;
-  problemcolorname: string;
-  problemcolor: string;
-  working_id?: number;
+  problemcolorname?: string;
+  problemcolor?: string;
 }
 
 interface IUpdateProblemDTO {
+  contestnumber: number;
   problemnumber: number;
   problemname: string;
-  problemfullname: string;
+  problemfullname?: string;
   problembasefilename?: string;
   probleminputfilename?: string;
-  probleminputfile: number;
-  probleminputfilehash: string;
+  probleminputfile?: number;
+  probleminputfilehash?: string;
   fake: boolean;
-  problemcolorname: string;
-  problemcolor: string;
-  working_id?: number;
+  problemcolorname?: string;
+  problemcolor?: string;
 }
 
 interface ICountResult {
@@ -34,13 +33,19 @@ interface ICountResult {
 }
 
 interface IProblemsRepository {
+  getFileByOid(oid: number): Promise<Buffer | undefined>;
   findByName(name: string): Promise<Problem | undefined>;
   list(contestnumber?: number): Promise<Problem[]>;
-  create(problem: ICreateProblemDTO): Promise<void>;
+  create(problem: ICreateProblemDTO): Promise<Problem>;
+  createBlob(file: Buffer): Promise<number>;
+  deleteBlob(oid: number): Promise<void>;
   count(): Promise<number>;
-  getById(id: number): Promise<Problem | undefined>;
+  getById(
+    contestnumber: number,
+    problemnumber: number
+  ): Promise<Problem | undefined>;
   update(problem: IUpdateProblemDTO): Promise<Problem>;
-  delete(contestnumber: number): Promise<void>;
+  delete(contestnumber: number, problemnumber: number): Promise<void>;
 }
 
 export {

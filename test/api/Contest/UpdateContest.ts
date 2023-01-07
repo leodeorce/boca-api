@@ -41,7 +41,7 @@ describe("Modifica os contests criados anteriormente", () => {
       expect(contestAlpha.contestnumber).to.deep.equal(1);
 
       const response = await request(URL)
-        .patch("/api/contest/1")
+        .put("/api/contest/1")
         .set("Accept", "application/json")
         .send(updateAlphaPass);
       expect(response.statusCode).to.equal(200);
@@ -68,7 +68,7 @@ describe("Modifica os contests criados anteriormente", () => {
 
     it('Ativa "Contest Beta", desativando "Contest Alpha" por consequência', async () => {
       let response = await request(URL)
-        .patch("/api/contest/2")
+        .put("/api/contest/2")
         .set("Accept", "application/json")
         .send(updateBetaPass2);
       expect(response.statusCode).to.equal(200);
@@ -92,13 +92,13 @@ describe("Modifica os contests criados anteriormente", () => {
   describe("Fluxo negativo", () => {
     it('Tenta modificar a duração de "Contest Alpha" para um valor inválido', async () => {
       const response = await request(URL)
-        .patch("/api/contest/1")
+        .put("/api/contest/1")
         .set("Accept", "application/json")
         .send(updateAlphaFail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include(
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include(
         "contestduration must be greater than zero"
       );
     });
@@ -110,8 +110,8 @@ describe("Modifica os contests criados anteriormente", () => {
         .send(updateBetaFail);
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include(
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include(
         "contestmainsite must be greater than zero"
       );
     });
@@ -123,8 +123,8 @@ describe("Modifica os contests criados anteriormente", () => {
         .send(updateCharlieFail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest does not exist");
     });
   });
 });

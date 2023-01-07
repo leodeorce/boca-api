@@ -1,5 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
+
 import { IContestsRepository } from "../../repositories/IContestsRepository";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 
 interface IRequest {

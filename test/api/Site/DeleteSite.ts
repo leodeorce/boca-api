@@ -23,7 +23,6 @@ describe("Remoção de um site", () => {
       expect(all.headers["content-type"]).to.contain("application/json");
       expect(all.body).to.be.an("array");
 
-      // TODO Trocar para site2 quando contest estiver criando o primeiro site automaticamente
       const site1 = all.body.find((site: Site) => site.sitenumber === 1);
       const site3 = all.body.find((site: Site) => site.sitenumber === 3);
 
@@ -41,8 +40,8 @@ describe("Remoção de um site", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Site does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Site does not exist");
     });
 
     it("Tenta deletar novamente o Site 3", async () => {
@@ -51,8 +50,8 @@ describe("Remoção de um site", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Site does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Site does not exist");
     });
 
     it("Tenta deletar o Site 1 de um contest inexistente", async () => {
@@ -61,8 +60,8 @@ describe("Remoção de um site", () => {
         .set("Accept", "application/json");
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
-      expect(response.body).to.have.own.property("error");
-      expect(response.body["error"]).to.include("Contest does not exist");
+      expect(response.body).to.have.own.property("message");
+      expect(response.body["message"]).to.include("Contest does not exist");
     });
   });
 });

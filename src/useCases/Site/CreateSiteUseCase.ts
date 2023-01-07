@@ -1,8 +1,11 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { Site } from "../../entities/Site";
 import { ApiError } from "../../errors/ApiError";
+
+import { Site } from "../../entities/Site";
+
 import { ISitesRepository } from "../../repositories/ISitesRepository";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import SiteValidator from "../../shared/validation/entities/SiteValidator";
 
@@ -71,27 +74,6 @@ class CreateSiteUseCase {
     sitemaxjudgewaittime,
   }: IRequest): Promise<Site> {
     const existingContest = await this.contestValidator.exists(contestnumber);
-
-    if (
-      contestnumber === undefined ||
-      siteip === undefined ||
-      sitename === undefined ||
-      siteactive === undefined ||
-      sitepermitlogins === undefined ||
-      siteglobalscore === undefined ||
-      sitescorelevel === undefined ||
-      sitenextuser === undefined ||
-      sitenextclar === undefined ||
-      sitenextrun === undefined ||
-      sitenexttask === undefined ||
-      sitemaxtask === undefined ||
-      sitechiefname === undefined ||
-      siteautojudge === undefined ||
-      sitemaxruntime === undefined ||
-      sitemaxjudgewaittime === undefined
-    ) {
-      throw ApiError.badRequest("Missing properties");
-    }
 
     // sitenumber é opcional. Caso não especificado, será o próximo ID disponível.
     // Caso especificado, devemos verificar se já não existe.

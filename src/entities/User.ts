@@ -38,11 +38,10 @@ class User {
   @IsString()
   userfullname!: string;
 
-  // TODO Validar manualmente
   @Column("varchar", { length: 300 })
-  // @MaxLength(300)
-  // @MinLength(1)  // TODO Criar uma anotação manual parecida com IsType
-  @IsType(["string", "undefined"])
+  @IsType(["string", "undefined"], {
+    message: "If specified, userdesc must be a string",
+  })
   userdesc?: string;
 
   @Column("varchar", { length: 20 })

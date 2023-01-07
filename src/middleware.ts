@@ -3,6 +3,7 @@ import { ILogger } from "./logging/ILogger";
 import { container } from "tsyringe";
 import { QueryFailedError } from "typeorm";
 import { ApiError } from "./errors/ApiError";
+import { HttpStatus } from "./shared/definitions/HttpStatusCodes";
 
 function errorLogger(
   err: Error,
@@ -28,10 +29,16 @@ function errorHandler(
   next: NextFunction
 ): void {
   if (err instanceof ApiError) {
-    res.status(err.status).json({ error: err.message }).end();
+    res
+      .status(err.status)
+      .json({ error: err.name, message: err.message })
+      .end();
     return;
   } else if (err instanceof QueryFailedError) {
-    res.status(500).json({ error: "Database query error" }).end();
+    res
+      .status(HttpStatus.INTERNAL_ERROR)
+      .json({ error: err.name, message: "Database query error" })
+      .end();
     return;
   }
 
@@ -44,7 +51,10 @@ function fallbackErrorHandler(
   res: Response,
   next: NextFunction
 ): void {
-  res.status(500).json({ error: "Unexpected error" }).end();
+  res
+    .status(HttpStatus.INTERNAL_ERROR)
+    .json({ error: "Unexpected error" })
+    .end();
   next();
 }
 
@@ -53,7 +63,7 @@ function fallbackRouteHandler(
   res: Response,
   next: NextFunction
 ): void {
-  res.status(404).end();
+  res.status(HttpStatus.NOT_FOUND).end();
   next();
 }
 

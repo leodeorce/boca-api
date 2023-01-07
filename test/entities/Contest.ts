@@ -1,7 +1,5 @@
 import { Contest } from "../../src/entities/Contest";
 
-// TODO Usar desestruturação para facilitar entendimento e diminuir código
-
 const createAlphaPass = new Contest();
 
 createAlphaPass.contestname = "Contest Alpha";
@@ -30,7 +28,7 @@ createBetaPass.contestmainsite = 2;
 // Nome já existe
 const createAlphaFail = new Contest();
 
-createAlphaFail.contestname = "Contest Beta";
+createAlphaFail.contestname = "";
 createAlphaFail.conteststartdate = Math.floor(Date.now() / 1000);
 createAlphaFail.contestduration = 1;
 createAlphaFail.contestlastmileanswer = 11_263_440;
@@ -68,6 +66,18 @@ createDeltaFail.contestmainsite = 2;
 // Ativa o Contest Alpha
 const updateAlphaPass = new Contest();
 updateAlphaPass.contestactive = true;
+updateAlphaPass.contestname = "Contest Alpha";
+updateAlphaPass.conteststartdate = Math.floor(Date.now() / 1000) + 3600;
+updateAlphaPass.contestduration = 11_264_340;
+updateAlphaPass.contestlastmileanswer = 11_263_440;
+updateAlphaPass.contestlastmilescore = 11_260_740;
+updateAlphaPass.contestlocalsite = 1;
+updateAlphaPass.contestpenalty = 1200;
+updateAlphaPass.contestmaxfilesize = 100_000;
+updateAlphaPass.contestmainsite = 1;
+updateAlphaPass.contestkeys = "[d3g22q]";
+updateAlphaPass.contestunlockkey = "[d3g22q]";
+updateAlphaPass.contestmainsiteurl = "http://a.b";
 
 // Modifica todas as propriedades possíveis
 const updateBetaPass = new Contest();
@@ -87,11 +97,24 @@ updateBetaPass.contestmainsiteurl = "http://a.b";
 
 // Ativa o Contest Beta
 const updateBetaPass2 = new Contest();
+updateBetaPass2.contestname = "Contest Beta Atualizado";
+updateBetaPass2.conteststartdate = Math.floor(Date.now() / 1000) - 7200;
+updateBetaPass2.contestduration = 7200;
+updateBetaPass2.contestlastmileanswer = 5600;
+updateBetaPass2.contestlastmilescore = 5600;
+updateBetaPass2.contestlocalsite = 1;
+updateBetaPass2.contestpenalty = 48_000;
+updateBetaPass2.contestmaxfilesize = 100_000;
 updateBetaPass2.contestactive = true;
+updateBetaPass2.contestmainsite = 3;
+updateBetaPass2.contestkeys = "[d3g22q]";
+updateBetaPass2.contestunlockkey = "[d3g22q]";
+updateBetaPass2.contestmainsiteurl = "http://a.b";
 
 // Tenta modificar a duração do Contest Alpha com um valor inválido
-const updateAlphaFail = new Contest();
+const updateAlphaFail = { ...createAlphaPass };
 updateAlphaFail.contestduration = -3600;
+updateAlphaFail.contestactive = false;
 
 // Tenta modificar o site principal do Contest Beta com o ID do "fake site"
 const updateBetaFail = new Contest();
@@ -110,9 +133,9 @@ updateBetaFail.contestunlockkey = "[d3g22q]";
 updateBetaFail.contestmainsiteurl = "http://a.b";
 
 // Tenta realizar modificação válida em um Contest que não existe
-const updateCharlieFail = new Contest();
+const updateCharlieFail = { ...createAlphaPass };
 updateCharlieFail.contestlastmileanswer = 0;
-
+updateCharlieFail.contestactive = false;
 
 export {
   createAlphaPass,
