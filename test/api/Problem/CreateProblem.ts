@@ -8,11 +8,8 @@ import createProblem2Pass from "../../entities/Problem/Pass/createProblem2.json"
 
 import createProblem3Fail from "../../entities/Problem/Fail/createProblem3.json";
 import createProblem4Fail from "../../entities/Problem/Fail/createProblem4.json";
+import createProblem5Fail from "../../entities/Problem/Fail/createProblem5.json";
 import createProblem6Fail from "../../entities/Problem/Fail/createProblem6.json";
-
-/**
- *  - Contest Beta deve existir
- */
 
 describe("Criação de um problema", () => {
   describe("Fluxo positivo", () => {
@@ -107,7 +104,7 @@ describe("Criação de um problema", () => {
       const response = await request(URL)
         .post("/api/contest/2/problem")
         .set("Accept", "application/json")
-        .send(createProblem4Fail);
+        .send(createProblem5Fail);
       expect(response.statusCode).to.equal(409);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

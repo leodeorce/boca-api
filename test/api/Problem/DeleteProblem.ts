@@ -44,7 +44,7 @@ describe("Remoção de um problema", () => {
   });
 
   describe("Fluxo negativo", () => {
-    it("Tenta resgatar o problema de ID 2022101 deletada", async () => {
+    it("Tenta resgatar o problema de ID 2022101 deletado", async () => {
       const response = await request(URL)
         .get(`/api/contest/2/problem/${createProblem1Pass.problemnumber}`)
         .set("Accept", "application/json");

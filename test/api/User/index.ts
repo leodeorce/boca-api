@@ -17,5 +17,5 @@ import "./DeleteUser";
 
 /**
  *   Estado final:
- *     Contest Beta (ID: 2) passa a ter User "Time 1" (ID: 1).
+ *     Contest Beta (ID: 2) passa a ter User "Time 3" (ID: 3).
  */

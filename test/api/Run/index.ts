@@ -18,7 +18,7 @@ import "./DeleteRun";
 
 /**
  *   Estado final:
- *     Problema "L1_2" (ID: 2022102) de Contest Beta (ID: 2) passa a
- *     ter Run 1 (ID: 1) de Lang 1 (ID: 1) e Run 3 (ID: 3) de Lang 2
- *     (ID: 2) associada ao User "Time 1" (ID: 1).
+ *     Problema "L1_2" (ID: 2022102) de Contest Beta (ID: 2) passa a ter
+ *     Run 1 (ID: 1) de Lang 1 (ID: 1) e Run 3 (ID: 3) de Lang 2 (ID: 2)
+ *     associada ao User "Time 3" (ID: 3).
  */

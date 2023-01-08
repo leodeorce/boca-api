@@ -1,5 +1,4 @@
 import { Router } from "express";
-// import multer from "multer";
 import fileUpload from "express-fileupload";
 
 import { ProblemController } from "../useCases/Problem/ProblemController";

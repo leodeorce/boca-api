@@ -45,7 +45,7 @@ class CreateProblemUseCase {
   }: IRequest): Promise<Problem> {
     await this.contestValidator.exists(contestnumber);
 
-    const existingProblem = this.problemsRepository.getById(
+    const existingProblem = await this.problemsRepository.getById(
       contestnumber,
       problemnumber
     );

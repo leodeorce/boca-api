@@ -142,19 +142,18 @@ class RunController {
     const contestnumber = Number(id_c);
     const runproblem = Number(id_p);
 
-    console.log(request.body);
-
     const { data } = request.body;
+    const parsedData = JSON.parse(data);
 
     const { runsitenumber, usernumber, rundate, runlangnumber, rundatediff } =
-      JSON.parse(data);
+      parsedData;
 
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isProblemId(runproblem);
 
       const runfile = request.files?.runfile as UploadedFile;
-      runRequestValidator.hasRequiredCreateProperties(request.body, runfile);
+      runRequestValidator.hasRequiredCreateProperties(parsedData, runfile);
 
       const run = await createRunUseCase.execute({
         contestnumber,

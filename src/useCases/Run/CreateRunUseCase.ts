@@ -19,7 +19,7 @@ interface IRequest {
   rundate: number;
   runfile: UploadedFile;
   runlangnumber: number;
-  rundatediff?: number;
+  rundatediff: number;
 }
 
 @injectable()
@@ -47,7 +47,7 @@ class CreateRunUseCase {
     runlangnumber,
     rundatediff,
   }: IRequest): Promise<Run> {
-    const contest = await this.contestValidator.exists(contestnumber);
+    await this.contestValidator.exists(contestnumber);
     await this.problemValidator.exists(contestnumber, runproblem);
 
     let oid = null;
@@ -76,19 +76,14 @@ class CreateRunUseCase {
     run.runfilename = runfilename;
     run.rundata = oid;
     run.runlangnumber = runlangnumber;
+    run.rundatediff = rundatediff;
+    run.runnumber = runnumber;
 
     run.rundatediffans = 999_999_999;
     run.runanswer = 0;
     run.runstatus = "openrun";
     run.runanswer1 = 0;
     run.runanswer2 = 0;
-
-    run.rundatediff =
-      rundatediff !== undefined
-        ? rundatediff
-        : contest.conteststartdate - Math.floor(Date.now() / 1000);
-
-    run.runnumber = runnumber;
 
     await this.runValidator.isValid(run);
 

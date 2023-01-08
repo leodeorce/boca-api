@@ -8,6 +8,7 @@ const createRequiredProperties = [
   "usernumber",
   "rundate",
   "runlangnumber",
+  "rundatediff",
 ];
 
 const updateRequiredProperties = ["runstatus"];
