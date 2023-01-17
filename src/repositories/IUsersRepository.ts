@@ -1,5 +1,8 @@
 import { User } from "../entities/User";
 
+// TODO Se o banco possuir default e/ou for nullable, não obrigar em ICreateUserDTO
+// TODO Se o banco possuir NOT NULL, obrigar em IUpdateUserDTO
+
 interface ICreateUserDTO {
   contestnumber: number;
   usersitenumber: number;
@@ -8,17 +11,17 @@ interface ICreateUserDTO {
   userfullname: string;
   userdesc?: string;
   usertype: string;
-  userenabled: boolean;
-  usermultilogin: boolean;
-  userpassword: string;
+  userenabled?: boolean;
+  usermultilogin?: boolean;
+  userpassword?: string;
   userip?: string;
   userlastlogin?: number;
-  usersession: string;
-  usersessionextra: string;
+  usersession?: string;
+  usersessionextra?: string;
   userlastlogout?: number;
   userpermitip?: string;
-  userinfo: string;
-  usericpcid: string;
+  userinfo?: string;
+  usericpcid?: string;
 }
 
 interface IUpdateUserDTO {
@@ -31,15 +34,15 @@ interface IUpdateUserDTO {
   usertype: string;
   userenabled: boolean;
   usermultilogin: boolean;
-  userpassword: string;
+  userpassword?: string;
   userip?: string;
   userlastlogin?: number;
-  usersession: string;
-  usersessionextra: string;
+  usersession?: string;
+  usersessionextra?: string;
   userlastlogout?: number;
   userpermitip?: string;
-  userinfo: string;
-  usericpcid: string;
+  userinfo?: string;
+  usericpcid?: string;
 }
 
 interface ILastIdResult {
@@ -47,7 +50,11 @@ interface ILastIdResult {
 }
 
 interface IUsersRepository {
-  findByName(name: string): Promise<User | undefined>;
+  findByName(
+    contestnumber: number,
+    usersitenumber: number,
+    name: string
+  ): Promise<User | undefined>;
   list(contestnumber: number, usersitenumber: number): Promise<User[]>;
   create(user: ICreateUserDTO): Promise<User>;
   getLastId(

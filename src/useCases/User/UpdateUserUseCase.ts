@@ -18,15 +18,15 @@ interface IRequest {
   usertype: string;
   userenabled: boolean;
   usermultilogin: boolean;
-  userpassword: string;
+  userpassword?: string;
   userip?: string;
   userlastlogin?: number;
-  usersession: string;
-  usersessionextra: string;
+  usersession?: string;
+  usersessionextra?: string;
   userlastlogout?: number;
   userpermitip?: string;
-  userinfo: string;
-  usericpcid: string;
+  userinfo?: string;
+  usericpcid?: string;
 }
 
 @injectable()
@@ -68,16 +68,36 @@ class UpdateUserUseCase {
     await this.siteValidator.exists(contestnumber, usersitenumber);
     await this.userValidator.exists(contestnumber, usersitenumber, usernumber);
 
-    const user = new User();
-    user.contestnumber = contestnumber;
-    user.usernumber = usernumber;
-    user.usersitenumber = usersitenumber;
-    user.username = username;
-    user.userfullname = userfullname;
+    // Compatibilidade com o BOCA
+    if (
+      userpassword !== "" &&
+      userpassword !== undefined &&
+      usertype === "team"
+    ) {
+      userpassword = "!" + userpassword;
+    }
+
+    const user = new User(
+      contestnumber,
+      usernumber,
+      usersitenumber,
+      username,
+      userfullname,
+      userdesc,
+      usertype,
+      userenabled,
+      usermultilogin,
+      userpassword,
+      userip,
+      userlastlogin,
+      usersession,
+      usersessionextra,
+      userlastlogout,
+      userpermitip,
+      userinfo,
+      usericpcid
+    );
     user.userdesc = userdesc;
-    user.usertype = usertype;
-    user.userenabled = userenabled;
-    user.usermultilogin = usermultilogin;
     user.userpassword = userpassword;
     user.userip = userip;
     user.userlastlogin = userlastlogin;

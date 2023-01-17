@@ -5,26 +5,15 @@ const createRequiredProperties = [
   "username",
   "userfullname",
   "usertype",
-  "userenabled",
-  "usermultilogin",
-  "userpassword",
-  "usersession",
-  "usersessionextra",
-  "userinfo",
-  "usericpcid",
 ];
 
 const updateRequiredProperties = [
+  "usernumber",
   "username",
   "userfullname",
   "usertype",
   "userenabled",
   "usermultilogin",
-  "userpassword",
-  "usersession",
-  "usersessionextra",
-  "userinfo",
-  "usericpcid",
 ];
 
 @injectable()

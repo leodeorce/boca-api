@@ -21,15 +21,20 @@ class UsersRepository implements IUsersRepository {
     });
   }
 
-  async findByName(name: string): Promise<User | undefined> {
-    const query = `
-      SELECT * FROM usertable WHERE username = '${name}'
-    `;
-    const user: User[] = await this.repository.query(query);
-    if (user.length === 0) {
-      return undefined;
-    }
-    return user[0];
+  async findByName(
+    contestnumber: number,
+    usersitenumber: number,
+    name: string
+  ): Promise<User | undefined> {
+    const user = await this.repository.findOne({
+      where: {
+        username: name,
+        contestnumber: contestnumber,
+        usersitenumber: usersitenumber,
+      },
+    });
+
+    return user != null ? user : undefined;
   }
 
   async getLastId(
