@@ -1,20 +1,24 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import request from "supertest";
-import { User } from "../../../src/entities/User";
-import {
-  createNewUserPass,
-  createUser3Pass,
-  updateUser3Pass,
-  updateUser4Fail,
-  updateUser1Pass,
-  updateUser3Fail,
-} from "../../entities/User";
+import { createHash } from "crypto";
+
 import { URL } from "../../utils/URL";
+
+import { User } from "../../../src/entities/User";
+
+import createUser1Pass from "../../entities/User/Pass/createUser1.json";
+import createUser3Pass from "../../entities/User/Pass/createUser3.json";
+import updateUser1Pass from "../../entities/User/Pass/updateUser1.json";
+import updateUser3Pass from "../../entities/User/Pass/updateUser3.json";
+
+import updateUser3Fail from "../../entities/User/Fail/updateUser3.json";
+import updateUser4Fail from "../../entities/User/Fail/updateUser4.json";
 
 describe("Modifica os usuários criados anteriormente", () => {
   let time1: User;
   let time3: User;
+  let updateUser1PassWithPasswd: object;
 
   it("Resgata os users a serem modificados", async () => {
     const all = await request(URL)
@@ -30,18 +34,27 @@ describe("Modifica os usuários criados anteriormente", () => {
 
   describe("Fluxo positivo", () => {
     it("Modifica a senha do Time 1", async () => {
-      expect(time1).to.deep.include(createNewUserPass);
+      expect(time1).to.deep.include(createUser1Pass);
       expect(time1.usernumber).to.deep.equal(1);
+
+      const password = createHash("sha256").update("senha").digest("hex");
+      updateUser1PassWithPasswd = {
+        ...updateUser1Pass,
+        userpassword: password,
+      };
 
       const response = await request(URL)
         .put("/api/contest/2/site/1/user/1")
         .set("Accept", "application/json")
-        .send(updateUser1Pass);
+        .send(updateUser1PassWithPasswd);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
       expect(response.body["usernumber"]).to.equal(1);
-      expect(response.body).to.deep.include(updateUser1Pass);
+      expect(response.body).to.deep.include({
+        ...updateUser1Pass,
+        userpassword: "!" + password,
+      });
     });
 
     it("Modifica a descrição do Time 3", async () => {

@@ -1,44 +1,81 @@
 import { expect } from "chai";
 import request from "supertest";
-import {
-  createNewUserPass,
-  createUser3Pass,
-  createUser4Fail,
-  createUser5Fail,
-} from "../../entities/User";
+import { createHash } from "crypto";
+
 import { URL } from "../../utils/URL";
 
-/**
- *  - Site 1 já deve ter sido criado em Contest Beta
- */
+import createUser1Pass from "../../entities/User/Pass/createUser1.json";
+import createUser2Pass from "../../entities/User/Pass/createUser2.json";
+import createUser3Pass from "../../entities/User/Pass/createUser3.json";
+
+import createUser4Fail from "../../entities/User/Fail/createUser4.json";
+import createUser5Fail from "../../entities/User/Fail/createUser5.json";
 
 describe("Cria um usuário", () => {
   describe("Fluxo positivo", () => {
-    it('Cria um usuário do tipo "Team" no "Site 1" de "Contest Beta"', async () => {
+    let createUser1PassWithPasswd: object;
+    let createUser3PassWithPasswd: object;
+
+    it('Cria um usuário "Time 1" do tipo "team" no "Site 1" de "Contest Beta"', async () => {
+      const password = createHash("sha256").update("boca").digest("hex");
+      createUser1PassWithPasswd = {
+        ...createUser1Pass,
+        userpassword: password,
+      };
+
       const response = await request(URL)
         .post("/api/contest/2/site/1/user")
         .set("Accept", "application/json")
-        .send(createNewUserPass);
+        .send(createUser1PassWithPasswd);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
       expect(response.body["usernumber"]).to.equal(1);
-      expect(response.body).to.deep.include(createNewUserPass);
+      expect(response.body).to.deep.include({
+        ...createUser1Pass,
+        userpassword: "!" + password,
+      });
     });
 
-    it('Cria outro usuário do tipo "Team" com alguns campos diferentes do anterior', async () => {
+    it('Cria um usuário "Time 2" do tipo "team" no "Site 1" de "Contest Beta"', async () => {
       const response = await request(URL)
         .post("/api/contest/2/site/1/user")
         .set("Accept", "application/json")
-        .send(createUser3Pass);
+        .send(createUser2Pass);
+
+      expect(response.statusCode).to.equal(200);
+      expect(response.headers["content-type"]).to.contain("application/json");
+      expect(response.body).to.have.own.property("usernumber");
+      expect(response.body["usernumber"]).to.equal(2);
+      expect(response.body).to.deep.include({
+        ...createUser2Pass,
+        userpassword: "",
+      });
+    });
+
+    it('Cria um usuário "Time 3" do tipo "team" com alguns campos diferentes do anterior', async () => {
+      const password = createHash("sha256").update("boca").digest("hex");
+      createUser3PassWithPasswd = {
+        ...createUser3Pass,
+        userpassword: password,
+      };
+
+      const response = await request(URL)
+        .post("/api/contest/2/site/1/user")
+        .set("Accept", "application/json")
+        .send(createUser3PassWithPasswd);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
       expect(response.body["usernumber"]).to.equal(3);
-      expect(response.body).to.deep.include(createUser3Pass);
+      expect(response.body).to.deep.include({
+        ...createUser3Pass,
+        userpassword: "!" + password,
+      });
     });
 
-    it("Resgata o primeiro dos dois usuários criados anteriormente", async () => {
+    it("Resgata o primeiro dos usuários criados anteriormente", async () => {
       const response = await request(URL)
         .get("/api/contest/2/site/1/user/1")
         .set("Accept", "application/json");
@@ -46,7 +83,9 @@ describe("Cria um usuário", () => {
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
       expect(response.body["usernumber"]).to.equal(1);
-      expect(response.body).to.deep.include(createNewUserPass);
+      expect(response.body).to.deep.include(createUser1Pass);
+      expect(response.body).to.have.own.property("userpassword");
+      expect(response.body["userpassword"]).to.contain("!");
     });
   });
 
@@ -70,7 +109,7 @@ describe("Cria um usuário", () => {
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
-      expect(response.body["message"]).to.include("username must be longer than");
+      expect(response.body["message"]).to.include("Missing: username");
     });
 
     it("Tenta resgatar um usuário que não existe", async () => {

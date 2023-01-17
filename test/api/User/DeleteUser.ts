@@ -2,8 +2,10 @@ import { expect } from "chai";
 import request from "supertest";
 
 import { User } from "../../../src/entities/User";
-import { updateUser3Pass } from "../../entities/User";
+
 import { URL } from "../../utils/URL";
+
+import updateUser3Pass from "../../entities/User/Pass/updateUser3.json";
 
 describe("Remoção de um user", () => {
   describe("Fluxo positivo", () => {
@@ -11,7 +13,7 @@ describe("Remoção de um user", () => {
       const response = await request(URL)
         .delete("/api/contest/2/site/1/user/1")
         .set("Accept", "application/json");
-      console.log(response.body);
+        
       expect(response.statusCode).to.equal(204);
       expect(response.headers).to.not.have.own.property("content-type");
       expect(response.body).to.be.empty;
