@@ -69,7 +69,7 @@ function fallbackRouteHandler(
 
 function requestLogger(req: Request, res: Response, next: NextFunction): void {
   const logger: ILogger = container.resolve("ApiLogger");
-  logger.logRequest(req.method, req.originalUrl);
+  logger.logRequest(req.method, req.originalUrl, req.ip);
   next();
 }
 
