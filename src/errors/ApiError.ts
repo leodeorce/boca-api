@@ -39,6 +39,10 @@ class ApiError extends Error {
       message
     );
   }
+
+  static unauthorized(message: string): ApiError {
+    return new ApiError("Unauthorized", HttpStatus.UNAUTHORIZED, message);
+  }
 }
 
 export { ApiError };

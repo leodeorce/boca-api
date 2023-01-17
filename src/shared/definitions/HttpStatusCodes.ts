@@ -8,6 +8,7 @@ enum HttpStatus {
   INTERNAL_ERROR = 500,
   ALREADY_EXISTS = 409,
   INCONSISTENCY = 409,
+  UNAUTHORIZED = 401,
 }
 
 export { HttpStatus };
