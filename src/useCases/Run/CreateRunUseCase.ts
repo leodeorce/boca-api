@@ -10,6 +10,7 @@ import { IRunsRepository } from "../../repositories/IRunsRepository";
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
 import RunValidator from "../../shared/validation/entities/RunValidator";
+import UserValidator from "../../shared/validation/entities/UserValidator";
 
 interface IRequest {
   contestnumber: number;
@@ -27,6 +28,7 @@ class CreateRunUseCase {
   private contestValidator: ContestValidator;
   private problemValidator: ProblemValidator;
   private runValidator: RunValidator;
+  private userValidator: UserValidator;
 
   constructor(
     @inject("RunsRepository")
@@ -35,6 +37,7 @@ class CreateRunUseCase {
     this.contestValidator = container.resolve(ContestValidator);
     this.problemValidator = container.resolve(ProblemValidator);
     this.runValidator = container.resolve(RunValidator);
+    this.userValidator = container.resolve(UserValidator);
   }
 
   async execute({
@@ -49,6 +52,7 @@ class CreateRunUseCase {
   }: IRequest): Promise<Run> {
     await this.contestValidator.exists(contestnumber);
     await this.problemValidator.exists(contestnumber, runproblem);
+    await this.userValidator.exists(contestnumber, runsitenumber, usernumber);
 
     let oid = null;
     const runfilename = runfile.name;

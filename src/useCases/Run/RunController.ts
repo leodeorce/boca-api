@@ -145,12 +145,25 @@ class RunController {
     const { data } = request.body;
     const parsedData = JSON.parse(data);
 
-    const { runsitenumber, usernumber, rundate, runlangnumber, rundatediff } =
-      parsedData;
+    const {
+      runsitenumber: runsitenumberAsString,
+      usernumber: usernumberAsString,
+      rundate: rundateAsString,
+      runlangnumber: runlangnumberAsString,
+      rundatediff: rundatediffAsString,
+    } = parsedData;
+
+    const runsitenumber = Number(runsitenumberAsString);
+    const usernumber = Number(usernumberAsString);
+    const rundate = Number(rundateAsString);
+    const runlangnumber = Number(runlangnumberAsString);
+    const rundatediff = Number(rundatediffAsString);
 
     try {
       idValidator.isContestId(contestnumber);
       idValidator.isProblemId(runproblem);
+      idValidator.isUserId(usernumber);
+      idValidator.isSiteId(runsitenumber);
 
       const runfile = request.files?.runfile as UploadedFile;
       runRequestValidator.hasRequiredCreateProperties(parsedData, runfile);

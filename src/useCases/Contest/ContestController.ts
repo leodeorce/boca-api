@@ -58,7 +58,8 @@ class ContestController {
   ): Promise<Response | undefined> {
     const createContestsUseCase = container.resolve(CreateContestsUseCase);
     const contestRequestValidator = container.resolve(ContestRequestValidator);
-
+    // console.log(request.body.userinfo);
+    
     const {
       contestname,
       conteststartdate,

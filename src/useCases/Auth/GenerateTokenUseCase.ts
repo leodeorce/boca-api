@@ -1,12 +1,13 @@
 import { inject, injectable } from "tsyringe";
+import { createHash } from "crypto";
 import jwt from "jsonwebtoken";
+import * as fs from "fs";
 
 import { ApiError } from "../../errors/ApiError";
 
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { IContestsRepository } from "../../repositories/IContestsRepository";
 import { ISitesRepository } from "../../repositories/ISitesRepository";
-import { createHash } from "crypto";
 
 interface IRequest {
   name: string;
@@ -45,7 +46,7 @@ class GenerateTokenUseCase {
     if (activeSite === undefined) {
       throw ApiError.inconsistency(
         `Local site of ID ${activeContest.contestlocalsite}` +
-          ` specified by contest "${activeContest}"` +
+          ` specified by contest "${activeContest.contestname}"` +
           ` of ID ${activeContest.contestnumber} was not found`
       );
     }
@@ -58,7 +59,7 @@ class GenerateTokenUseCase {
     );
     if (user === undefined) {
       throw ApiError.notFound(
-        `User with username ${name}` +
+        `User with username ${name} ` +
           `in the active contest and site does not exist`
       );
     }
@@ -66,7 +67,9 @@ class GenerateTokenUseCase {
     // Salt deve ser a mesma usada para criar a hash recebida
     const salt = process.env.PASSWORD_SALT;
     if (salt === undefined) {
-      throw ApiError.internal("Password salt is not set");
+      throw ApiError.internal(
+        "Cannot generate new authentication token: Password salt is not set"
+      );
     }
 
     // Se usuário é do tipo "team", hash é guardada com um "!" no início
@@ -75,24 +78,20 @@ class GenerateTokenUseCase {
         ? user.userpassword?.replace("!", "")
         : user.userpassword;
 
-    console.log(">" + user.userpassword + "<");
-    console.log(">" + hashedPassword + "<");
-
     const saltedHash = createHash("sha256")
       .update(hashedPassword + salt)
       .digest("hex");
-
-    console.log(">" + saltedHash + "<");
-    // TODO Existe a possibilidade de criar um User com hash igual a ""
 
     if (saltedHash !== saltedPassword) {
       throw ApiError.unauthorized("Wrong password");
     }
 
     // Cria e retorna novo token JWT
-    const secret = process.env.TOKEN_SECRET;
-    if (secret === undefined) {
-      throw ApiError.internal("Cannot generate new authentication token");
+    const privateKey = fs.readFileSync("./secrets/private.key", "utf8");
+    if (privateKey === undefined) {
+      throw ApiError.internal(
+        "Cannot generate new authentication token: Private key not found"
+      );
     }
 
     const userInfo = {
@@ -109,9 +108,13 @@ class GenerateTokenUseCase {
         ? tokenExpiresInSeconds + "s"
         : "1800s";
 
-    const token = jwt.sign(userInfo, secret, {
+    const token = jwt.sign(userInfo, privateKey, {
+      issuer: "BOCA API",
+      audience: "boca-api",
       expiresIn: expiresIn,
+      algorithm: "RS256"
     });
+
     return token;
   }
 }

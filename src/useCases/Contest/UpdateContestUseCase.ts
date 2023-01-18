@@ -81,24 +81,6 @@ class UpdateContestUseCase {
 
     await this.contestValidator.isValid(contest);
 
-    /**    Abaixo acontecem duas queries que podem gerar inconsistências ao falhar.
-     *     Se a desativação do contest ativo falhar, mas a ativação do novo ocorrer,
-     *   existirão dois contests ativos.
-     *     Se o contest ativo for desativado com sucesso, mas a ativação do novo contest falhar,
-     *   a desativação do primeiro gera inconsistência com o BOCA web.
-     */
-
-    if (contestactive) {
-      const activeContest = await this.contestsRepository.getActive();
-
-      if (activeContest && activeContest.contestnumber !== contestnumber) {
-        await this.contestsRepository.update({
-          contestnumber: activeContest.contestnumber,
-          contestactive: false,
-        });
-      }
-    }
-
     return await this.contestsRepository.update({ ...contest });
   }
 }

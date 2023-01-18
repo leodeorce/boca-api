@@ -8,6 +8,7 @@ import { URL } from "../../utils/URL";
 import { User } from "../../../src/entities/User";
 
 import createUser1Pass from "../../entities/User/Pass/createUser1.json";
+import createUser2Pass from "../../entities/User/Pass/createUser2.json";
 import createUser3Pass from "../../entities/User/Pass/createUser3.json";
 import updateUser1Pass from "../../entities/User/Pass/updateUser1.json";
 import updateUser3Pass from "../../entities/User/Pass/updateUser3.json";
@@ -17,6 +18,7 @@ import updateUser4Fail from "../../entities/User/Fail/updateUser4.json";
 
 describe("Modifica os usuários criados anteriormente", () => {
   let time1: User;
+  let time2: User;
   let time3: User;
   let updateUser1PassWithPasswd: object;
 
@@ -29,7 +31,11 @@ describe("Modifica os usuários criados anteriormente", () => {
     expect(all.body).to.be.an("array");
 
     time1 = all.body.find((user: User) => user.usernumber === 1);
+    time2 = all.body.find((user: User) => user.usernumber === 2);
     time3 = all.body.find((user: User) => user.usernumber === 3);
+
+    expect(time2).to.deep.include(createUser2Pass);
+    expect(time2.usernumber).to.deep.equal(2);
   });
 
   describe("Fluxo positivo", () => {

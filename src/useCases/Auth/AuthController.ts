@@ -2,6 +2,7 @@ import "reflect-metadata";
 
 import { container } from "tsyringe";
 import { NextFunction, Request, Response } from "express";
+
 import { GenerateTokenUseCase } from "./GenerateTokenUseCase";
 
 class AuthController {
