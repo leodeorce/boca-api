@@ -1,8 +1,12 @@
 import { expect } from "chai";
 import request from "supertest";
-import { Answer } from "../../../src/entities/Answer";
-import { updateAnswer1Pass, updateAnswer0Pass } from "../../entities/Answer";
+
 import { URL } from "../../utils/URL";
+
+import { Answer } from "../../../src/entities/Answer";
+
+import updateAnswer0Pass from "../../entities/Answer/Pass/updateAnswer0.json";
+import updateAnswer1Pass from "../../entities/Answer/Pass/updateAnswer1.json";
 
 describe("Remoção de uma answer", () => {
   describe("Fluxo positivo", () => {

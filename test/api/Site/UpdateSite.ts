@@ -1,16 +1,18 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import request from "supertest";
-import { Site } from "../../../src/entities/Site";
-import {
-  createNewSitePass,
-  updateSite1Pass,
-  createSite3Pass,
-  updateSite3Fail,
-  updateSite4Fail,
-  updateSite3Pass,
-} from "../../entities/Site";
+
 import { URL } from "../../utils/URL";
+
+import { Site } from "../../../src/entities/Site";
+
+import createSite1Pass from "../../entities/Site/Pass/createSite1.json";
+import createSite3Pass from "../../entities/Site/Pass/createSite3.json";
+import updateSite1Pass from "../../entities/Site/Pass/updateSite1.json";
+import updateSite3Pass from "../../entities/Site/Pass/updateSite3.json";
+
+import updateSite3Fail from "../../entities/Site/Fail/updateSite3.json";
+import updateSite4Fail from "../../entities/Site/Fail/updateSite4.json";
 
 describe("Modifica os sites criados anteriormente", () => {
   let site1: Site;
@@ -30,7 +32,7 @@ describe("Modifica os sites criados anteriormente", () => {
 
   describe("Fluxo positivo", () => {
     it('Modifica a duração do Site 1 em "Contest Beta"', async () => {
-      expect(site1).to.deep.include(createNewSitePass);
+      expect(site1).to.deep.include(createSite1Pass);
       expect(site1.sitenumber).to.deep.equal(1);
 
       const response = await request(URL)

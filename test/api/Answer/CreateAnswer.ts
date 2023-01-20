@@ -1,13 +1,14 @@
 import { expect } from "chai";
 import request from "supertest";
-import {
-  createAnswer0Pass,
-  createAnswer1Pass,
-  createAnswer3Fail,
-  createAnswer4Fail,
-  createAnswer2Pass,
-} from "../../entities/Answer";
+
 import { URL } from "../../utils/URL";
+
+import createAnswer0Pass from "../../entities/Answer/Pass/createAnswer0.json";
+import createAnswer1Pass from "../../entities/Answer/Pass/createAnswer1.json";
+import createAnswer2Pass from "../../entities/Answer/Pass/createAnswer2.json";
+
+import createAnswer3Fail from "../../entities/Answer/Fail/createAnswer3.json";
+import createAnswer4Fail from "../../entities/Answer/Fail/createAnswer4.json";
 
 /**
  *  - Contest Beta deve existir

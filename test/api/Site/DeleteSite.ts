@@ -1,8 +1,11 @@
 import { expect } from "chai";
 import request from "supertest";
-import { Site } from "../../../src/entities/Site";
-import { updateSite1Pass } from "../../entities/Site";
+
 import { URL } from "../../utils/URL";
+
+import { Site } from "../../../src/entities/Site";
+
+import updateSite1Pass from "../../entities/Site/Pass/updateSite1.json";
 
 describe("Remoção de um site", () => {
   describe("Fluxo positivo", () => {

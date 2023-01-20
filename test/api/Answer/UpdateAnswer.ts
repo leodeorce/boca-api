@@ -1,17 +1,19 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import request from "supertest";
-import { Answer } from "../../../src/entities/Answer";
-import {
-  createAnswer0Pass,
-  createAnswer1Pass,
-  createAnswer2Pass,
-  updateAnswer1Pass,
-  updateAnswer0Fail,
-  updateAnswer0Pass,
-  updateAnswer3Fail,
-} from "../../entities/Answer";
+
 import { URL } from "../../utils/URL";
+
+import { Answer } from "../../../src/entities/Answer";
+
+import createAnswer0Pass from "../../entities/Answer/Pass/createAnswer0.json";
+import createAnswer1Pass from "../../entities/Answer/Pass/createAnswer1.json";
+import createAnswer2Pass from "../../entities/Answer/Pass/createAnswer2.json";
+import updateAnswer0Pass from "../../entities/Answer/Pass/updateAnswer0.json";
+import updateAnswer1Pass from "../../entities/Answer/Pass/updateAnswer1.json";
+
+import updateAnswer0Fail from "../../entities/Answer/Fail/updateAnswer0.json";
+import updateAnswer3Fail from "../../entities/Answer/Fail/updateAnswer3.json";
 
 describe("Modifica as answers criadas anteriormente", () => {
   let answer0: Answer;

@@ -1,0 +1,23 @@
+{
+  "siteip": "192.168.0.1",
+  "sitename": "Site 2",
+  "siteactive": true,
+  "sitepermitlogins": false,
+  "sitelastmileanswer": 0,
+  "sitelastmilescore": 0,
+  "siteduration": 3600,
+  "siteautoend": true,
+  "sitejudging": "1",
+  "sitetasking": "1",
+  "siteglobalscore": "2",
+  "sitescorelevel": 3,
+  "sitenextuser": 0,
+  "sitenextclar": 0,
+  "sitenextrun": 0,
+  "sitenexttask": 0,
+  "sitemaxtask": 10,
+  "sitechiefname": "",
+  "siteautojudge": false,
+  "sitemaxruntime": 600,
+  "sitemaxjudgewaittime": 900
+}

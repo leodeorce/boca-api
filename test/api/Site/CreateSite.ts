@@ -1,12 +1,13 @@
 import { expect } from "chai";
 import request from "supertest";
-import {
-  createNewSitePass,
-  createSite3Pass,
-  createSite4Fail,
-  createSite5Fail,
-} from "../../entities/Site";
+
 import { URL } from "../../utils/URL";
+
+import createSite1Pass from "../../entities/Site/Pass/createSite1.json";
+import createSite3Pass from "../../entities/Site/Pass/createSite3.json";
+
+import createSite4Fail from "../../entities/Site/Fail/createSite4.json";
+import createSite5Fail from "../../entities/Site/Fail/createSite5.json";
 
 /**
  *  - Contest Beta deve existir ainda
@@ -18,12 +19,12 @@ describe("Criação de um site", () => {
       const response = await request(URL)
         .post("/api/contest/2/site")
         .set("Accept", "application/json")
-        .send(createNewSitePass);
+        .send(createSite1Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
       expect(response.body["sitenumber"]).to.equal(1);
-      expect(response.body).to.deep.include(createNewSitePass);
+      expect(response.body).to.deep.include(createSite1Pass);
     });
 
     it('Cria outro site para o "Contest Beta" com valores diferentes', async () => {
@@ -46,7 +47,7 @@ describe("Criação de um site", () => {
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
       expect(response.body["sitenumber"]).to.equal(1);
-      expect(response.body).to.deep.include(createNewSitePass);
+      expect(response.body).to.deep.include(createSite1Pass);
     });
   });
 
