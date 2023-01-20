@@ -19,19 +19,19 @@ interface ICreateContestDTO {
 
 interface IUpdateContestDTO {
   contestnumber: number;
-  contestname?: string;
-  conteststartdate?: number;
-  contestduration?: number;
+  contestname: string;
+  conteststartdate: number;
+  contestduration: number;
   contestlastmileanswer?: number;
   contestlastmilescore?: number;
-  contestlocalsite?: number;
-  contestpenalty?: number;
-  contestmaxfilesize?: number;
-  contestactive?: boolean;
-  contestmainsite?: number;
-  contestkeys?: string;
-  contestunlockkey?: string;
-  contestmainsiteurl?: string;
+  contestlocalsite: number;
+  contestpenalty: number;
+  contestmaxfilesize: number;
+  contestactive: boolean;
+  contestmainsite: number;
+  contestkeys: string;
+  contestunlockkey: string;
+  contestmainsiteurl: string;
 }
 
 interface ILastIdResult {

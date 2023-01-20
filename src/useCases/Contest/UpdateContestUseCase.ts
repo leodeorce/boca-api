@@ -1,7 +1,5 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { ApiError } from "../../errors/ApiError";
-
 import { Contest } from "../../entities/Contest";
 
 import { IContestsRepository } from "../../repositories/IContestsRepository";
@@ -54,26 +52,22 @@ class UpdateContestUseCase {
   }: IRequest): Promise<Contest> {
     await this.contestValidator.exists(contestnumber);
 
-    contestname = contestname ? contestname.trim() : "";
-    if (contestname.length === 0) {
-      throw ApiError.badRequest("Contest name must not be empty");
-    }
-
-    const contest = new Contest();
-    contest.contestnumber = contestnumber;
-    contest.contestname = contestname;
-    contest.conteststartdate = conteststartdate;
-    contest.contestduration = contestduration;
-    contest.contestlastmileanswer = contestlastmileanswer;
-    contest.contestlastmilescore = contestlastmilescore;
-    contest.contestlocalsite = contestlocalsite;
-    contest.contestpenalty = contestpenalty;
-    contest.contestmaxfilesize = contestmaxfilesize;
-    contest.contestactive = contestactive;
-    contest.contestmainsite = contestmainsite;
-    contest.contestkeys = contestkeys;
-    contest.contestunlockkey = contestunlockkey;
-    contest.contestmainsiteurl = contestmainsiteurl;
+    const contest = new Contest(
+      contestnumber,
+      contestname,
+      conteststartdate,
+      contestduration,
+      contestlastmileanswer,
+      contestlastmilescore,
+      contestlocalsite,
+      contestpenalty,
+      contestmaxfilesize,
+      contestactive,
+      contestmainsite,
+      contestkeys,
+      contestunlockkey,
+      contestmainsiteurl
+    );
 
     await this.contestValidator.isValid(contest);
 

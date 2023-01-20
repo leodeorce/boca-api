@@ -85,6 +85,38 @@ class Contest {
 
   @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
+
+  constructor(
+    contestnumber: number,
+    contestname: string,
+    conteststartdate: number,
+    contestduration: number,
+    contestlastmileanswer: number | undefined = undefined,
+    contestlastmilescore: number | undefined = undefined,
+    contestlocalsite: number,
+    contestpenalty: number,
+    contestmaxfilesize: number,
+    contestactive: boolean,
+    contestmainsite: number,
+    contestkeys: string,
+    contestunlockkey: string,
+    contestmainsiteurl: string
+  ) {
+    this.contestnumber = contestnumber;
+    this.contestname = contestname;
+    this.conteststartdate = conteststartdate;
+    this.contestduration = contestduration;
+    this.contestlastmileanswer = contestlastmileanswer;
+    this.contestlastmilescore = contestlastmilescore;
+    this.contestlocalsite = contestlocalsite;
+    this.contestpenalty = contestpenalty;
+    this.contestmaxfilesize = contestmaxfilesize;
+    this.contestactive = contestactive;
+    this.contestmainsite = contestmainsite;
+    this.contestkeys = contestkeys;
+    this.contestunlockkey = contestunlockkey;
+    this.contestmainsiteurl = contestmainsiteurl;
+  }
 }
 
 export { Contest };

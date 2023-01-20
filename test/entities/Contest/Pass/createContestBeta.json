@@ -5,5 +5,9 @@
   "contestlocalsite": 5,
   "contestpenalty": 12000,
   "contestmaxfilesize": 1000,
-  "contestmainsite": 2
+  "contestactive": false,
+  "contestmainsite": 2,
+  "contestkeys": "",
+  "contestunlockkey": "",
+  "contestmainsiteurl": ""
 }

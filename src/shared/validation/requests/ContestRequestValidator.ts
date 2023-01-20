@@ -8,7 +8,11 @@ const createRequiredProperties = [
   "contestlocalsite",
   "contestpenalty",
   "contestmaxfilesize",
+  "contestactive",
   "contestmainsite",
+  "contestkeys",
+  "contestunlockkey",
+  "contestmainsiteurl",
 ];
 
 const updateRequiredProperties = [

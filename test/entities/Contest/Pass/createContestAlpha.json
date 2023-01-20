@@ -7,6 +7,7 @@
   "contestlocalsite": 1,
   "contestpenalty": 1200,
   "contestmaxfilesize": 100000,
+  "contestactive": false,
   "contestmainsite": 1,
   "contestkeys": "[d3g22q]",
   "contestunlockkey": "[d3g22q]",

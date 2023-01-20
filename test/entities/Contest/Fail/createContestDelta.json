@@ -7,5 +7,9 @@
   "contestlocalsite": 1,
   "contestpenalty": 12000,
   "contestmaxfilesize": 1000,
-  "contestmainsite": 2
+  "contestactive": false,
+  "contestmainsite": 2,
+  "contestkeys": "[d3g22q]",
+  "contestunlockkey": "[d3g22q]",
+  "contestmainsiteurl": "http://a.b"
 }

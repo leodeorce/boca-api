@@ -58,7 +58,7 @@ class ContestController {
   ): Promise<Response | undefined> {
     const createContestsUseCase = container.resolve(CreateContestsUseCase);
     const contestRequestValidator = container.resolve(ContestRequestValidator);
-    
+
     const {
       contestname,
       conteststartdate,
@@ -68,6 +68,7 @@ class ContestController {
       contestlocalsite,
       contestpenalty,
       contestmaxfilesize,
+      contestactive,
       contestmainsite,
       contestkeys,
       contestunlockkey,
@@ -86,6 +87,7 @@ class ContestController {
         contestlocalsite,
         contestpenalty,
         contestmaxfilesize,
+        contestactive,
         contestmainsite,
         contestkeys,
         contestunlockkey,
