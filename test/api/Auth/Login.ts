@@ -77,7 +77,7 @@ describe("Fluxos de login de um usuário", () => {
       expect(response.body["message"]).to.include("Wrong password");
     });
 
-    it('Tenta fazer login no User "Time 2" que não existe', async () => {
+    it('Tenta fazer login no User "Time 1" que não existe', async () => {
       const salt = "v512nj18986j8t9u1puqa2p9mh";
       const password = createHash("sha256").update("boca").digest("hex");
       const hash = createHash("sha256")
@@ -87,7 +87,7 @@ describe("Fluxos de login de um usuário", () => {
       const response = await request(URL)
         .get("/api/token")
         .query({
-          name: "time2",
+          name: "time1",
           password: hash,
         })
         .set("Accept", "application/json");

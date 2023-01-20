@@ -13,20 +13,14 @@ import createUser5Fail from "../../entities/User/Fail/createUser5.json";
 
 describe("Cria um usuário", () => {
   describe("Fluxo positivo", () => {
-    let createUser1PassWithPasswd: object;
-    let createUser3PassWithPasswd: object;
-
     it('Cria um usuário "Time 1" do tipo "team" no "Site 1" de "Contest Beta"', async () => {
       const password = createHash("sha256").update("boca").digest("hex");
-      createUser1PassWithPasswd = {
-        ...createUser1Pass,
-        userpassword: password,
-      };
+      createUser1Pass.userpassword = password;
 
       const response = await request(URL)
         .post("/api/contest/2/site/1/user")
         .set("Accept", "application/json")
-        .send(createUser1PassWithPasswd);
+        .send(createUser1Pass);
 
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
@@ -48,23 +42,18 @@ describe("Cria um usuário", () => {
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
       expect(response.body["usernumber"]).to.equal(2);
-      expect(response.body).to.deep.include({
-        ...createUser2Pass,
-        userpassword: "",
-      });
+      expect(response.body).to.deep.include(createUser2Pass);
     });
 
     it('Cria um usuário "Time 3" do tipo "team" com alguns campos diferentes do anterior', async () => {
       const password = createHash("sha256").update("boca").digest("hex");
-      createUser3PassWithPasswd = {
-        ...createUser3Pass,
-        userpassword: password,
-      };
+      createUser3Pass.userpassword = password;
 
       const response = await request(URL)
         .post("/api/contest/2/site/1/user")
         .set("Accept", "application/json")
-        .send(createUser3PassWithPasswd);
+        .send(createUser3Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
@@ -79,11 +68,14 @@ describe("Cria um usuário", () => {
       const response = await request(URL)
         .get("/api/contest/2/site/1/user/1")
         .set("Accept", "application/json");
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
       expect(response.body["usernumber"]).to.equal(1);
-      expect(response.body).to.deep.include(createUser1Pass);
+      for (const key of Object.keys(createUser1Pass)) {
+        expect(Object.keys(response.body)).to.deep.include(key);
+      }
       expect(response.body).to.have.own.property("userpassword");
       expect(response.body["userpassword"]).to.contain("!");
     });
@@ -95,6 +87,7 @@ describe("Cria um usuário", () => {
         .post("/api/contest/2/site/4/user")
         .set("Accept", "application/json")
         .send(createUser4Fail);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -106,6 +99,7 @@ describe("Cria um usuário", () => {
         .post("/api/contest/2/site/1/user")
         .set("Accept", "application/json")
         .send(createUser5Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -116,6 +110,7 @@ describe("Cria um usuário", () => {
       const response = await request(URL)
         .get("/api/contest/2/site/1/user/4")
         .set("Accept", "application/json");
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

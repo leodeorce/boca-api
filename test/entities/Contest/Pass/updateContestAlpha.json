@@ -1,0 +1,15 @@
+{
+  "contestname": "Contest Alpha",
+  "contestactive": false,
+  "conteststartdate": 0,
+  "contestduration": 11264340,
+  "contestlastmileanswer": 11263440,
+  "contestlastmilescore": 11260740,
+  "contestlocalsite": 1,
+  "contestpenalty": 1200,
+  "contestmaxfilesize": 100000,
+  "contestmainsite": 1,
+  "contestkeys": "[d3g22q]",
+  "contestunlockkey": "[d3g22q]",
+  "contestmainsiteurl": "http://a.b"
+}

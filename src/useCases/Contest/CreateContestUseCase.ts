@@ -1,7 +1,5 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { ApiError } from "../../errors/ApiError";
-
 import { Contest } from "../../entities/Contest";
 
 import { IContestsRepository } from "../../repositories/IContestsRepository";
@@ -48,11 +46,6 @@ class CreateContestsUseCase {
     contestunlockkey,
     contestmainsiteurl,
   }: IRequest): Promise<Contest> {
-    contestname = contestname ? contestname.trim() : "";
-    if (contestname.length === 0) {
-      throw ApiError.badRequest("Contest name must not be empty");
-    }
-
     contestlastmileanswer = contestlastmileanswer
       ? contestlastmileanswer
       : contestduration;

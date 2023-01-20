@@ -14,7 +14,7 @@ import { IsType } from "../shared/validation/utils/IsType";
 @Entity("contesttable")
 class Contest {
   @PrimaryColumn("int4")
-  @IsPositive({ message: "contestnumber must be greater than zero" })
+  @Min(0)
   @IsInt()
   contestnumber!: number;
 
@@ -36,11 +36,11 @@ class Contest {
 
   @Column("int4", { nullable: true })
   @IsType(["number", "undefined"])
-  contestlastmileanswer?: number;
+  contestlastmileanswer: number | undefined;
 
   @Column("int4", { nullable: true })
   @IsType(["number", "undefined"])
-  contestlastmilescore?: number;
+  contestlastmilescore: number | undefined;
 
   @Column("int4")
   @IsInt()

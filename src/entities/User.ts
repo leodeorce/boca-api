@@ -5,6 +5,7 @@ import {
   IsString,
   Matches,
   MaxLength,
+  Min,
   MinLength,
 } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
@@ -14,7 +15,7 @@ import { IsType } from "../shared/validation/utils/IsType";
 @Entity("usertable")
 class User {
   @PrimaryColumn("int4")
-  @IsPositive({ message: "contestnumber must be greater than zero" })
+  @Min(0)
   @IsInt()
   contestnumber!: number;
 

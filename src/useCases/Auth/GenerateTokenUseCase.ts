@@ -8,6 +8,8 @@ import { ApiError } from "../../errors/ApiError";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { IContestsRepository } from "../../repositories/IContestsRepository";
 import { ISitesRepository } from "../../repositories/ISitesRepository";
+import { AuthPayload } from "../../shared/definitions/AuthPayload";
+import { UserType } from "../../shared/definitions/UserType";
 
 interface IRequest {
   name: string;
@@ -32,36 +34,63 @@ class GenerateTokenUseCase {
       throw ApiError.badRequest("Password hash is invalid");
     }
 
-    // Checa se existe um Contest ativo
-    const activeContest = await this.contestsRepository.getActive();
-    if (activeContest === undefined) {
-      throw ApiError.notFound("There is no active contest");
-    }
+    let contest, site, user;
 
-    // Checa se o Site ativo desse Contest existe
-    const activeSite = await this.sitesRepository.getById(
-      activeContest.contestnumber,
-      activeContest.contestlocalsite
-    );
-    if (activeSite === undefined) {
-      throw ApiError.inconsistency(
-        `Local site of ID ${activeContest.contestlocalsite}` +
-          ` specified by contest "${activeContest.contestname}"` +
-          ` of ID ${activeContest.contestnumber} was not found`
-      );
-    }
+    // Usuário system deve sempre ser capaz de realizar login
+    if (name === "system") {
+      contest = await this.contestsRepository.getById(0);
+      if (contest === undefined) {
+        throw ApiError.notFound("Fake contest not found");
+      }
 
-    // Busca usuário com o nome recebido nesse Contest e Site
-    const user = await this.usersRepository.findByName(
-      activeContest.contestnumber,
-      activeSite.sitenumber,
-      name
-    );
-    if (user === undefined) {
-      throw ApiError.notFound(
-        `User with username ${name} ` +
-          `in the active contest and site does not exist`
+      site = await this.sitesRepository.getById(
+        contest.contestnumber,
+        contest.contestlocalsite
       );
+      if (site === undefined) {
+        throw ApiError.inconsistency("Fake site not found");
+      }
+
+      user = await this.usersRepository.findByName(
+        contest.contestnumber,
+        site.sitenumber,
+        UserType.SYSTEM
+      );
+      if (user === undefined) {
+        throw ApiError.notFound('User "system" not found');
+      }
+    } else {
+      // Checa se existe um Contest ativo
+      contest = await this.contestsRepository.getActive();
+      if (contest === undefined) {
+        throw ApiError.notFound("There is no active contest");
+      }
+
+      // Checa se o Site ativo desse Contest existe
+      site = await this.sitesRepository.getById(
+        contest.contestnumber,
+        contest.contestlocalsite
+      );
+      if (site === undefined) {
+        throw ApiError.inconsistency(
+          `Local site of ID ${contest.contestlocalsite}` +
+            ` specified by contest "${contest.contestname}"` +
+            ` of ID ${contest.contestnumber} was not found`
+        );
+      }
+
+      // Busca usuário com o nome recebido nesse Contest e Site
+      user = await this.usersRepository.findByName(
+        contest.contestnumber,
+        site.sitenumber,
+        name
+      );
+      if (user === undefined) {
+        throw ApiError.notFound(
+          `User with username ${name} does not exist ` +
+            `in the active contest and site`
+        );
+      }
     }
 
     // Salt deve ser a mesma usada para criar a hash recebida
@@ -94,9 +123,9 @@ class GenerateTokenUseCase {
       );
     }
 
-    const userInfo = {
-      contestnumber: activeContest.contestnumber,
-      usersitenumber: activeSite.sitenumber,
+    const userInfo: AuthPayload = {
+      contestnumber: contest.contestnumber,
+      usersitenumber: site.sitenumber,
       usernumber: user.usernumber,
       username: user.username,
       usertype: user.usertype,
@@ -112,7 +141,7 @@ class GenerateTokenUseCase {
       issuer: "BOCA API",
       audience: "boca-api",
       expiresIn: expiresIn,
-      algorithm: "RS256"
+      algorithm: "RS256",
     });
 
     return token;

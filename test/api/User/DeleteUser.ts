@@ -23,6 +23,7 @@ describe("Remoção de um user", () => {
       const all = await request(URL)
         .get("/api/contest/2/site/1/user")
         .set("Accept", "application/json");
+
       expect(all.statusCode).to.equal(200);
       expect(all.headers["content-type"]).to.contain("application/json");
       expect(all.body).to.be.an("array");
@@ -41,6 +42,7 @@ describe("Remoção de um user", () => {
         const response = await request(URL)
           .get("/api/contest/2/site/1/user/1")
           .set("Accept", "application/json");
+
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
         expect(response.body).to.have.own.property("message");
@@ -51,6 +53,7 @@ describe("Remoção de um user", () => {
         const response = await request(URL)
           .delete("/api/contest/2/site/1/user/1")
           .set("Accept", "application/json");
+
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
         expect(response.body).to.have.own.property("message");
@@ -61,6 +64,7 @@ describe("Remoção de um user", () => {
         const response = await request(URL)
           .delete("/api/contest/3/site/1/user/1")
           .set("Accept", "application/json");
+          
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
         expect(response.body).to.have.own.property("message");

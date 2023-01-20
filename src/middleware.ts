@@ -9,6 +9,7 @@ import { ILogger } from "./logging/ILogger";
 import { ApiError } from "./errors/ApiError";
 
 import { HttpStatus } from "./shared/definitions/HttpStatusCodes";
+import { AuthPayload } from "./shared/definitions/AuthPayload";
 
 function errorLogger(
   err: Error,
@@ -78,34 +79,43 @@ function requestLogger(req: Request, res: Response, next: NextFunction): void {
   next();
 }
 
-function authenticate(req: Request, res: Response, next: NextFunction): void {
-  const token = req.headers.authorization?.split(" ")[1];
+const authenticate = (authorizedUserTypes: string[]) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const token = req.headers.authorization?.split(" ")[1];
 
-  if (token === undefined || token == null) {
-    throw ApiError.badRequest("Missing authorization token");
-  }
+    if (token === undefined || token == null) {
+      throw ApiError.unauthorized("Missing authorization token");
+    }
 
-  const publicKey = fs.readFileSync("./secrets/public.key", "utf8");
-  if (publicKey === undefined) {
-    throw ApiError.internal(
-      "Cannot verify authentication token: Public key not found"
-    );
-  }
+    const publicKey = fs.readFileSync("./secrets/public.key", "utf8");
+    if (publicKey === undefined) {
+      throw ApiError.internal(
+        "Cannot verify authentication token: Public key not found"
+      );
+    }
 
-  try {
-    const decodedToken = jwt.verify(token, publicKey, {
-      issuer: "BOCA API",
-      audience: "boca-api",
-      algorithms: ["RS256"],
-    });
+    let decodedToken: AuthPayload;
+    try {
+      decodedToken = jwt.verify(token, publicKey, {
+        issuer: "BOCA API",
+        audience: "boca-api",
+        algorithms: ["RS256"],
+      }) as AuthPayload;
+    } catch (error) {
+      throw ApiError.unauthorized("Authorization token invalid: " + error);
+    }
+
+    if (authorizedUserTypes.includes(decodedToken.usertype) === false) {
+      throw ApiError.forbidden(
+        "Authenticated user is unauthorized to use this endpoint"
+      );
+    }
 
     req.body.userinfo = decodedToken;
 
     next();
-  } catch (error) {
-    throw ApiError.unauthorized("Authorization token invalid: " + error);
-  }
-}
+  };
+};
 
 export {
   errorLogger,

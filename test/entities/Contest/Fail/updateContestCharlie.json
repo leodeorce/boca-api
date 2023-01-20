@@ -1,0 +1,15 @@
+{
+  "contestname": "Contest Charlie",
+  "contestactive": false,
+  "conteststartdate": 1,
+  "contestduration": 1,
+  "contestlastmileanswer": 11263440,
+  "contestlastmilescore": 11260740,
+  "contestlocalsite": 1,
+  "contestpenalty": 12000,
+  "contestmaxfilesize": 100000,
+  "contestmainsite": 2,
+  "contestkeys": "",
+  "contestunlockkey": "",
+  "contestmainsiteurl": ""
+}

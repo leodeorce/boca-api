@@ -20,7 +20,6 @@ describe("Modifica os usuários criados anteriormente", () => {
   let time1: User;
   let time2: User;
   let time3: User;
-  let updateUser1PassWithPasswd: object;
 
   it("Resgata os users a serem modificados", async () => {
     const all = await request(URL)
@@ -40,19 +39,19 @@ describe("Modifica os usuários criados anteriormente", () => {
 
   describe("Fluxo positivo", () => {
     it("Modifica a senha do Time 1", async () => {
-      expect(time1).to.deep.include(createUser1Pass);
+      expect(time1).to.deep.include({
+        ...createUser1Pass,
+        userpassword: "!" + createUser1Pass.userpassword,
+      });
       expect(time1.usernumber).to.deep.equal(1);
 
       const password = createHash("sha256").update("senha").digest("hex");
-      updateUser1PassWithPasswd = {
-        ...updateUser1Pass,
-        userpassword: password,
-      };
+      updateUser1Pass.userpassword = password;
 
       const response = await request(URL)
         .put("/api/contest/2/site/1/user/1")
         .set("Accept", "application/json")
-        .send(updateUser1PassWithPasswd);
+        .send(updateUser1Pass);
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("usernumber");
@@ -64,7 +63,10 @@ describe("Modifica os usuários criados anteriormente", () => {
     });
 
     it("Modifica a descrição do Time 3", async () => {
-      expect(time3).to.deep.include(createUser3Pass);
+      expect(time3).to.deep.include({
+        ...createUser3Pass,
+        userpassword: "!" + createUser3Pass.userpassword,
+      });
       expect(time3.usernumber).to.deep.equal(3);
 
       const response = await request(URL)

@@ -64,12 +64,8 @@ class UpdateContestUseCase {
     contest.contestname = contestname;
     contest.conteststartdate = conteststartdate;
     contest.contestduration = contestduration;
-    contest.contestlastmileanswer = contestlastmileanswer
-      ? contestlastmileanswer
-      : contestduration;
-    contest.contestlastmilescore = contestlastmilescore
-      ? contestlastmilescore
-      : contestduration;
+    contest.contestlastmileanswer = contestlastmileanswer;
+    contest.contestlastmilescore = contestlastmilescore;
     contest.contestlocalsite = contestlocalsite;
     contest.contestpenalty = contestpenalty;
     contest.contestmaxfilesize = contestmaxfilesize;
