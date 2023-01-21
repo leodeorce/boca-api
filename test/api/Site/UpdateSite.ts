@@ -6,6 +6,8 @@ import { URL } from "../../utils/URL";
 
 import { Site } from "../../../src/entities/Site";
 
+import { getToken } from "../../utils/common";
+
 import createSite1Pass from "../../entities/Site/Pass/createSite1.json";
 import createSite3Pass from "../../entities/Site/Pass/createSite3.json";
 import updateSite1Pass from "../../entities/Site/Pass/updateSite1.json";
@@ -17,11 +19,22 @@ import updateSite4Fail from "../../entities/Site/Fail/updateSite4.json";
 describe("Modifica os sites criados anteriormente", () => {
   let site1: Site;
   let site3: Site;
+  let systemToken: string;
+
+  it('Faz login no User "system"', async () => {
+    systemToken = await getToken(
+      "boca",
+      "v512nj18986j8t9u1puqa2p9mh",
+      "system"
+    );
+  });
 
   it("Resgata os sites a serem modificados", async () => {
     const all = await request(URL)
       .get("/api/contest/2/site")
-      .set("Accept", "application/json");
+      .set("Accept", "application/json")
+      .set("Authorization", `Token ${systemToken}`);
+
     expect(all.statusCode).to.equal(200);
     expect(all.headers["content-type"]).to.contain("application/json");
     expect(all.body).to.be.an("array");
@@ -38,7 +51,9 @@ describe("Modifica os sites criados anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/site/1")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${systemToken}`)
         .send(updateSite1Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
@@ -53,7 +68,9 @@ describe("Modifica os sites criados anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/site/3")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${systemToken}`)
         .send(updateSite3Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("sitenumber");
@@ -70,7 +87,9 @@ describe("Modifica os sites criados anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/site/3")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${systemToken}`)
         .send(updateSite3Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -83,6 +102,8 @@ describe("Modifica os sites criados anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/site/4")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${systemToken}`)
+
         .send(updateSite4Fail);
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");

@@ -1,5 +1,7 @@
 import { Router } from "express";
+
 import { authenticate } from "../middleware";
+
 import { UserType } from "../shared/definitions/UserType";
 
 import { ContestController } from "../useCases/Contest/ContestController";
@@ -30,6 +32,14 @@ contestsRoutes.get(
   contestController.getOne
 );
 
+contestsRoutes.post(
+  "/contest",
+  authenticate([
+    UserType.SYSTEM, // Único capaz de criar um Contest
+  ]),
+  contestController.create
+);
+
 contestsRoutes.put(
   "/contest/:id_c",
   authenticate([
@@ -44,14 +54,6 @@ contestsRoutes.delete(
     UserType.SYSTEM, // Único capaz de deletar um Contest // TODO Validar
   ]),
   contestController.delete
-);
-
-contestsRoutes.post(
-  "/contest",
-  authenticate([
-    UserType.SYSTEM, // Único capaz de criar um Contest
-  ]),
-  contestController.create
 );
 
 export { contestsRoutes };

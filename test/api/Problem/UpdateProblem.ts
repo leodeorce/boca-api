@@ -6,6 +6,8 @@ import { Problem } from "../../../src/entities/Problem";
 
 import { URL } from "../../utils/URL";
 
+import { getToken } from "../../utils/common";
+
 import createProblem1Pass from "../../entities/Problem/Pass/createProblem1.json";
 import createProblem2Pass from "../../entities/Problem/Pass/createProblem2.json";
 import updateProblem1Pass from "../../entities/Problem/Pass/updateProblem1.json";
@@ -17,11 +19,18 @@ import updateProblem3Fail from "../../entities/Problem/Fail/updateProblem3.json"
 describe("Modifica os problemas criados anteriormente", () => {
   let problem1: Problem;
   let problem2: Problem;
+  let adminToken: string;
+
+  it('Faz login no User "admin"', async () => {
+    adminToken = await getToken("boca", "v512nj18986j8t9u1puqa2p9mh", "admin");
+  });
 
   it("Resgata os problemas a serem modificados", async () => {
     const all = await request(URL)
       .get("/api/contest/2/problem")
-      .set("Accept", "application/json");
+      .set("Accept", "application/json")
+      .set("Authorization", `Token ${adminToken}`);
+
     expect(all.statusCode).to.equal(200);
     expect(all.headers["content-type"]).to.contain("application/json");
     expect(all.body).to.be.an("array");
@@ -44,7 +53,9 @@ describe("Modifica os problemas criados anteriormente", () => {
       const response = await request(URL)
         .put(`/api/contest/2/problem/${createProblem1Pass.problemnumber}`)
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateProblem1Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("problemnumber");
@@ -58,7 +69,9 @@ describe("Modifica os problemas criados anteriormente", () => {
       const response = await request(URL)
         .put(`/api/contest/2/problem/${createProblem2Pass.problemnumber}`)
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateProblem2Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("problemnumber");
@@ -71,7 +84,9 @@ describe("Modifica os problemas criados anteriormente", () => {
     it('Modifica o arquivo do problema "L1_2" em "Contest Beta"', async () => {
       const response = await request(URL)
         .put(`/api/contest/2/problem/${createProblem2Pass.problemnumber}/file`)
-        .attach("probleminputfile", "test/files/L1_2.zip");
+        .attach("probleminputfile", "test/files/L1_2.zip")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(updateProblem2Pass);
@@ -83,7 +98,9 @@ describe("Modifica os problemas criados anteriormente", () => {
       const response = await request(URL)
         .put(`/api/contest/2/problem/${createProblem1Pass.problemnumber}`)
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateProblem1Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -94,7 +111,9 @@ describe("Modifica os problemas criados anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/problem/2022103")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateProblem3Fail);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

@@ -6,6 +6,8 @@ import { URL } from "../../utils/URL";
 
 import { Answer } from "../../../src/entities/Answer";
 
+import { getToken } from "../../utils/common";
+
 import createAnswer0Pass from "../../entities/Answer/Pass/createAnswer0.json";
 import createAnswer1Pass from "../../entities/Answer/Pass/createAnswer1.json";
 import createAnswer2Pass from "../../entities/Answer/Pass/createAnswer2.json";
@@ -19,11 +21,18 @@ describe("Modifica as answers criadas anteriormente", () => {
   let answer0: Answer;
   let answer1: Answer;
   let answer2: Answer;
+  let adminToken: string;
+
+  it('Faz login no User "admin"', async () => {
+    adminToken = await getToken("boca", "v512nj18986j8t9u1puqa2p9mh", "admin");
+  });
 
   it("Resgata as answers a serem modificadas", async () => {
     const all = await request(URL)
       .get("/api/contest/2/answer")
-      .set("Accept", "application/json");
+      .set("Accept", "application/json")
+      .set("Authorization", `Token ${adminToken}`);
+
     expect(all.statusCode).to.equal(200);
     expect(all.headers["content-type"]).to.contain("application/json");
     expect(all.body).to.be.an("array");
@@ -45,7 +54,9 @@ describe("Modifica as answers criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/answer/0")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateAnswer0Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("answernumber");
@@ -57,7 +68,9 @@ describe("Modifica as answers criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/answer/1")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateAnswer1Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("answernumber");
@@ -72,7 +85,9 @@ describe("Modifica as answers criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/answer/0")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateAnswer0Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -85,7 +100,9 @@ describe("Modifica as answers criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/answer/3")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(updateAnswer3Fail);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

@@ -111,7 +111,7 @@ const authenticate = (authorizedUserTypes: string[]) => {
       );
     }
 
-    req.body.userinfo = decodedToken;
+    req.body.authtoken = decodedToken;
 
     next();
   };

@@ -3,6 +3,8 @@ import request from "supertest";
 
 import { URL } from "../../utils/URL";
 
+import { getToken } from "../../utils/common";
+
 import createProblem1Pass from "../../entities/Problem/Pass/createProblem1.json";
 import createProblem2Pass from "../../entities/Problem/Pass/createProblem2.json";
 
@@ -12,12 +14,20 @@ import createProblem5Fail from "../../entities/Problem/Fail/createProblem5.json"
 import createProblem6Fail from "../../entities/Problem/Fail/createProblem6.json";
 
 describe("Criação de um problema", () => {
+  let adminToken: string;
+
+  it('Faz login no User "admin"', async () => {
+    adminToken = await getToken("boca", "v512nj18986j8t9u1puqa2p9mh", "admin");
+  });
+
   describe("Fluxo positivo", () => {
     it('Cria o problema "L1_1" no "Contest Beta"', async () => {
       const response = await request(URL)
         .post("/api/contest/2/problem")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createProblem1Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createProblem1Pass);
@@ -26,7 +36,9 @@ describe("Criação de um problema", () => {
     it('Adiciona arquivo L1_1.zip ao problema "L1_1"', async () => {
       const response = await request(URL)
         .put(`/api/contest/2/problem/${createProblem1Pass.problemnumber}/file`)
-        .attach("probleminputfile", "test/files/L1_1.zip");
+        .attach("probleminputfile", "test/files/L1_1.zip")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createProblem1Pass);
@@ -36,7 +48,9 @@ describe("Criação de um problema", () => {
       const response = await request(URL)
         .post("/api/contest/2/problem")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createProblem2Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createProblem2Pass);
@@ -45,7 +59,9 @@ describe("Criação de um problema", () => {
     it('Adiciona arquivo L1_2.zip ao problema "L1_2"', async () => {
       const response = await request(URL)
         .put(`/api/contest/2/problem/${createProblem2Pass.problemnumber}/file`)
-        .attach("probleminputfile", "test/files/L1_2.zip");
+        .attach("probleminputfile", "test/files/L1_2.zip")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createProblem2Pass);
@@ -54,7 +70,9 @@ describe("Criação de um problema", () => {
     it("Resgata o primeiro dos dois problemas criados anteriormente", async () => {
       const response = await request(URL)
         .get(`/api/contest/2/problem/${createProblem1Pass.problemnumber}`)
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("problemnumber");
@@ -65,9 +83,10 @@ describe("Criação de um problema", () => {
     });
 
     it("Resgata o arquivo do segundo problema criado anteriormente", async () => {
-      const response = await request(URL).get(
-        `/api/contest/2/problem/${createProblem2Pass.problemnumber}/file`
-      );
+      const response = await request(URL)
+        .get(`/api/contest/2/problem/${createProblem2Pass.problemnumber}/file`)
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/zip");
       expect(response.headers["content-length"]).to.contain("326229");
@@ -82,7 +101,9 @@ describe("Criação de um problema", () => {
       const response = await request(URL)
         .post("/api/contest/3/problem")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createProblem3Fail);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -93,7 +114,9 @@ describe("Criação de um problema", () => {
       const response = await request(URL)
         .post("/api/contest/2/problem")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createProblem4Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -104,7 +127,9 @@ describe("Criação de um problema", () => {
       const response = await request(URL)
         .post("/api/contest/2/problem")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createProblem5Fail);
+
       expect(response.statusCode).to.equal(409);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -114,7 +139,9 @@ describe("Criação de um problema", () => {
     it("Tenta resgatar um problema que não existe", async () => {
       const response = await request(URL)
         .get("/api/contest/2/problem/2022105")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -125,7 +152,9 @@ describe("Criação de um problema", () => {
       const response = await request(URL)
         .post("/api/contest/2/problem")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createProblem6Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

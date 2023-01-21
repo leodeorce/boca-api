@@ -1,0 +1,9 @@
+{
+  "username": "judge",
+  "userpassword": "",
+  "userfullname": "Judge",
+  "usertype": "judge",
+  "userenabled": true,
+  "usermultilogin": true,
+  "userdesc": "The Judge"
+}

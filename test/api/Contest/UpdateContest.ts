@@ -1,11 +1,12 @@
 import { expect } from "chai";
 import { describe } from "mocha";
-import { createHash } from "crypto";
 import request from "supertest";
 
 import { URL } from "../../utils/URL";
 
 import { Contest } from "../../../src/entities/Contest";
+
+import { getToken } from "../../utils/common";
 
 import createContestAlphaPass from "../../entities/Contest/Pass/createContestAlpha.json";
 import createContestBetaPass from "../../entities/Contest/Pass/createContestBeta.json";
@@ -23,29 +24,12 @@ describe("Modifica os contests criados anteriormente", () => {
   let contestAlpha: Contest;
   let contestBeta: Contest;
 
-  it('Resgata um token de autenticação para "system"', async () => {
-    const salt = "v512nj18986j8t9u1puqa2p9mh";
-    const password = createHash("sha256").update("boca").digest("hex");
-    const hash = createHash("sha256")
-      .update(password + salt)
-      .digest("hex");
-
-    const response = await request(URL)
-      .get("/api/token")
-      .query({
-        name: "system",
-        password: hash,
-      })
-      .set("Accept", "application/json");
-
-    expect(response.statusCode).to.equal(200);
-    expect(response.headers["content-type"]).to.contain("application/json");
-
-    const { accessToken } = response.body;
-    const count = accessToken.match(/\./g)?.length;
-    expect(count).to.equal(2);
-
-    systemToken = accessToken;
+  it('Faz login no User "system"', async () => {
+    systemToken = await getToken(
+      "boca",
+      "v512nj18986j8t9u1puqa2p9mh",
+      "system"
+    );
   });
 
   it("Resgata os contests a serem modificados", async () => {

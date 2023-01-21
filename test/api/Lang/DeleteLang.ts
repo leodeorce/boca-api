@@ -2,17 +2,28 @@ import { expect } from "chai";
 import request from "supertest";
 
 import { Lang } from "../../../src/entities/Lang";
+
 import { URL } from "../../utils/URL";
+
+import { getToken } from "../../utils/common";
 
 import updateLang1Pass from "../../entities/Lang/Pass/updateLang1.json";
 import updateLang2Pass from "../../entities/Lang/Pass/updateLang2.json";
 
 describe("Remoção de uma linguagem", () => {
+  let adminToken: string;
+
+  it('Faz login no User "admin"', async () => {
+    adminToken = await getToken("boca", "v512nj18986j8t9u1puqa2p9mh", "admin");
+  });
+
   describe("Fluxo positivo", () => {
     it('Deleta a linguagem de ID 3 do "Contest Beta"', async () => {
       const response = await request(URL)
         .delete("/api/contest/2/language/3")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(204);
       expect(response.headers).to.not.have.own.property("content-type");
       expect(response.body).to.be.empty;
@@ -21,7 +32,9 @@ describe("Remoção de uma linguagem", () => {
     it("Resgata todas as linguagens, mas a linguagem de ID 3 foi deletada", async () => {
       const all = await request(URL)
         .get("/api/contest/2/language")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(all.statusCode).to.equal(200);
       expect(all.headers["content-type"]).to.contain("application/json");
       expect(all.body).to.be.an("array");
@@ -46,7 +59,9 @@ describe("Remoção de uma linguagem", () => {
     it("Tenta resgatar a linguagem de ID 3 deletada", async () => {
       const response = await request(URL)
         .get("/api/contest/2/language/3")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -56,7 +71,9 @@ describe("Remoção de uma linguagem", () => {
     it("Tenta deletar novamente a linguagem de ID 3", async () => {
       const response = await request(URL)
         .delete("/api/contest/2/language/3")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -66,7 +83,9 @@ describe("Remoção de uma linguagem", () => {
     it("Tenta deletar a linguagem de ID 1 de um contest inexistente", async () => {
       const response = await request(URL)
         .delete("/api/contest/3/language/1")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

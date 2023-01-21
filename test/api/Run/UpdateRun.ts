@@ -6,6 +6,8 @@ import { Run } from "../../../src/entities/Run";
 
 import { URL } from "../../utils/URL";
 
+import { getToken } from "../../utils/common";
+
 import createRun1Pass from "../../entities/Run/Pass/createRun1.json";
 import createRun2Pass from "../../entities/Run/Pass/createRun2.json";
 import createRun3Pass from "../../entities/Run/Pass/createRun3.json";
@@ -19,11 +21,18 @@ describe("Modifica as runs criadas anteriormente", () => {
   let run1: Run;
   let run2: Run;
   let run3: Run;
+  let judgeToken: string;
+
+  it('Faz login no User "judge"', async () => {
+    judgeToken = await getToken("boca", "v512nj18986j8t9u1puqa2p9mh", "judge");
+  });
 
   it("Resgata as runs a serem modificadas", async () => {
     const all = await request(URL)
       .get("/api/contest/2/problem/2022102/run")
-      .set("Accept", "application/json");
+      .set("Accept", "application/json")
+      .set("Authorization", `Token ${judgeToken}`);
+
     expect(all.statusCode).to.equal(200);
     expect(all.headers["content-type"]).to.contain("application/json");
     expect(all.body).to.be.an("array");
@@ -42,7 +51,9 @@ describe("Modifica as runs criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/problem/2022102/run/1")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${judgeToken}`)
         .send(updateRun1Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createRun1Pass);
@@ -53,7 +64,9 @@ describe("Modifica as runs criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/problem/2022102/run/2")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${judgeToken}`)
         .send(updateRun2Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createRun2Pass);
@@ -66,7 +79,9 @@ describe("Modifica as runs criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/problem/2022102/run/3")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${judgeToken}`)
         .send(updateRun3Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -77,7 +92,9 @@ describe("Modifica as runs criadas anteriormente", () => {
       const response = await request(URL)
         .put("/api/contest/2/problem/2022102/run/4")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${judgeToken}`)
         .send(updateRun4Fail);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
