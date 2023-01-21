@@ -37,11 +37,7 @@ class CreateLangUseCase {
     lastId = lastId !== undefined ? lastId : 0;
     const langnumber = lastId + 1;
 
-    const lang = new Lang();
-    lang.contestnumber = contestnumber;
-    lang.langnumber = langnumber;
-    lang.langname = langname;
-    lang.langextension = langextension;
+    const lang = new Lang(contestnumber, langnumber, langname, langextension);
 
     await this.langValidator.isValid(lang);
 

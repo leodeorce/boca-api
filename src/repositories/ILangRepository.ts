@@ -8,10 +8,10 @@ interface ICreateLangDTO {
 }
 
 interface IUpdadeLangDTO {
-  contestnumber?: number;
+  contestnumber: number;
   langnumber: number;
-  langname?: string;
-  langextension?: string;
+  langname: string;
+  langextension: string;
 }
 
 interface ILastIdResult {

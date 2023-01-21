@@ -11,9 +11,9 @@ interface ICreateAnswerDTO {
 interface IUpdateAnswerDTO {
   contestnumber: number;
   answernumber: number;
-  runanswer?: string;
-  yes?: boolean;
-  fake?: boolean;
+  runanswer: string;
+  yes: boolean;
+  fake: boolean;
 }
 
 interface ILastIdResult {

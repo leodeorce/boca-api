@@ -47,12 +47,13 @@ class CreateAnswerUseCase {
       throw ApiError.alreadyExists("Answer already exists for this contest");
     }
 
-    const answer = new Answer();
-    answer.contestnumber = contestnumber;
-    answer.answernumber = answernumber;
-    answer.fake = fake;
-    answer.runanswer = runanswer;
-    answer.yes = yes;
+    const answer = new Answer(
+      contestnumber,
+      answernumber,
+      runanswer,
+      yes,
+      fake
+    );
 
     await this.answerValidator.isValid(answer);
 
