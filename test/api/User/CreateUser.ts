@@ -101,7 +101,7 @@ describe("Cria um usuário", () => {
       });
     });
 
-    it('Cria um usuário "judge" do tipo "admin"', async () => {
+    it('Cria um usuário "admin" do tipo "admin"', async () => {
       const password = createHash("sha256").update("boca").digest("hex");
       createUserAdminPass.userpassword = password;
 

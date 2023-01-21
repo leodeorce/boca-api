@@ -1,0 +1,15 @@
+{
+  "contestname": "Contest 1",
+  "conteststartdate": 0,
+  "contestduration": 18000,
+  "contestlastmileanswer": 17100,
+  "contestlastmilescore": 14400,
+  "contestlocalsite": 1,
+  "contestpenalty": 1200,
+  "contestmaxfilesize": 100000,
+  "contestactive": false,
+  "contestmainsite": 1,
+  "contestkeys": "",
+  "contestunlockkey": "",
+  "contestmainsiteurl": ""
+}

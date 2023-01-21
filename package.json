@@ -18,6 +18,7 @@
     "test:dev": "export $(grep '^[A-Z]' .env.test) && ts-node --transpile-only src/server.ts",
     "test:health": "sh ./test/utils/healthcheck.sh",
     "test:api": "mocha -r ts-node/register './test/api/index.ts'",
+    "test:usecases": "mocha -r ts-node/register './test/useCases/index.ts'",
     "test:purge": "bash ./test/utils/purgedb.sh",
     "docker:up": "docker compose -f docker-compose-dev.yml up --build -d",
     "docker:down": "docker compose -f docker-compose-dev.yml down",

@@ -1,0 +1,9 @@
+{
+  "username": "admin",
+  "usernumber": 1000,
+  "userpassword": "",
+  "userfullname": "Administrator",
+  "usertype": "admin",
+  "userenabled": true,
+  "usermultilogin": true
+}
