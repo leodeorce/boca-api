@@ -1,5 +1,5 @@
 ---
-name: API Test
+name: Use Cases Test
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  api:
+  usecases:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,7 @@ jobs:
         run: yarn test:health
 
       - name: Script de testes
-        run: yarn test:api
+        run: yarn test:usecases
 
       - name: Descer contêineres
         run: yarn test:docker:down

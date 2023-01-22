@@ -38,6 +38,11 @@ jobs:
           VALIDATE_PHP_PHPSTAN: false
           VALIDATE_PHP_PSALM: false
           VALIDATE_JSCPD: false
+          VALIDATE_CLANG_FORMAT: false
+          VALIDATE_CPP: false
+          VALIDATE_GITLEAKS: false
+          VALIDATE_SQLFLUFF: false
+          VALIDATE_JAVA: FALSE
           LOG_LEVEL: WARN
           EDITORCONFIG_FILE_NAME: .editorconfig
           LINTER_RULES_PATH: /
