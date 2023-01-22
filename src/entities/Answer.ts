@@ -37,6 +37,20 @@ class Answer {
 
   @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
+
+  constructor(
+    contestnumber: number,
+    answernumber: number,
+    runanswer: string,
+    yes = false,
+    fake = false
+  ) {
+    this.contestnumber = contestnumber;
+    this.answernumber = answernumber;
+    this.runanswer = runanswer;
+    this.yes = yes;
+    this.fake = fake;
+  }
 }
 
 export { Answer };

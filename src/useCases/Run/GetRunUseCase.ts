@@ -1,26 +1,37 @@
-import { inject, injectable } from "tsyringe";
+import { container, injectable } from "tsyringe";
 
 import { Run } from "../../entities/Run";
-import { RunsRepository } from "../../repositories/implementations/RunsRepository";
+
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
+import RunValidator from "../../shared/validation/entities/RunValidator";
 
 interface IRequest {
-  id: number;
+  contestnumber: number;
+  runproblem: number;
+  runnumber: number;
 }
 
 @injectable()
 class GetRunUseCase {
-  constructor(
-    @inject("RunsRepository")
-    private runsRepository: RunsRepository
-  ) {}
+  private contestValidator: ContestValidator;
+  private problemValidator: ProblemValidator;
+  private runValidator: RunValidator;
 
-  async execute({ id }: IRequest): Promise<Run | undefined> {
-    try {
-      const run = await this.runsRepository.getById(id);
-      return run;
-    } catch (error) {
-      return Promise.reject(error);
-    }
+  constructor() {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.problemValidator = container.resolve(ProblemValidator);
+    this.runValidator = container.resolve(RunValidator);
+  }
+
+  async execute({
+    contestnumber,
+    runproblem,
+    runnumber,
+  }: IRequest): Promise<Run | undefined> {
+    await this.contestValidator.exists(contestnumber);
+    await this.problemValidator.exists(contestnumber, runproblem);
+    return await this.runValidator.exists(contestnumber, runproblem, runnumber);
   }
 }
 

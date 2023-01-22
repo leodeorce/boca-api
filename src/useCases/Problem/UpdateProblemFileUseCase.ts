@@ -1,12 +1,15 @@
 import { container, inject, injectable } from "tsyringe";
 import { createHash } from "node:crypto";
+import { UploadedFile } from "express-fileupload";
+
+import { ApiError } from "../../errors/ApiError";
 
 import { Problem } from "../../entities/Problem";
-import { ApiError } from "../../errors/ApiError";
+
 import { IProblemsRepository } from "../../repositories/IProblemsRepository";
+
 import ContestValidator from "../../shared/validation/entities/ContestValidator";
 import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
-import { UploadedFile } from "express-fileupload";
 
 interface IRequest {
   contestnumber: number;

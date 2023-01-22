@@ -13,6 +13,8 @@ services:
       - "3000:3000"
     environment:
       - LISTEN_PORT=3000
+      - TOKEN_EXPIRES_IN_SECONDS=1800
+      - PASSWORD_SALT=v512nj18986j8t9u1puqa2p9mh
       - DB_PORT=5432
       - DB_HOST=boca-postgres
       - DB_NAME=bocadb

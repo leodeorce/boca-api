@@ -29,40 +29,66 @@ class Problem {
   @IsString()
   problemname!: string;
 
-  @Column("varchar", { length: 100 })
+  @Column("varchar", { length: 100, nullable: true })
   @IsType(["string", "undefined"])
-  problemfullname?: string;
+  problemfullname: string | undefined;
 
-  @Column("varchar", { length: 100 })
+  @Column("varchar", { length: 100, nullable: true })
   @IsType(["string", "undefined"])
-  problembasefilename?: string;
+  problembasefilename: string | undefined;
 
-  @Column("varchar", { length: 100 })
+  @Column("varchar", { length: 100, nullable: true })
   @IsType(["string", "undefined"])
-  probleminputfilename?: string;
+  probleminputfilename: string | undefined;
 
-  @Column("bigint")
+  @Column("bigint", { nullable: true })
   @IsType(["number", "undefined"])
-  probleminputfile?: number;
+  probleminputfile: number | undefined;
 
-  @Column("varchar", { length: 50 })
+  @Column("varchar", { length: 50, nullable: true })
   @IsType(["string", "undefined"])
-  probleminputfilehash?: string;
+  probleminputfilehash: string | undefined;
 
   @Column("bool")
   @IsBoolean()
   fake!: boolean;
 
-  @Column("varchar", { length: 100 })
+  @Column("varchar", { length: 100, nullable: true })
   @IsType(["string", "undefined"])
-  problemcolorname?: string;
+  problemcolorname: string | undefined;
 
-  @Column("varchar", { length: 6 })
+  @Column("varchar", { length: 6, nullable: true })
   @IsType(["string", "undefined"])
-  problemcolor?: string;
+  problemcolor: string | undefined;
 
   @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
+
+  constructor(
+    contestnumber: number,
+    problemnumber: number,
+    problemname: string,
+    problemfullname: string | undefined = "",
+    problembasefilename: string | undefined,
+    probleminputfilename: string | undefined = "",
+    probleminputfile: number | undefined,
+    probleminputfilehash: string | undefined,
+    fake = false,
+    problemcolorname: string | undefined = "",
+    problemcolor: string | undefined = ""
+  ) {
+    this.contestnumber = contestnumber;
+    this.problemnumber = problemnumber;
+    this.problemname = problemname;
+    this.problemfullname = problemfullname;
+    this.problembasefilename = problembasefilename;
+    this.probleminputfilename = probleminputfilename;
+    this.probleminputfile = probleminputfile;
+    this.probleminputfilehash = probleminputfilehash;
+    this.fake = fake;
+    this.problemcolorname = problemcolorname;
+    this.problemcolor = problemcolor;
+  }
 }
 
 export { Problem };

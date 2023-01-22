@@ -36,12 +36,7 @@ class UpdateLangUseCase {
     await this.contestValidator.exists(contestnumber);
     await this.langValidator.exists(contestnumber, langnumber);
 
-    const lang = new Lang();
-    
-    lang.contestnumber = contestnumber;
-    lang.langnumber = langnumber;
-    lang.langname = langname;
-    lang.langextension = langextension;
+    const lang = new Lang(contestnumber, langnumber, langname, langextension);
 
     await this.langValidator.isValid(lang);
 

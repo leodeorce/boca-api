@@ -11,7 +11,7 @@ class IdValidator {
   }
 
   isContestId(id: number) {
-    this.isId(id, "contest", 1);
+    this.isId(id, "contest", 0);
   }
 
   isSiteId(id: number) {
@@ -32,6 +32,10 @@ class IdValidator {
 
   isProblemId(id: number) {
     this.isId(id, "problem", 0);
+  }
+
+  isRunId(id: number) {
+    this.isId(id, "run", 1);
   }
 }
 

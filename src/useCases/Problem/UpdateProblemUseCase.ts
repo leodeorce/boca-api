@@ -13,6 +13,9 @@ interface IRequest {
   problemname: string;
   problemfullname?: string;
   problembasefilename?: string;
+  probleminputfilename?: string;
+  probleminputfile?: number;
+  probleminputfilehash?: string;
   fake: boolean;
   problemcolorname?: string;
   problemcolor?: string;
@@ -37,31 +40,45 @@ class UpdateProblemsUseCase {
     problemname,
     problemfullname,
     problembasefilename,
+    probleminputfilename,
+    probleminputfile,
+    probleminputfilehash,
     fake,
     problemcolorname,
     problemcolor,
   }: IRequest): Promise<Problem> {
     await this.contestValidator.exists(contestnumber);
-    await this.problemValidator.exists(contestnumber, problemnumber);
+    const existingProblem = await this.problemValidator.exists(
+      contestnumber,
+      problemnumber
+    );
 
-    const problem = new Problem();
+    probleminputfilename =
+      probleminputfilename !== undefined
+        ? probleminputfilename
+        : existingProblem.probleminputfilename;
+    probleminputfile =
+      probleminputfile !== undefined
+        ? probleminputfile
+        : existingProblem.probleminputfile;
+    probleminputfilehash =
+      probleminputfilehash !== undefined
+        ? probleminputfilehash
+        : existingProblem.probleminputfilehash;
 
-    problem.contestnumber = contestnumber;
-    problem.problemnumber = problemnumber;
-    problem.problemname = problemname;
-    problem.fake = fake;
-    problem.problembasefilename = problembasefilename;
-    problem.probleminputfilename = "";
-    problem.probleminputfile = undefined;
-    problem.probleminputfilehash = undefined;
-
-    problem.problemcolorname =
-      problemcolorname === undefined ? "" : problemcolorname;
-
-    problem.problemcolor = problemcolor === undefined ? "" : problemcolor;
-
-    problem.problemfullname =
-      problemfullname === undefined ? "" : problemfullname;
+    const problem = new Problem(
+      contestnumber,
+      problemnumber,
+      problemname,
+      problemfullname,
+      problembasefilename,
+      probleminputfilename,
+      probleminputfile,
+      probleminputfilehash,
+      fake,
+      problemcolorname,
+      problemcolor
+    );
 
     await this.problemValidator.isValid(problem);
 

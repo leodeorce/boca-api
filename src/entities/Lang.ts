@@ -34,6 +34,18 @@ class Lang {
 
   @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
+
+  constructor(
+    contestnumber: number,
+    langnumber: number,
+    langname: string,
+    langextension: string
+  ) {
+    this.contestnumber = contestnumber;
+    this.langnumber = langnumber;
+    this.langname = langname;
+    this.langextension = langextension;
+  }
 }
 
 export { Lang };

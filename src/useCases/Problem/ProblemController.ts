@@ -6,7 +6,10 @@ import { container } from "tsyringe";
 import * as fs from "fs";
 
 import { HttpStatus } from "../../shared/definitions/HttpStatusCodes";
+
 import IdValidator from "../../shared/validation/utils/IdValidator";
+
+import { ProblemRequestValidator } from "../../shared/validation/requests/ProblemRequestValidator";
 
 import { CreateProblemUseCase } from "./CreateProblemUseCase";
 import { DeleteProblemUseCase } from "./DeleteProblemUseCase";
@@ -14,7 +17,6 @@ import { GetProblemUseCase } from "./GetProblemUseCase";
 import { ListProblemsUseCase } from "./ListProblemsUseCase";
 import { UpdateProblemFileUseCase } from "./UpdateProblemFileUseCase";
 import { UpdateProblemsUseCase } from "./UpdateProblemUseCase";
-import { ProblemRequestValidator } from "../../shared/validation/requests/ProblemRequestValidator";
 import { GetProblemFileUseCase } from "./GetProblemFileUseCase";
 
 class ProblemController {
@@ -212,6 +214,9 @@ class ProblemController {
       problemname,
       problemfullname,
       problembasefilename,
+      probleminputfilename,
+      probleminputfile,
+      probleminputfilehash,
       fake,
       problemcolorname,
       problemcolor,
@@ -228,6 +233,9 @@ class ProblemController {
         problemname,
         problemfullname,
         problembasefilename,
+        probleminputfilename,
+        probleminputfile,
+        probleminputfilehash,
         fake,
         problemcolorname,
         problemcolor,

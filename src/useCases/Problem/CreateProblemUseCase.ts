@@ -1,5 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
 
+import { ApiError } from "../../errors/ApiError";
+
 import { Problem } from "../../entities/Problem";
 
 import { IProblemsRepository } from "../../repositories/IProblemsRepository";
@@ -13,6 +15,9 @@ interface IRequest {
   problemname: string;
   problemfullname?: string;
   problembasefilename?: string;
+  probleminputfilename?: string;
+  probleminputfile?: number;
+  probleminputfilehash?: string;
   fake: boolean;
   problemcolorname?: string;
   problemcolor?: string;
@@ -37,30 +42,37 @@ class CreateProblemUseCase {
     problemname,
     problemfullname,
     problembasefilename,
+    probleminputfilename,
+    probleminputfile,
+    probleminputfilehash,
     fake,
     problemcolorname,
     problemcolor,
   }: IRequest): Promise<Problem> {
     await this.contestValidator.exists(contestnumber);
 
-    const problem = new Problem();
+    const existingProblem = await this.problemsRepository.getById(
+      contestnumber,
+      problemnumber
+    );
 
-    problem.contestnumber = contestnumber;
-    problem.problemnumber = problemnumber;
-    problem.problemname = problemname;
-    problem.problembasefilename = problembasefilename;
-    problem.fake = fake;
-    problem.probleminputfilename = "";
-    problem.probleminputfile = undefined;
-    problem.probleminputfilehash = undefined;
+    if (existingProblem !== undefined) {
+      throw ApiError.alreadyExists("Problem number is already in use");
+    }
 
-    problem.problemfullname =
-      problemfullname !== undefined ? problemfullname : "";
-
-    problem.problemcolorname =
-      problemcolorname !== undefined ? problemcolorname : "";
-
-    problem.problemcolor = problemcolor !== undefined ? problemcolor : "";
+    const problem = new Problem(
+      contestnumber,
+      problemnumber,
+      problemname,
+      problemfullname,
+      problembasefilename,
+      probleminputfilename,
+      probleminputfile,
+      probleminputfilehash,
+      fake,
+      problemcolorname,
+      problemcolor
+    );
 
     await this.problemValidator.isValid(problem);
 

@@ -1,0 +1,15 @@
+{
+  "contestname": "Contest Beta",
+  "contestactive": true,
+  "conteststartdate": 0,
+  "contestlastmileanswer": 5600,
+  "contestlastmilescore": 5600,
+  "contestduration": 3600,
+  "contestlocalsite": 1,
+  "contestpenalty": 48000,
+  "contestmaxfilesize": 1000,
+  "contestmainsite": 3,
+  "contestkeys": "",
+  "contestunlockkey": "",
+  "contestmainsiteurl": ""
+}

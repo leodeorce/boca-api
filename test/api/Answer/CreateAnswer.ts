@@ -1,25 +1,32 @@
 import { expect } from "chai";
 import request from "supertest";
-import {
-  createAnswer0Pass,
-  createAnswer1Pass,
-  createAnswer3Fail,
-  createAnswer4Fail,
-  createAnswer2Pass,
-} from "../../entities/Answer";
+
 import { URL } from "../../utils/URL";
 
-/**
- *  - Contest Beta deve existir
- */
+import { getToken } from "../../utils/common";
+
+import createAnswer0Pass from "../../entities/Answer/Pass/createAnswer0.json";
+import createAnswer1Pass from "../../entities/Answer/Pass/createAnswer1.json";
+import createAnswer2Pass from "../../entities/Answer/Pass/createAnswer2.json";
+
+import createAnswer3Fail from "../../entities/Answer/Fail/createAnswer3.json";
+import createAnswer4Fail from "../../entities/Answer/Fail/createAnswer4.json";
 
 describe("Criação de uma answer", () => {
+  let adminToken: string;
+
+  it('Faz login no User "admin"', async () => {
+    adminToken = await getToken("boca", "v512nj18986j8t9u1puqa2p9mh", "admin");
+  });
+
   describe("Fluxo positivo", () => {
     it('Cria a answer "Not answered yet" para o "Contest Beta"', async () => {
       const response = await request(URL)
         .post("/api/contest/2/answer")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createAnswer0Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createAnswer0Pass);
@@ -29,7 +36,9 @@ describe("Criação de uma answer", () => {
       const response = await request(URL)
         .post("/api/contest/2/answer")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createAnswer1Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createAnswer1Pass);
@@ -39,7 +48,9 @@ describe("Criação de uma answer", () => {
       const response = await request(URL)
         .post("/api/contest/2/answer")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createAnswer2Pass);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.deep.include(createAnswer2Pass);
@@ -48,7 +59,9 @@ describe("Criação de uma answer", () => {
     it("Resgata a primeira das três answers criadas anteriormente", async () => {
       const response = await request(URL)
         .get("/api/contest/2/answer/0")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("answernumber");
@@ -62,7 +75,9 @@ describe("Criação de uma answer", () => {
       const response = await request(URL)
         .post("/api/contest/3/answer")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createAnswer3Fail);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -73,7 +88,9 @@ describe("Criação de uma answer", () => {
       const response = await request(URL)
         .post("/api/contest/2/answer")
         .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`)
         .send(createAnswer4Fail);
+
       expect(response.statusCode).to.equal(400);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");
@@ -85,7 +102,9 @@ describe("Criação de uma answer", () => {
     it("Tenta resgatar uma answer que não existe", async () => {
       const response = await request(URL)
         .get("/api/contest/2/answer/4")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(404);
       expect(response.headers["content-type"]).to.contain("application/json");
       expect(response.body).to.have.own.property("message");

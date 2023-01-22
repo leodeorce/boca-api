@@ -1,9 +1,12 @@
-import { getRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
+
+import { AppDataSource } from "../../database";
 
 import { Run } from "../../entities/Run";
+
 import {
-  ICountResult,
   ICreateRunDTO,
+  ILastIdResult,
   IRunsRepository,
   IUpdateRunDTO,
 } from "../IRunsRepository";
@@ -12,123 +15,134 @@ class RunsRepository implements IRunsRepository {
   private repository: Repository<Run>;
 
   constructor() {
-    this.repository = getRepository(Run);
+    this.repository = AppDataSource.getRepository(Run);
   }
 
-  async list(contestnumber?: number): Promise<Run[]> {
-    if (contestnumber) {
-      const problems = await this.repository.query(
-        `SELECT * FROM runtable WHERE runproblem=${contestnumber}`
-      );
-      return problems;
-    }
-    const runs = await this.repository.query(`SELECT * FROM runtable`);
-    return runs;
+  async list(contestnumber: number, runproblem: number): Promise<Run[]> {
+    return await this.repository.find({
+      where: { contestnumber: contestnumber, runproblem: runproblem },
+    });
   }
 
-  async count(): Promise<number> {
-    const count: ICountResult[] = await this.repository.query(
-      `SELECT MAX(runnumber) FROM runtable`
+  async getLastId(
+    contestnumber: number,
+    runproblem: number
+  ): Promise<number | undefined> {
+    const lastIdResult: ILastIdResult | undefined = await this.repository
+      .createQueryBuilder("run")
+      .select("MAX(run.runnumber)", "id")
+      .where("run.contestnumber = :contestnumber", {
+        contestnumber: contestnumber,
+      })
+      .andWhere("run.runproblem = :runproblem", {
+        runproblem: runproblem,
+      })
+      .getRawOne();
+
+    return lastIdResult !== undefined ? lastIdResult.id : undefined;
+  }
+
+  async getById(
+    contestnumber: number,
+    runproblem: number,
+    runnumber: number
+  ): Promise<Run | undefined> {
+    const run: Run | null = await this.repository.findOneBy({
+      contestnumber: contestnumber,
+      runproblem: runproblem,
+      runnumber: runnumber,
+    });
+
+    return run != null ? run : undefined;
+  }
+
+  async getFileByOid(oid: number): Promise<Buffer | undefined> {
+    const result = await this.repository.query(
+      `SELECT pg_catalog.lo_get(${oid});`
     );
-    if (count[0].max === null) {
-      return -1;
-    }
-    return parseInt(count[0].max, 10);
-  }
 
-  async getById(id: number): Promise<Run | undefined> {
-    const contest: Run[] = await this.repository.query(
-      `SELECT * FROM runtable WHERE runnumber = ${id}`
-    );
-    if (contest.length === 0) {
+    if (result.length === 0 || result[0].lo_get == null) {
       return undefined;
     }
-    return contest[0];
+    return result[0].lo_get as Buffer;
   }
 
-  async create(createObject: ICreateRunDTO): Promise<void> {
-    let createColumns = "";
-    let createValues = "";
-
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(createObject).filter(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([_, v]) => v !== null && v !== undefined
-      )
+  async createBlob(file: Buffer): Promise<number> {
+    const createLoResult = await this.repository.query(
+      "SELECT pg_catalog.lo_create('0');"
     );
+    const oid = createLoResult[0].lo_create;
 
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length === 0) {
-      return Promise.reject();
-    }
+    let query = `SELECT pg_catalog.lo_open('${oid}', 131072);`;
 
-    KeysAndValues.forEach((object) => {
-      createColumns = createColumns.concat(`${object[0]},`);
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}',` : `${object[1]},`;
-      createValues = createValues.concat(value);
-    });
-    // Limpar a query
-    createColumns = createColumns.trim(); // Remove espaços em branco desnecessarios
-    createColumns = createColumns.slice(0, createColumns.length - 1); // Retira a ultima virgula
-    createValues = createValues.trim(); // Remove espaços em branco desnecessarios
-    createValues = createValues.slice(0, createValues.length - 1); // Retira a ultima virgula
+    const fileHex = file.toString("hex");
+    const CHUNK_SIZE = 32768;
+    const numWrites = Math.floor(fileHex.length / CHUNK_SIZE) + 1;
 
-    const query = `INSERT INTO runtable 
-      (
-        ${createColumns}
-      ) VALUES (
-        ${createValues}
+    for (let i = 0; i < numWrites; i += 1) {
+      query = query.concat(
+        "\n",
+        `SELECT pg_catalog.lowrite(0, '\\x${fileHex.slice(
+          CHUNK_SIZE * i,
+          CHUNK_SIZE * (i + 1)
+        )}');`
       );
-      `;
-
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
     }
+
+    query = query.concat("\n", "SELECT pg_catalog.lo_close(0);");
+    await this.repository.query(query);
+
+    return oid;
+  }
+
+  async deleteBlob(oid: number): Promise<void> {
+    await this.repository.query(`SELECT pg_catalog.lo_unlink(${oid});`);
+  }
+
+  async create(createObject: ICreateRunDTO): Promise<Run> {
+    const run = this.repository.create(createObject);
+    await this.repository.save(run);
+    return run;
   }
 
   async update(updateObject: IUpdateRunDTO): Promise<Run> {
-    // Remover parâmetros vazios (string vazia ou nulos, etc)
-    const filteredObject = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(updateObject).filter(([_, v]) => v != null)
-    );
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Run)
+      .set(updateObject)
+      .where("contestnumber = :contestnumber", {
+        contestnumber: updateObject.contestnumber,
+      })
+      .andWhere("runproblem = :runproblem", {
+        runproblem: updateObject.runproblem,
+      })
+      .andWhere("runnumber = :runnumber", {
+        runnumber: updateObject.runnumber,
+      })
+      .returning("*")
+      .execute();
 
-    let query = `UPDATE runtable\n`;
-    const KeysAndValues = Object.entries(filteredObject);
-    if (KeysAndValues.length > 0) {
-      query = query.concat(`
-      SET `);
-    }
-
-    KeysAndValues.forEach((object) => {
-      const value =
-        typeof object[1] === "string" ? `'${object[1]}'` : object[1];
-      query = query.concat(`${object[0]} = ${value}, `);
-    });
-    query = query.trim(); // Remove espaços em branco desnecessarios
-    query = query.slice(0, query.length - 1); // Retira a ultima virgula
-    query = query.concat(`\nWHERE runnumber = ${updateObject.runnumber};`);
-    try {
-      const updatedContest: Run[] = await this.repository.query(query);
-      return updatedContest[0];
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    const updatedRun: Record<string, unknown> = result.raw[0];
+    return this.repository.create(updatedRun);
   }
 
-  async delete(runNumber: number): Promise<void> {
-    const query = `DELETE FROM runtable WHERE runNumber=${runNumber}`;
-    try {
-      await this.repository.query(query);
-      return Promise.resolve();
-    } catch (err) {
-      return Promise.reject(err);
-    }
+  async delete(
+    contestnumber: number,
+    runproblem: number,
+    runnumber: number
+  ): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Run)
+      .where("contestnumber = :contestnumber", { contestnumber: contestnumber })
+      .andWhere("runproblem = :runproblem", {
+        runproblem: runproblem,
+      })
+      .andWhere("runnumber = :runnumber", {
+        runnumber: runnumber,
+      })
+      .execute();
   }
 }
 

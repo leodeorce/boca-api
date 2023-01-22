@@ -1,29 +1,50 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 
-import { RunsRepository } from "../../repositories/implementations/RunsRepository";
+import { IRunsRepository } from "../../repositories/IRunsRepository";
+
+import ContestValidator from "../../shared/validation/entities/ContestValidator";
+import ProblemValidator from "../../shared/validation/entities/ProblemValidator";
+import RunValidator from "../../shared/validation/entities/RunValidator";
 
 interface IRequest {
-  id: number;
+  contestnumber: number;
+  runproblem: number;
+  runnumber: number;
 }
 
 @injectable()
 class DeleteRunUseCase {
+  private contestValidator: ContestValidator;
+  private problemValidator: ProblemValidator;
+  private runValidator: RunValidator;
+
   constructor(
     @inject("RunsRepository")
-    private runsRepository: RunsRepository
-  ) {}
+    private runsRepository: IRunsRepository
+  ) {
+    this.contestValidator = container.resolve(ContestValidator);
+    this.problemValidator = container.resolve(ProblemValidator);
+    this.runValidator = container.resolve(RunValidator);
+  }
 
-  async execute({ id }: IRequest): Promise<void> {
-    const runAlreadyExists = await this.runsRepository.getById(id);
+  async execute({
+    contestnumber,
+    runproblem,
+    runnumber,
+  }: IRequest): Promise<void> {
+    await this.contestValidator.exists(contestnumber);
+    await this.problemValidator.exists(contestnumber, runproblem);
+    const existingRun = await this.runValidator.exists(
+      contestnumber,
+      runproblem,
+      runnumber
+    );
 
-    if (!runAlreadyExists) {
-      throw new Error("Run does not exists");
+    if (existingRun.rundata !== undefined && existingRun.rundata != null) {
+      await this.runsRepository.deleteBlob(existingRun.rundata);
     }
-    try {
-      await this.runsRepository.delete(id);
-    } catch (error) {
-      return Promise.reject(error);
-    }
+
+    await this.runsRepository.delete(contestnumber, runproblem, runnumber);
   }
 }
 

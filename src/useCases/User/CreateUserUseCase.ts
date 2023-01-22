@@ -18,17 +18,17 @@ interface IRequest {
   userfullname: string;
   userdesc?: string;
   usertype: string;
-  userenabled: boolean;
-  usermultilogin: boolean;
-  userpassword: string;
+  userenabled?: boolean;
+  usermultilogin?: boolean;
+  userpassword?: string;
   userip?: string;
   userlastlogin?: number;
-  usersession: string;
-  usersessionextra: string;
+  usersession?: string;
+  usersessionextra?: string;
   userlastlogout?: number;
   userpermitip?: string;
-  userinfo: string;
-  usericpcid: string;
+  userinfo?: string;
+  usericpcid?: string;
 }
 
 @injectable()
@@ -92,25 +92,35 @@ class CreateUserUseCase {
       }
     }
 
-    const user = new User();
-    user.contestnumber = contestnumber;
-    user.usernumber = usernumber;
-    user.usersitenumber = usersitenumber;
-    user.username = username;
-    user.userfullname = userfullname;
-    user.userdesc = userdesc;
-    user.usertype = usertype;
-    user.userenabled = userenabled;
-    user.usermultilogin = usermultilogin;
-    user.userpassword = userpassword;
-    user.userip = userip;
-    user.userlastlogin = userlastlogin;
-    user.usersession = usersession;
-    user.usersessionextra = usersessionextra;
-    user.userlastlogout = userlastlogout;
-    user.userpermitip = userpermitip;
-    user.userinfo = userinfo;
-    user.usericpcid = usericpcid;
+    // Compatibilidade com o BOCA
+    if (
+      userpassword !== "" &&
+      userpassword !== undefined &&
+      usertype === "team"
+    ) {
+      userpassword = "!" + userpassword;
+    }
+
+    const user = new User(
+      contestnumber,
+      usernumber,
+      usersitenumber,
+      username,
+      userfullname,
+      userdesc,
+      usertype,
+      userenabled,
+      usermultilogin,
+      userpassword,
+      userip,
+      userlastlogin,
+      usersession,
+      usersessionextra,
+      userlastlogout,
+      userpermitip,
+      userinfo,
+      usericpcid
+    );
 
     await this.userValidator.isValid(user);
 

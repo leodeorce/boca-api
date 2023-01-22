@@ -2,16 +2,27 @@ import { expect } from "chai";
 import request from "supertest";
 
 import { User } from "../../../src/entities/User";
-import { updateUser3Pass } from "../../entities/User";
+
 import { URL } from "../../utils/URL";
 
-describe("Remoção de um user", () => {
+import { getToken } from "../../utils/common";
+
+import updateUser3Pass from "../../entities/User/Pass/updateUser3.json";
+
+describe("Remoção de um usuário", () => {
+  let adminToken: string;
+
+  it('Faz login no User "admin"', async () => {
+    adminToken = await getToken("boca", "v512nj18986j8t9u1puqa2p9mh", "admin");
+  });
+
   describe("Fluxo positivo", () => {
     it('Deleta o Time 1 do "Site 1" em "Contest Beta"', async () => {
       const response = await request(URL)
         .delete("/api/contest/2/site/1/user/1")
-        .set("Accept", "application/json");
-      console.log(response.body);
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(response.statusCode).to.equal(204);
       expect(response.headers).to.not.have.own.property("content-type");
       expect(response.body).to.be.empty;
@@ -20,7 +31,9 @@ describe("Remoção de um user", () => {
     it("Resgata todos os usuários do Site 1, mas o Time 1 foi deletado", async () => {
       const all = await request(URL)
         .get("/api/contest/2/site/1/user")
-        .set("Accept", "application/json");
+        .set("Accept", "application/json")
+        .set("Authorization", `Token ${adminToken}`);
+
       expect(all.statusCode).to.equal(200);
       expect(all.headers["content-type"]).to.contain("application/json");
       expect(all.body).to.be.an("array");
@@ -38,7 +51,9 @@ describe("Remoção de um user", () => {
       it("Tenta resgatar o Time 1 deletado", async () => {
         const response = await request(URL)
           .get("/api/contest/2/site/1/user/1")
-          .set("Accept", "application/json");
+          .set("Accept", "application/json")
+          .set("Authorization", `Token ${adminToken}`);
+
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
         expect(response.body).to.have.own.property("message");
@@ -48,7 +63,9 @@ describe("Remoção de um user", () => {
       it("Tenta deletar novamente o Time 1", async () => {
         const response = await request(URL)
           .delete("/api/contest/2/site/1/user/1")
-          .set("Accept", "application/json");
+          .set("Accept", "application/json")
+          .set("Authorization", `Token ${adminToken}`);
+
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
         expect(response.body).to.have.own.property("message");
@@ -58,7 +75,9 @@ describe("Remoção de um user", () => {
       it("Tenta deletar o Time 1 de um contest inexistente", async () => {
         const response = await request(URL)
           .delete("/api/contest/3/site/1/user/1")
-          .set("Accept", "application/json");
+          .set("Accept", "application/json")
+          .set("Authorization", `Token ${adminToken}`);
+
         expect(response.statusCode).to.equal(404);
         expect(response.headers["content-type"]).to.contain("application/json");
         expect(response.body).to.have.own.property("message");

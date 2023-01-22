@@ -1,5 +1,6 @@
 /**
  *   User "Time 1" do tipo Team é criado em Site 1 do Contest Beta
+ *   User "Time 2" do tipo Team é criado em Site 1 do Contest Beta
  *   User "Time 3" do tipo Team é criado em Site 1 do Contest Beta
  */
 import "./CreateUser";
@@ -17,5 +18,6 @@ import "./DeleteUser";
 
 /**
  *   Estado final:
- *     Contest Beta (ID: 2) passa a ter User "Time 1" (ID: 1).
+ *     Contest Beta (ID: 2) passa a ter User "Time 2" (ID: 2).
+ *     Contest Beta (ID: 2) passa a ter User "Time 3" (ID: 3).
  */

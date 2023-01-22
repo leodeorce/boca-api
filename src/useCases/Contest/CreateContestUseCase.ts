@@ -1,7 +1,5 @@
 import { container, inject, injectable } from "tsyringe";
 
-import { ApiError } from "../../errors/ApiError";
-
 import { Contest } from "../../entities/Contest";
 
 import { IContestsRepository } from "../../repositories/IContestsRepository";
@@ -17,10 +15,11 @@ interface IRequest {
   contestlocalsite: number;
   contestpenalty: number;
   contestmaxfilesize: number;
+  contestactive: boolean;
   contestmainsite: number;
-  contestkeys?: string; // TODO Avaliar obrigatoriedade
-  contestunlockkey?: string;
-  contestmainsiteurl?: string;
+  contestkeys: string;
+  contestunlockkey: string;
+  contestmainsiteurl: string;
 }
 
 @injectable()
@@ -43,47 +42,32 @@ class CreateContestsUseCase {
     contestlocalsite,
     contestpenalty,
     contestmaxfilesize,
+    contestactive,
     contestmainsite,
     contestkeys,
     contestunlockkey,
     contestmainsiteurl,
   }: IRequest): Promise<Contest> {
-    contestname = contestname ? contestname.trim() : "";
-    if (contestname.length === 0) {
-      throw ApiError.badRequest("Contest name must not be empty");
-    }
-
-    contestlastmileanswer = contestlastmileanswer
-      ? contestlastmileanswer
-      : contestduration;
-    contestlastmilescore = contestlastmilescore
-      ? contestlastmilescore
-      : contestduration;
-    contestkeys = contestkeys ? contestkeys : "";
-    contestmainsiteurl = contestmainsiteurl ? contestmainsiteurl : "";
-    contestunlockkey = contestunlockkey ? contestunlockkey : "";
-
-    const contestactive = false;
-
     let lastId = await this.contestsRepository.getLastId();
     lastId = lastId !== undefined ? lastId : 0;
     const contestnumber = lastId + 1;
 
-    const contest = new Contest();
-    contest.contestnumber = contestnumber;
-    contest.contestname = contestname;
-    contest.conteststartdate = conteststartdate;
-    contest.contestduration = contestduration;
-    contest.contestlastmileanswer = contestlastmileanswer;
-    contest.contestlastmilescore = contestlastmilescore;
-    contest.contestlocalsite = contestlocalsite;
-    contest.contestpenalty = contestpenalty;
-    contest.contestmaxfilesize = contestmaxfilesize;
-    contest.contestactive = contestactive;
-    contest.contestmainsite = contestmainsite;
-    contest.contestkeys = contestkeys;
-    contest.contestunlockkey = contestunlockkey;
-    contest.contestmainsiteurl = contestmainsiteurl;
+    const contest = new Contest(
+      contestnumber,
+      contestname,
+      conteststartdate,
+      contestduration,
+      contestlastmileanswer,
+      contestlastmilescore,
+      contestlocalsite,
+      contestpenalty,
+      contestmaxfilesize,
+      contestactive,
+      contestmainsite,
+      contestkeys,
+      contestunlockkey,
+      contestmainsiteurl
+    );
 
     await this.contestValidator.isValid(contest);
 

@@ -22,8 +22,8 @@ class ApiLogger implements ILogger {
     });
   }
 
-  async logRequest(method: string, url: string): Promise<void> {
-    this.logger.log("info", "%s %s", method, url);
+  async logRequest(method: string, url: string, ip: string): Promise<void> {
+    this.logger.log("info", "%s %s from %s", method, url, ip);
   }
 
   async logError(err: Error): Promise<void> {

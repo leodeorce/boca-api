@@ -9,38 +9,38 @@ import {
   MinLength,
 } from "class-validator";
 
+import { IsType } from "../shared/validation/utils/IsType";
+
 @Entity("contesttable")
 class Contest {
   @PrimaryColumn("int4")
+  @Min(0)
   @IsInt()
-  @IsPositive({ message: "contestnumber must be greater than zero" })
   contestnumber!: number;
 
   @Column("varchar", { length: 100 })
-  @IsString()
-  @MinLength(1)
   @MaxLength(100)
+  @MinLength(1)
+  @IsString()
   contestname!: string;
 
   @Column("int4")
-  @IsInt()
   @IsPositive({ message: "conteststartdate must be greater than zero" })
+  @IsInt()
   conteststartdate!: number;
 
   @Column("int4")
-  @IsInt()
   @IsPositive({ message: "contestduration must be greater than zero" })
+  @IsInt()
   contestduration!: number;
 
   @Column("int4", { nullable: true })
-  @IsInt()
-  @Min(0)
-  contestlastmileanswer?: number;
+  @IsType(["number", "undefined"])
+  contestlastmileanswer: number | undefined;
 
   @Column("int4", { nullable: true })
-  @IsInt()
-  @Min(0)
-  contestlastmilescore?: number;
+  @IsType(["number", "undefined"])
+  contestlastmilescore: number | undefined;
 
   @Column("int4")
   @IsInt()
@@ -85,6 +85,38 @@ class Contest {
 
   @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
+
+  constructor(
+    contestnumber: number,
+    contestname: string,
+    conteststartdate: number,
+    contestduration: number,
+    contestlastmileanswer: number | undefined = undefined,
+    contestlastmilescore: number | undefined = undefined,
+    contestlocalsite: number,
+    contestpenalty: number,
+    contestmaxfilesize: number,
+    contestactive: boolean,
+    contestmainsite: number,
+    contestkeys: string,
+    contestunlockkey: string,
+    contestmainsiteurl: string
+  ) {
+    this.contestnumber = contestnumber;
+    this.contestname = contestname;
+    this.conteststartdate = conteststartdate;
+    this.contestduration = contestduration;
+    this.contestlastmileanswer = contestlastmileanswer;
+    this.contestlastmilescore = contestlastmilescore;
+    this.contestlocalsite = contestlocalsite;
+    this.contestpenalty = contestpenalty;
+    this.contestmaxfilesize = contestmaxfilesize;
+    this.contestactive = contestactive;
+    this.contestmainsite = contestmainsite;
+    this.contestkeys = contestkeys;
+    this.contestunlockkey = contestunlockkey;
+    this.contestmainsiteurl = contestmainsiteurl;
+  }
 }
 
 export { Contest };

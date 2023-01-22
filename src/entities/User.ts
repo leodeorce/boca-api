@@ -3,16 +3,19 @@ import {
   IsInt,
   IsPositive,
   IsString,
+  Matches,
   MaxLength,
+  Min,
   MinLength,
 } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
+
 import { IsType } from "../shared/validation/utils/IsType";
 
 @Entity("usertable")
 class User {
   @PrimaryColumn("int4")
-  @IsPositive({ message: "contestnumber must be greater than zero" })
+  @Min(0)
   @IsInt()
   contestnumber!: number;
 
@@ -42,84 +45,119 @@ class User {
   @IsType(["string", "undefined"], {
     message: "If specified, userdesc must be a string",
   })
-  userdesc?: string;
+  userdesc: string | undefined;
 
   @Column("varchar", { length: 20 })
-  @MaxLength(20)
-  @MinLength(1)
+  @Matches(/^(judge){1}$|^(team){1}$|^(admin){1}$|^(system){1}$/, {
+    message: "usertype must be one of [judge, team, admin, system]",
+  })
   @IsString()
   usertype!: string;
 
   @Column("bool")
   @IsBoolean()
-  userenabled = true;
+  userenabled!: boolean;
 
   @Column("bool")
   @IsBoolean()
-  usermultilogin = false;
+  usermultilogin!: boolean;
 
-  @Column("varchar", { length: 200 })
-  @MaxLength(200)
-  @MinLength(0)
-  @IsString()
-  userpassword = "";
-
-  // TODO Validar manualmente
-  @Column("varchar", { length: 300 })
-  // @MaxLength(300)
-  // @MinLength(8)
-  @IsType(["string", "undefined"])
-  userip?: string;
-
-  // TODO Validar manualmente
-  @Column("int4")
-  // @IsPositive({ message: "userlastlogin must be greater than zero" })
-  @IsType(["number", "undefined"], {
-    message: "If specified, userlastlogin must be greater than zero",
+  @Column("varchar", { length: 200, nullable: true })
+  @IsType(["string", "undefined"], {
+    message: "If specified, userpassword must be a string",
   })
-  userlastlogin?: number;
+  userpassword: string | undefined;
 
-  @Column("varchar", { length: 50 })
-  @MaxLength(50)
-  @MinLength(0)
-  @IsString()
-  usersession = "";
-
-  @Column("varchar", { length: 50 })
-  @MaxLength(50)
-  @MinLength(0)
-  @IsString()
-  usersessionextra = "";
-
-  // TODO Validar manualmente
-  @Column("int4")
-  // @IsPositive({ message: "userlastlogout must be greater than zero" })
-  @IsType(["number", "undefined"], {
-    message: "If specified, userlastlogout must be greater than zero",
+  @Column("varchar", { length: 300, nullable: true })
+  @IsType(["string", "undefined"], {
+    message: "If specified, userip must be a string",
   })
-  userlastlogout?: number;
+  userip: string | undefined;
 
-  // TODO Validar manualmente
-  @Column("varchar", { length: 300 })
-  // @MaxLength(300)
-  // @MinLength(8)
-  @IsType(["string", "undefined"])
-  userpermitip?: string;
+  @Column("int4", { nullable: true })
+  @IsType(["number", "undefined"], {
+    message: "If specified, userlastlogin must be a number",
+  })
+  userlastlogin: number | undefined;
 
-  @Column("varchar", { length: 300 })
-  @MaxLength(300)
-  @MinLength(0)
-  @IsString()
-  userinfo = "";
+  @Column("varchar", { length: 50, nullable: true })
+  @IsType(["string", "undefined"], {
+    message: "If specified, usersession must be a string",
+  })
+  usersession: string | undefined;
+
+  @Column("varchar", { length: 50, nullable: true })
+  @IsType(["string", "undefined"], {
+    message: "If specified, usersessionextra must be a string",
+  })
+  usersessionextra: string | undefined;
+
+  @Column("int4", { nullable: true })
+  @IsType(["number", "undefined"], {
+    message: "If specified, userlastlogout must be a number",
+  })
+  userlastlogout: number | undefined;
+
+  @Column("varchar", { length: 300, nullable: true })
+  @IsType(["string", "undefined"], {
+    message: "If specified, userpermitip must be a string",
+  })
+  userpermitip: string | undefined;
+
+  @Column("varchar", { length: 300, nullable: true })
+  @IsType(["string", "undefined"], {
+    message: "If specified, userinfo must be a string",
+  })
+  userinfo: string | undefined;
 
   @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
   updatetime!: number;
 
-  @Column("varchar", { length: 50 })
-  @MaxLength(50)
-  @MinLength(0)
-  @IsString()
-  usericpcid = "";
+  @Column("varchar", { length: 50, nullable: true })
+  @IsType(["string", "undefined"], {
+    message: "If specified, usericpcid must be a string",
+  })
+  usericpcid: string | undefined;
+
+  constructor(
+    contestnumber: number,
+    usernumber: number,
+    usersitenumber: number,
+    username: string,
+    userfullname: string,
+    userdesc: string | undefined,
+    usertype: string,
+    userenabled = true,
+    usermultilogin = false,
+    userpassword: string | undefined = "",
+    userip: string | undefined = undefined,
+    userlastlogin: number | undefined = undefined,
+    usersession: string | undefined = "",
+    usersessionextra: string | undefined = "",
+    userlastlogout: number | undefined = undefined,
+    userpermitip: string | undefined = undefined,
+    userinfo: string | undefined = "",
+    usericpcid: string | undefined = ""
+  ) {
+    this.contestnumber = contestnumber;
+    this.usernumber = usernumber;
+    this.usersitenumber = usersitenumber;
+    this.username = username;
+    this.userfullname = userfullname;
+    this.userdesc = userdesc;
+    this.usertype = usertype;
+    this.userenabled = userenabled;
+    this.usermultilogin = usermultilogin;
+    this.userpassword = userpassword;
+    this.userip = userip;
+    this.userlastlogin = userlastlogin;
+    this.usersession = usersession;
+    this.usersessionextra = usersessionextra;
+    this.userlastlogout = userlastlogout;
+    this.userpermitip = userpermitip;
+    this.userinfo = userinfo;
+    this.usericpcid = usericpcid;
+  }
 }
 
 export { User };

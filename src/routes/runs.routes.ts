@@ -1,4 +1,9 @@
 import { Router } from "express";
+import fileUpload from "express-fileupload";
+
+import { authenticate } from "../middleware";
+
+import { UserType } from "../shared/definitions/UserType";
 
 import { RunController } from "../useCases/Run/RunController";
 
@@ -6,10 +11,60 @@ const runsRoutes = Router();
 
 const runController = new RunController();
 
-runsRoutes.get("/problem/:id_p/run", runController.listAll);
-runsRoutes.post("/problem/:id_p/run", runController.create);
-runsRoutes.get("/run/:id_run", runController.getOne);
-runsRoutes.put("/run/:id_run", runController.update);
-runsRoutes.delete("/run/:id_run", runController.delete);
+runsRoutes.get(
+  "/contest/:id_c/problem/:id_p/run",
+  authenticate([
+    UserType.ADMIN, // TODO Deve resgatar apenas Runs do Contest ao qual o admin pertence
+    UserType.TEAM, // TODO Deve resgatar apenas Runs do Contest ao qual o team pertence
+    UserType.JUDGE, // TODO Deve resgatar apenas Runs do Contest ao qual o judge pertence
+  ]),
+  runController.listAll
+);
+
+runsRoutes.get(
+  "/contest/:id_c/problem/:id_p/run/:id_r",
+  authenticate([
+    UserType.ADMIN, // TODO Deve resgatar apenas uma Run do Contest ao qual o admin pertence
+    UserType.TEAM, // TODO Deve resgatar apenas uma Run do Contest ao qual o team pertence
+    UserType.JUDGE, // TODO Deve resgatar apenas uma Run do Contest ao qual o judge pertence
+  ]),
+  runController.getOne
+);
+
+runsRoutes.get(
+  "/contest/:id_c/problem/:id_p/run/:id_r/file",
+  authenticate([
+    UserType.ADMIN, // TODO Deve resgatar apenas o arquivo de Runs do Contest ao qual o admin pertence
+    UserType.TEAM, // TODO Deve resgatar apenas o arquivo de Runs do Contest ao qual o team pertence
+    UserType.JUDGE, // TODO Deve resgatar apenas o arquivo de Runs do Contest ao qual o judge pertence
+  ]),
+  runController.getFile
+);
+
+runsRoutes.post(
+  "/contest/:id_c/problem/:id_p/run",
+  fileUpload(),
+  authenticate([
+    UserType.TEAM, // TODO Deve criar Runs apenas no Contest ao qual o team pertence
+  ]),
+  runController.create
+);
+
+runsRoutes.put(
+  "/contest/:id_c/problem/:id_p/run/:id_r",
+  authenticate([
+    UserType.ADMIN, // TODO Deve atualizar apenas Runs do Contest ao qual o admin pertence
+    UserType.JUDGE, // TODO Deve atualizar apenas Runs do Contest ao qual o judge pertence
+  ]),
+  runController.update
+);
+
+runsRoutes.delete(
+  "/contest/:id_c/problem/:id_p/run/:id_r",
+  authenticate([
+    UserType.ADMIN, // TODO Deve deletar apenas Runs do Contest ao qual o admin pertence
+  ]),
+  runController.delete
+);
 
 export { runsRoutes };
