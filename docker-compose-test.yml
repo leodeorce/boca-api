@@ -14,6 +14,8 @@ services:
       - "3333:3333"
     environment:
       - LISTEN_PORT=3333
+      - TOKEN_EXPIRES_IN_SECONDS=1800
+      - PASSWORD_SALT=v512nj18986j8t9u1puqa2p9mh
       - DB_PORT=5433
       - DB_HOST=boca-postgres-test
       - DB_NAME=testdb
