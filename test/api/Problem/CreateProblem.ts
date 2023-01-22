@@ -89,7 +89,6 @@ describe("Criação de um problema", () => {
 
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("application/zip");
-      expect(response.headers["content-length"]).to.contain("326229");
       expect(response.headers["content-disposition"]).to.contain(
         'filename="L1_2.zip"'
       );

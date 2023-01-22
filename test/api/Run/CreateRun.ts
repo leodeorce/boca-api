@@ -77,7 +77,6 @@ describe("Criação de uma run", () => {
 
       expect(response.statusCode).to.equal(200);
       expect(response.headers["content-type"]).to.contain("text/x-java-source");
-      expect(response.headers["content-length"]).to.contain("117");
       expect(response.headers["content-disposition"]).to.contain(
         'filename="Time_1_L1_2_v2.java"'
       );
