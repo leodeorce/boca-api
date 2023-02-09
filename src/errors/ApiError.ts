@@ -49,4 +49,18 @@ class ApiError extends Error {
   }
 }
 
-export { ApiError };
+const errorSchema = {
+  type: "object",
+  properties: {
+    error: {
+      type: "string",
+      description: "Tipo de erro.",
+    },
+    message: {
+      type: "string",
+      description: "Mensagem específica do erro.",
+    },
+  },
+};
+
+export { ApiError, errorSchema };

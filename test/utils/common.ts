@@ -1,6 +1,8 @@
 import { expect } from "chai";
 import { createHash } from "crypto";
 import request from "supertest";
+import * as fs from "fs";
+import * as crypto from "crypto";
 
 import { URL } from "./URL";
 
@@ -37,4 +39,30 @@ const getToken = async (
   return token;
 };
 
-export { getToken };
+const verifyRSA = () => {
+  const secretsDir = "./secrets";
+  if (!fs.existsSync(secretsDir)) {
+    fs.mkdirSync(secretsDir);
+  }
+
+  const privateKeyPath = secretsDir + "/private.key";
+  const publicKeyPath = secretsDir + "/public.key";
+
+  if (!fs.existsSync(privateKeyPath) || !fs.existsSync(publicKeyPath)) {
+    const keyPair = crypto.generateKeyPairSync("rsa", {
+      modulusLength: 2048,
+      publicKeyEncoding: {
+        type: "spki",
+        format: "pem",
+      },
+      privateKeyEncoding: {
+        type: "pkcs8",
+        format: "pem",
+      },
+    });
+    fs.writeFileSync(privateKeyPath, keyPair.privateKey);
+    fs.writeFileSync(publicKeyPath, keyPair.publicKey);
+  }
+};
+
+export { getToken, verifyRSA };
