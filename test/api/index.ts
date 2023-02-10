@@ -1,7 +1,3 @@
-import { verifyRSA } from "../utils/common";
-
-verifyRSA();
-
 import "./Contest/index";
 import "./Site/index";
 import "./User/index";
