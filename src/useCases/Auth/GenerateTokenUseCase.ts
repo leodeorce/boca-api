@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { createHash } from "crypto";
+import { createHash, generateKeyPairSync } from "crypto";
 import jwt from "jsonwebtoken";
 import * as fs from "fs";
 
@@ -28,6 +28,31 @@ class GenerateTokenUseCase {
   ) {}
 
   async execute({ name, saltedPassword }: IRequest): Promise<string> {
+    // Verifica ou cria par de chaves RSA
+    const secretsDir = "./secrets";
+    if (!fs.existsSync(secretsDir)) {
+      fs.mkdirSync(secretsDir);
+    }
+
+    const privateKeyPath = secretsDir + "/private.key";
+    const publicKeyPath = secretsDir + "/public.key";
+
+    if (!fs.existsSync(privateKeyPath) || !fs.existsSync(publicKeyPath)) {
+      const keyPair = generateKeyPairSync("rsa", {
+        modulusLength: 2048,
+        publicKeyEncoding: {
+          type: "spki",
+          format: "pem",
+        },
+        privateKeyEncoding: {
+          type: "pkcs8",
+          format: "pem",
+        },
+      });
+      fs.writeFileSync(privateKeyPath, keyPair.privateKey);
+      fs.writeFileSync(publicKeyPath, keyPair.publicKey);
+    }
+
     // Valida formato da hash SHA256
     const regexExp = /^[a-f0-9]{64}$/;
     if (regexExp.test(saltedPassword) != true) {
@@ -116,7 +141,7 @@ class GenerateTokenUseCase {
     }
 
     // Cria e retorna novo token JWT
-    const privateKey = fs.readFileSync("./secrets/private.key", "utf8");
+    const privateKey = fs.readFileSync(privateKeyPath, "utf8");
     if (privateKey === undefined) {
       throw ApiError.internal(
         "Cannot generate new authentication token: Private key not found"

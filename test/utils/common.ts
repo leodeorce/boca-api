@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { createHash } from "crypto";
 import request from "supertest";
-import * as fs from "fs";
 
 import { URL } from "./URL";
 
@@ -38,11 +37,4 @@ const getToken = async (
   return token;
 };
 
-const verifyRSA = () => {
-  const secretsDir = "./secrets";
-  if (!fs.existsSync(secretsDir)) {
-    console.error("O par de chaves RSA não está configurado");
-  }
-};
-
-export { getToken, verifyRSA };
+export { getToken };
