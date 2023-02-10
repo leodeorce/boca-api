@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.GITHUB_REF }}
 
       - name: Instalar dependências
         run: yarn install
