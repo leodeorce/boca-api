@@ -3,7 +3,7 @@
 O BOCA API é uma ferramenta de conexão com sistema de apoio à competições de programação BOCA Online Contest Administrator.
 
 
-# Dependências
+## Dependências
 
 O BOCA API faz uso das seguintes tecnologias/bibliotecas:
 
@@ -25,12 +25,12 @@ O BOCA API faz uso das seguintes tecnologias/bibliotecas:
 Embora os conjuntos de testes desenvolvidos tenham sido a principal forma de testagem ao longo do desenvolvimento, em algumas ocasiões optou-se pelo uso da ferramenta [Postman](https://www.postman.com/) para envio de requisições HTTP à API.
 
 
-# Instalação e execução
+## Instalação e execução
 
 A API pode ser executada em um contêiner [Docker](https://www.docker.com/) criado a partir de seu `Dockerfile` presente na raiz do repositório, ou de forma tradicional com o uso das ferramentas `Node.js` e `Yarn`.
 
 
-## Ambiente conteinerizado
+### Ambiente conteinerizado
 
 Uma vez instalada a ferramenta `Docker` no seu sistema, abra um terminal na raiz do projeto e execute os comandos a seguir.
 
@@ -96,7 +96,7 @@ docker compose -f docker-compose-validation.yml down
 ```
 
 
-## Ambiente tradicional
+### Ambiente tradicional
 
 Uma vez instaladas as ferramentas `Yarn` e `Node.js`, abra um terminal na raiz do projeto e execute:
 
@@ -111,7 +111,7 @@ yarn test:dev
 Os scripts `yarn dev` e `yarn test:dev` acima buscam variáveis de ambiente de dois arquivos que contém suas definições, respectivamente: `.env.dev` e `.env.test`.
 
 
-# Estrutura de arquivos
+## Estrutura de arquivos
 
 - O código da aplicação se encontra na pasta `src`:
   - Na pasta `database`, estão todas as configurações relacionadas ao banco de dados da aplicação;
@@ -130,6 +130,6 @@ Os scripts `yarn dev` e `yarn test:dev` acima buscam variáveis de ambiente de d
   - Na pasta `utils` estão definições e scripts úteis e/ou necessários para a execução dos conjuntos de testes.
 
 
-# Autores
+## Autores
 
 O desenvolvimento do BOCA API iniciou com Mateus Lenke e Rogério Medeiros na disciplina de Banco de Dados do curso de Ciência da Computação na Universidade Federal do Espírito Santo (Ufes) no semestre letivo 2021/2 e continuou no Trabalho de Conclusão de Curso de Leonardo Deorce no semestre letivo 2022/2 do mesmo curso e universidade.

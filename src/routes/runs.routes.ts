@@ -67,4 +67,6 @@ runsRoutes.delete(
   runController.delete
 );
 
+// TODO Criar endpoints que gerenciam Runs no contexto de Users e não Problems. Ex: GET em /contest/:id_c/user/:id_u/run
+
 export { runsRoutes };
