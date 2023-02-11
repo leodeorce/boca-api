@@ -3,6 +3,22 @@
 # top-most EditorConfig file
 root = true
 
+[/test/files/**]
+indent_style = unset
+indent_size = unset
+end_of_line = unset
+charset = unset
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+[README.md]
+indent_style = space
+indent_size = unset
+end_of_line = unset
+charset = utf-8
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
 [*]
 indent_style = space
 indent_size = 2

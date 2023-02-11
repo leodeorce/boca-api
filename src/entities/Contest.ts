@@ -80,7 +80,7 @@ class Contest {
   @Column("varchar", { length: 200 })
   @IsString()
   @MinLength(0)
-  @MaxLength(100)
+  @MaxLength(200)
   contestmainsiteurl!: string;
 
   @Column("int4", { default: "EXTRACT(EPOCH FROM now())" })
@@ -119,4 +119,141 @@ class Contest {
   }
 }
 
-export { Contest };
+const createRequiredProperties = [
+  "contestname",
+  "conteststartdate",
+  "contestduration",
+  "contestlocalsite",
+  "contestpenalty",
+  "contestmaxfilesize",
+  "contestactive",
+  "contestmainsite",
+  "contestkeys",
+  "contestunlockkey",
+  "contestmainsiteurl",
+];
+
+const updateRequiredProperties = [
+  "contestname",
+  "conteststartdate",
+  "contestduration",
+  "contestlocalsite",
+  "contestpenalty",
+  "contestmaxfilesize",
+  "contestactive",
+  "contestmainsite",
+  "contestkeys",
+  "contestunlockkey",
+  "contestmainsiteurl",
+];
+
+const contestRequestSchema = {
+  type: "object",
+  properties: {
+    contestnumber: {
+      type: "number",
+      description: "Identificador da competição.",
+      minimum: 0,
+    },
+    contestname: {
+      type: "string",
+      description: "Nome da competição.",
+      minLength: 1,
+      maxLength: 100,
+    },
+    conteststartdate: {
+      type: "number",
+      description: "Unix timestamp da data de início da competição.",
+      minimum: 1,
+    },
+    contestduration: {
+      type: "number",
+      description: "Tempo de duração da competição em segundos.",
+      minimum: 1,
+    },
+    contestlastmileanswer: {
+      type: "number",
+      description:
+        "Quantidade de tempo em segundos a partir do início para não responder aos times.",
+      minimum: 0,
+    },
+    contestlastmilescore: {
+      type: "number",
+      description:
+        "Quantidade de tempo em segundos a partir do início para não atualizar placar.",
+      minimum: 0,
+    },
+    contestlocalsite: {
+      type: "number",
+      description: "Identificador do site local do servidor no qual se encontra a competição.",
+      minimum: 1,
+    },
+    contestpenalty: {
+      type: "number",
+      description: "Quantidade de segundos perdidos para cada submissão incorreta.",
+      minimum: 0,
+    },
+    contestmaxfilesize: {
+      type: "number",
+      description: "Tamanho máximo em bytes dos códigos que podem ser submetidos.",
+      minimum: 1,
+    },
+    contestactive: {
+      type: "boolean",
+      description: "Indica se a competição está ativa ou não.",
+    },
+    contestmainsite: {
+      type: "number",
+      description: "Identificador do site principal no qual se encontra a competição.",
+      minimum: 1,
+    },
+    contestkeys: {
+      type: "string",
+      description: "Lista de chaves relevantes à competição.",
+    },
+    contestunlockkey: {
+      type: "string",
+      description: "Chave para descriptografar arquivos de problemas.",
+      minLength: 0,
+      maxLength: 100,
+    },
+    contestmainsiteurl: {
+      type: "string",
+      description: "URL do site principal no qual se encontra a competição.",
+      minLength: 0,
+      maxLength: 200,
+    },
+  },
+};
+
+const contestResponseSchema = {
+  ...contestRequestSchema,
+  properties: {
+    ...contestRequestSchema.properties,
+    updatetime: {
+      type: "number",
+      description:
+        "Unix timestamp da última atualização desta instância no banco de dados.",
+      minimum: 1,
+    },
+  },
+};
+
+const createContestSchema = {
+  ...contestRequestSchema,
+  required: createRequiredProperties,
+};
+
+const updateContestSchema = {
+  ...contestRequestSchema,
+  required: updateRequiredProperties,
+};
+
+export {
+  Contest,
+  contestResponseSchema,
+  createRequiredProperties,
+  updateRequiredProperties,
+  createContestSchema,
+  updateContestSchema,
+};

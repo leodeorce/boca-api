@@ -1,33 +1,9 @@
 import { injectable } from "tsyringe";
+import {
+  createRequiredProperties,
+  updateRequiredProperties,
+} from "../../../entities/Contest";
 import { RequestValidator } from "./RequestValidator";
-
-const createRequiredProperties = [
-  "contestname",
-  "conteststartdate",
-  "contestduration",
-  "contestlocalsite",
-  "contestpenalty",
-  "contestmaxfilesize",
-  "contestactive",
-  "contestmainsite",
-  "contestkeys",
-  "contestunlockkey",
-  "contestmainsiteurl",
-];
-
-const updateRequiredProperties = [
-  "contestname",
-  "conteststartdate",
-  "contestduration",
-  "contestlocalsite",
-  "contestpenalty",
-  "contestmaxfilesize",
-  "contestactive",
-  "contestmainsite",
-  "contestkeys",
-  "contestunlockkey",
-  "contestmainsiteurl",
-];
 
 @injectable()
 class ContestRequestValidator extends RequestValidator {

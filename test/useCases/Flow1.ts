@@ -43,7 +43,7 @@ describe("Fluxo 1", () => {
   });
 
   it("Cria o Contest 1", async () => {
-    createContest1.conteststartdate = Math.floor(Date.now() / 1000) + 3600;
+    createContest1.conteststartdate = Math.floor(Date.now() / 1000) - 3600;
 
     const response = await request(URL)
       .post("/api/contest")
@@ -137,7 +137,7 @@ describe("Fluxo 1", () => {
     adminToken = await getToken("boca", salt, "admin");
   });
 
-  it("Cria as linguagem C e Java para o Contest 1", async () => {
+  it("Cria as Langs C e Java para o Contest 1", async () => {
     let response = await request(URL)
       .post("/api/contest/1/language")
       .set("Accept", "application/json")
@@ -185,7 +185,7 @@ describe("Fluxo 1", () => {
     }
   });
 
-  it("Cria os problemas L1_1 e L1_2 no Contest 1", async () => {
+  it("Cria os Problems L1_1 e L1_2 no Contest 1", async () => {
     let response = await request(URL)
       .post("/api/contest/1/problem")
       .set("Accept", "application/json")

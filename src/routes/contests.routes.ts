@@ -10,6 +10,27 @@ const contestsRoutes = Router();
 
 const contestController = new ContestController();
 
+/**
+ * @swagger
+ * /api/contest:
+ *   get:
+ *     summary: Resgata todas as competições cadastradas.
+ *     responses:
+ *       200:
+ *         description: Competições cadastradas.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Contest'
+ *       401:
+ *         description: Requisição não autenticada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 contestsRoutes.get(
   "/contest",
   authenticate([
@@ -21,6 +42,39 @@ contestsRoutes.get(
   contestController.listAll
 );
 
+/**
+ * @swagger
+ * /api/contest/{id_c}:
+ *   get:
+ *     summary: Resgata a competição de identificador id_c.
+ *     parameters:
+ *       - name: id_c
+ *         in: path
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: O identificador da competição.
+ *       - name: Authorization
+ *         in: header
+ *         description: Token de autorização no formato "Token <token_jwt_aqui>" sem os <>.
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: A competição cadastrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Contest'
+ *       404:
+ *         description: Competição não encontrada.
+ *       401:
+ *         description: Requisição não autenticada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 contestsRoutes.get(
   "/contest/:id_c",
   authenticate([
