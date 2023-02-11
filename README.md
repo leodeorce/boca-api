@@ -1,98 +1,135 @@
-# Boca API
+# BOCA API
 
-> API de conexão com a ferramenta para competições de programação BOCA
+O BOCA API é uma ferramenta de conexão com sistema de apoio à competições de programação BOCA Online Contest Administrator.
 
-Alunos:
 
-- Matheus Lenke
-- Rogério Medeiros
+# Dependências
 
-## Dependências
+O BOCA API faz uso das seguintes tecnologias/bibliotecas:
 
-Para rodar este projeto, temos as seguintes dependências obrigatórias para rodar o projeto:
-
-- [Yarn](https://yarnpkg.com/) (Ou utilizar o [npm](https://www.npmjs.com/) do próprio node)
-- [Node.js](https://nodejs.org/en/) -> Versão LTS `16.14.0`
-- [Docker](https://www.docker.com/)
+- [Node.js](https://nodejs.org/en/)
+- [Yarn](https://yarnpkg.com/)
 - [TypeScript](https://www.typescriptlang.org/)
+- [TypeORM](https://typeorm.io/)
+- [TSyringe](https://github.com/microsoft/tsyringe)
+- [winston](https://github.com/winstonjs/winston)
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+- [class-validator](https://github.com/typestack/class-validator)
+- [Express](https://expressjs.com/)
+- [express-fileupload](https://www.npmjs.com/package/express-fileupload)
+- [crypto-js](https://www.npmjs.com/package/crypto-js)
+- [Swagger UI Express](https://www.npmjs.com/package/swagger-ui-express)
+- [swagger-jsdoc](https://www.npmjs.com/package/swagger-jsdoc)
+- [dotenv](https://www.npmjs.com/package/dotenv)
 
-foi utilizado `TypeScript` como linguagem principal e o `Visual Studio Code` como editor de código. É necessário instalar o `Node.js`, e recomenda-se a última versão LTS `16.14.0`.
-Além disso, para gerenciamento de dependências, pode-se utilizar o `npm`, porém devido às suas vantagens, recomenda-se a utilização do `yarn`.
-Também foi utilizado a ferramenta `postman` para testagem das rotas, além do `docker` para utilização de containers, isolando a API, os serviços do BOCA e o banco de dados.
+Embora os conjuntos de testes desenvolvidos tenham sido a principal forma de testagem ao longo do desenvolvimento, em algumas ocasiões optou-se pelo uso da ferramenta [Postman](https://www.postman.com/) para envio de requisições HTTP à API.
 
-Algumas ferramentas adicionais recomendadas:
 
-### Links
+# Instalação e execução
 
-- [Visual Studio Code](https://code.visualstudio.com/)
-- [Postman](https://www.postman.com/)
+A API pode ser executada em um contêiner [Docker](https://www.docker.com/) criado a partir de seu `Dockerfile` presente na raiz do repositório, ou de forma tradicional com o uso das ferramentas `Node.js` e `Yarn`.
 
-### Variáveis de ambiente
 
-Para rodar o projeto, é necessário configurar as variáveis de ambiente neste projeto. Dentro do arquivo `.env`, você precisa atualizar as seguintes variáveis:
+## Ambiente conteinerizado
 
-- `BOCA_POSTGRES_DOCKER_NAME`: O nome dado para o container postgres do banco de dados do Boca
+Uma vez instalada a ferramenta `Docker` no seu sistema, abra um terminal na raiz do projeto e execute os comandos a seguir.
 
-## Instalação
-
-Instalação de dependências
-
-```sh
-  yarn
-  # ou
-  npm install
-```
-
-Para subir a aplicação com docker, foram criados scripts personalizados no arquivo `package.json`. Para rodar qualquer comando com o npm, basta substituir `yarn` por `npm run`
+Para criar a imagem do contêiner:
 
 ```sh
-  yarn docker:up # Sobe todos os containers, incluindo os dependentes do Boca
-
-  yarn docker:down # Desce todos os containers
-
-  yarn docker:apilogs # Visualiza os logs da API
-
-  yarn docker:postgreslogs # Visualiza os logs do Banco de dados Postgres
+docker build -t boca-api .
 ```
 
-Para realizar as migrations da aplicação, com os containers rodando:
+Será necessário configurar variáveis de ambiente para o correto funcionamento da API. Para subir o contêiner criado com as variáveis de ambiente configuradas (substitua os valores de acordo com a sua configuração):
 
 ```sh
-  yarn typeorm migration:run # Executa todas as migrations pendentes
-
-  yarn typeorm migration:revert # Reverte a última migration executada
-
-  yarn typeorm migration:create -n nome-da-migration # Cria uma nova migration
+docker run -e DB_HOST=localhost \
+           -e DB_NAME=bocadb \
+           -e DB_PASSWORD=dAm0HAiC \
+           -e DB_PORT=5432 \
+           -e DB_SUPER_PASSWORD=dAm0HAiC \
+           -e DB_SUPER_USER=bocauser \
+           -e DB_USER=bocauser \
+           -e LISTEN_PORT=3000 \
+           -e TOKEN_EXPIRES_IN_SECONDS=1800 \
+           -e PASSWORD_SALT=v512nj18986j8t9u1puqa2p9mh \
+           -p 3000:3000 \
+           --name boca-api \
+           boca-api
 ```
 
-Os arquivos especificando as migrations se encontram na pasta `src/database/migrations`
+Com o comando acima, a ferramenta é iniciada e busca pelo banco de dados do BOCA no endereço `DB_HOST` e na porta `DB_PORT`.
 
-## Setup do Postman
+Caso tenha interesse em subir o banco de dados `PostgreSQL` ou o [boca-docker](https://github.com/joaofazolo/boca-docker) junto à API, utilize os arquivos `Docker Compose` presentes na raiz repositório:
 
-> ⚠️ Atenção, antes de testar tenha certeza de que você rodou todas as migrations da aplicação corretamente, caso contrário, as requisições podem não funcionar corretamente
+```sh
+# Variáveis configuradas para desenvolvimento
+docker compose -f docker-compose-dev.yml up --build -d
+# Ou
+yarn docker:up
 
-Os exemplos de uso da aplicação se encontram no Postman, cujo arquivo de definição da API pode ser encontrado na pasta `apidocs`. Ao importar, é possível ver a pasta `Boca API`, com todas as entidades listadas e suas respectivas requisições.
+# Variáveis configuradas para execução dos testes
+docker compose -f docker-compose-test.yml up --build -d
+# Ou
+yarn test:docker:up
 
-Para configurar, é necessário criar uma variável de ambiente de desenvolvimento contendo a URL da aplicação em seu workspace. A variável se chama `base_url` e o valor padrão rodando em ambiente de desenvolvimento seria `http://localhost:3333`, apontando para a API Node.js.
+# Sobe o BOCA API e o boca-docker juntos
+docker compose -f docker-compose-validation.yml up --build -d
+```
 
-Cada requisição possui suas particularidades feitas com base na especificação do trabalho, podendo possuir pequenas modificações. Para modificar os dados por exemplo de um método create, basta modificar o JSON do Body da requisição
+Os comandos `yarn docker:up` e `yarn test:docker:up` são scripts definidos no arquivo `package.json`. Para executá-los, é necessário que a ferramenta `Yarn` esteja instalada.
 
-## Decisões de projeto
+Para descer os contêineres, basta executar:
+```sh
+docker compose -f docker-compose-dev.yml down
+# Opcionalmente, adicione o argumento -v para apagar os dados do banco
+# Ou
+yarn docker:down # Não contém -v
 
-### Estrutura de arquivos
+docker compose -f docker-compose-test.yml down
+# Opcionalmente, adicione o argumento -v para apagar os dados do banco
+# Ou
+yarn test:docker:down # Contém -v
 
-- O código da aplicação se encontra na pasta `src`.
-- Na pasta `database`, temos todas as configurações relacionadas ao banco de dados da aplicação
-- Na pasta `entities`, temos as entidades da nossa aplicação, replicando as existentes em nosso banco de dados
-- Na pasta `repositories`, temos as classes responsáveis por realizar modificações das entidades no banco de dados, e suas interfaces de implementação
-- Na pasta `routes`, temos as rotas da nossa aplicação
-- Na pasta `shared`, temos os arquivos compartilhados pela aplicação toda. Dentro da pasta `container`, temos o arquivo responsável por registrar uma instância única de cada repository da nossa aplicação (Padrão singleton)
-- Na pasta `useCases`, temos os controladores e casos de uso de cada entidade da aplicação, contendo as regras de negócio do sistema
-- No arquivo `.env`, temos as variáveis de ambiente
+docker compose -f docker-compose-validation.yml down
+# Opcionalmente, adicione o argumento -v para apagar os dados do banco
+```
 
-### Estrutura do banco de dados
 
-- Foi criado uma tabela `workingtable`, que permite organizar listas de problmas (exercícios).
-- Foi adicionado à tabela `problemtable` uma coluna `working_id`, que indica a qual working aquele problema pertence
-- Foi criado uma tabela `userworkingtable`, que permite definir para cada usuário listas de problemas
-- Foi criada uma tabela `problemlanguagetable`, que permite definir linguagens de programação para cada problema específico, podendo em um mesmo contest, problemas diferentes demandarem linguagens diferentes
+## Ambiente tradicional
+
+Uma vez instaladas as ferramentas `Yarn` e `Node.js`, abra um terminal na raiz do projeto e execute:
+
+```sh
+yarn install
+
+yarn dev
+# ou
+yarn test:dev
+```
+
+Os scripts `yarn dev` e `yarn test:dev` acima buscam variáveis de ambiente de dois arquivos que contém suas definições, respectivamente: `.env.dev` e `.env.test`.
+
+
+# Estrutura de arquivos
+
+- O código da aplicação se encontra na pasta `src`:
+  - Na pasta `database`, estão todas as configurações relacionadas ao banco de dados da aplicação;
+  - Na pasta `entities`, estão as entidades da nossa aplicação, mapeando as existentes no banco de dados do BOCA através de ORM com a biblioteca TypeORM;
+  - Na pasta `repositories`, estão as classes responsáveis pela comunicação com o banco de dados, bem como as interfaces que elas implementam;
+  - Na pasta `routes`, estão as rotas da aplicação;
+  - Na pasta `shared`, estão os arquivos de definições (tipos enumerados e algumas interfaces), arquivos de configuração do contêiner de injeção de dependências `tsyringe`, e implementações de classes que realizam validação de dados;
+  - Na pasta `useCases`, estão os controladores e casos de uso de cada entidade da aplicação, contendo as regras de negócio do sistema;
+  - Na pasta `logging`, estão a interface e implementação da estrutura de logging do sistema;
+  - Na pasta `errors`, estão as definições de erros esperados pela API.
+- Os conjuntos de testes se encontram na pasta `test`:
+  - Na pasta `api`, estão os testes de API;
+  - Na pasta `useCases`, estão os testes de casos de uso;
+  - Na pasta `entities`, estão os objetos utilizados para requisições HTTP nos conjuntos de testes;
+  - Na pasta `files` estão arquivos para problemas e submissões usados em requisições dos conjuntos de testes;
+  - Na pasta `utils` estão definições e scripts úteis e/ou necessários para a execução dos conjuntos de testes.
+
+
+# Autores
+
+O desenvolvimento do BOCA API iniciou com Mateus Lenke e Rogério Medeiros na disciplina de Banco de Dados do curso de Ciência da Computação na Universidade Federal do Espírito Santo (Ufes) no semestre letivo 2021/2 e continuou no Trabalho de Conclusão de Curso de Leonardo Deorce no semestre letivo 2022/2 do mesmo curso e universidade.
