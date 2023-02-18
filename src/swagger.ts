@@ -22,7 +22,7 @@ const badRequest = {
       schema: errorSchema,
     },
   },
-}
+};
 
 const contestId = {
   name: "id_c",
@@ -35,8 +35,37 @@ const contestId = {
 const authorization = {
   name: "Authorization",
   in: "header",
-  description: "Token de autorização no formato \"Token <token_jwt_aqui>\" sem os <>.",
+  description:
+    'Token de autorização no formato "Token <token_jwt_aqui>" sem os <>.',
   required: true,
+  type: "string",
+};
+
+const getTokenRequest = {
+  required: true,
+  content: {
+    "application/json": {
+      schema: {
+        type: "object",
+        required: ["name", "password"],
+        properties: {
+          name: {
+            type: "string",
+            description: "Nome do usuário.",
+          },
+          password: {
+            type: "string",
+            description:
+              "Resultado da hash SHA256 sobre a concatenação do salt " +
+              "com a hash SHA256 sobre a senha do usuário.",
+          },
+        },
+      },
+    },
+  },
+};
+
+const tokenSchema = {
   type: "string",
 };
 
@@ -51,10 +80,12 @@ const swaggerDefinition = {
     schemas: {
       Error: errorSchema,
       Contest: contestResponseSchema,
+      Token: tokenSchema,
     },
     requestBodies: {
       CreateContest: createContestRequest,
       UpdateContest: updateContestRequest,
+      GetToken: getTokenRequest,
     },
     responses: {
       Unauthorized: unauthorizedResponse,
