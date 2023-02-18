@@ -150,11 +150,6 @@ const updateRequiredProperties = [
 const contestRequestSchema = {
   type: "object",
   properties: {
-    contestnumber: {
-      type: "number",
-      description: "Identificador da competição.",
-      minimum: 0,
-    },
     contestname: {
       type: "string",
       description: "Nome da competição.",
@@ -185,17 +180,20 @@ const contestRequestSchema = {
     },
     contestlocalsite: {
       type: "number",
-      description: "Identificador do site local do servidor no qual se encontra a competição.",
+      description:
+        "Identificador do site local do servidor no qual se encontra a competição.",
       minimum: 1,
     },
     contestpenalty: {
       type: "number",
-      description: "Quantidade de segundos perdidos para cada submissão incorreta.",
+      description:
+        "Quantidade de segundos perdidos para cada submissão incorreta.",
       minimum: 0,
     },
     contestmaxfilesize: {
       type: "number",
-      description: "Tamanho máximo em bytes dos códigos que podem ser submetidos.",
+      description:
+        "Tamanho máximo em bytes dos códigos que podem ser submetidos.",
       minimum: 1,
     },
     contestactive: {
@@ -204,7 +202,8 @@ const contestRequestSchema = {
     },
     contestmainsite: {
       type: "number",
-      description: "Identificador do site principal no qual se encontra a competição.",
+      description:
+        "Identificador do site principal no qual se encontra a competição.",
       minimum: 1,
     },
     contestkeys: {
@@ -230,6 +229,11 @@ const contestResponseSchema = {
   ...contestRequestSchema,
   properties: {
     ...contestRequestSchema.properties,
+    contestnumber: {
+      type: "number",
+      description: "Identificador da competição.",
+      minimum: 0,
+    },
     updatetime: {
       type: "number",
       description:
@@ -249,11 +253,29 @@ const updateContestSchema = {
   required: updateRequiredProperties,
 };
 
+const createContestRequest = {
+  required: true,
+  content: {
+    "application/json": {
+      schema: createContestSchema,
+    },
+  },
+};
+
+const updateContestRequest = {
+  required: true,
+  content: {
+    "application/json": {
+      schema: updateContestSchema,
+    },
+  },
+};
+
 export {
   Contest,
   contestResponseSchema,
   createRequiredProperties,
   updateRequiredProperties,
-  createContestSchema,
-  updateContestSchema,
+  createContestRequest,
+  updateContestRequest,
 };

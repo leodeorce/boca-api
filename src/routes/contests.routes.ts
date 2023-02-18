@@ -15,6 +15,8 @@ const contestController = new ContestController();
  * /api/contest:
  *   get:
  *     summary: Resgata todas as competições cadastradas.
+ *     parameters:
+ *       - $ref: '#/components/parameters/Authorization'
  *     responses:
  *       200:
  *         description: Competições cadastradas.
@@ -25,11 +27,7 @@ const contestController = new ContestController();
  *               items:
  *                 $ref: '#/components/schemas/Contest'
  *       401:
- *         description: Requisição não autenticada.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
+ *         $ref: '#/components/responses/Unauthorized'
  */
 contestsRoutes.get(
   "/contest",
@@ -48,17 +46,8 @@ contestsRoutes.get(
  *   get:
  *     summary: Resgata a competição de identificador id_c.
  *     parameters:
- *       - name: id_c
- *         in: path
- *         schema:
- *           type: string
- *         required: true
- *         description: O identificador da competição.
- *       - name: Authorization
- *         in: header
- *         description: Token de autorização no formato "Token <token_jwt_aqui>" sem os <>.
- *         required: true
- *         type: string
+ *       - $ref: '#/components/parameters/ContestId'
+ *       - $ref: '#/components/parameters/Authorization'
  *     responses:
  *       200:
  *         description: A competição cadastrada.
@@ -66,14 +55,10 @@ contestsRoutes.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Contest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  *       404:
  *         description: Competição não encontrada.
- *       401:
- *         description: Requisição não autenticada.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 contestsRoutes.get(
   "/contest/:id_c",
@@ -86,6 +71,27 @@ contestsRoutes.get(
   contestController.getOne
 );
 
+/**
+ * @swagger
+ * /api/contest:
+ *   post:
+ *     summary: Cria uma nova competição.
+ *     parameters:
+ *       - $ref: '#/components/parameters/Authorization'
+ *     requestBody:
+ *       $ref: '#/components/requestBodies/CreateContest'
+ *     responses:
+ *       200:
+ *         description: A competição criada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Contest'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
 contestsRoutes.post(
   "/contest",
   authenticate([
@@ -94,6 +100,29 @@ contestsRoutes.post(
   contestController.create
 );
 
+
+/**
+ * @swagger
+ * /api/contest/{id_c}:
+ *   put:
+ *     summary: Atualiza uma competição existente.
+ *     parameters:
+ *       - $ref: '#/components/parameters/ContestId'
+ *       - $ref: '#/components/parameters/Authorization'
+ *     requestBody:
+ *       $ref: '#/components/requestBodies/UpdateContest'
+ *     responses:
+ *       200:
+ *         description: A competição atualizada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Contest'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
 contestsRoutes.put(
   "/contest/:id_c",
   authenticate([
@@ -102,6 +131,22 @@ contestsRoutes.put(
   contestController.update
 );
 
+/**
+ * @swagger
+ * /api/contest/{id_c}:
+ *   put:
+ *     summary: Deleta uma competição.
+ *     parameters:
+ *       - $ref: '#/components/parameters/ContestId'
+ *       - $ref: '#/components/parameters/Authorization'
+ *     responses:
+ *       204:
+ *         description: A competição foi deletada.
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
 contestsRoutes.delete(
   "/contest/:id_c",
   authenticate([
