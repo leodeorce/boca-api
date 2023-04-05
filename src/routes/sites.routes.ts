@@ -10,6 +10,28 @@ const sitesRoutes = Router();
 
 const siteController = new SiteController();
 
+/**
+ * @swagger
+ * /api/contest/{id_c}/site:
+ *   get:
+ *     tags:
+ *       - Site
+ *     summary: Resgata todos os sites cadastrados na competição de identificador id_c.
+ *     parameters:
+ *       - $ref: '#/components/parameters/ContestId'
+ *       - $ref: '#/components/parameters/Authorization'
+ *     responses:
+ *       200:
+ *         description: Sites cadastrados na competição de identificador **id_c**.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Site'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
 sitesRoutes.get(
   "/contest/:id_c/site",
   authenticate([
@@ -28,6 +50,33 @@ sitesRoutes.post(
   siteController.create
 );
 
+/**
+ * @swagger
+ * /api/contest/{id_c}/site/{id_s}:
+ *   get:
+ *     tags:
+ *       - Site
+ *     summary: Resgata o site de identificador id_s pertencente à competição de identificador id_c.
+ *     parameters:
+ *       - $ref: '#/components/parameters/ContestId'
+ *       - $ref: '#/components/parameters/SiteId'
+ *       - $ref: '#/components/parameters/Authorization'
+ *     responses:
+ *       200:
+ *         description: O site de identificador **id_s** pertencente à competição de identificador **id_c**.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Site'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       404:
+ *         description: Site não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 sitesRoutes.get(
   "/contest/:id_c/site/:id_s",
   authenticate([

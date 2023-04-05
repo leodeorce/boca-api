@@ -14,6 +14,8 @@ const contestController = new ContestController();
  * @swagger
  * /api/contest:
  *   get:
+ *     tags:
+ *       - Contest
  *     summary: Resgata todas as competições cadastradas.
  *     parameters:
  *       - $ref: '#/components/parameters/Authorization'
@@ -44,6 +46,8 @@ contestsRoutes.get(
  * @swagger
  * /api/contest/{id_c}:
  *   get:
+ *     tags:
+ *       - Contest
  *     summary: Resgata a competição de identificador id_c.
  *     parameters:
  *       - $ref: '#/components/parameters/ContestId'
@@ -59,6 +63,10 @@ contestsRoutes.get(
  *         $ref: '#/components/responses/Unauthorized'
  *       404:
  *         description: Competição não encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 contestsRoutes.get(
   "/contest/:id_c",
@@ -75,6 +83,8 @@ contestsRoutes.get(
  * @swagger
  * /api/contest:
  *   post:
+ *     tags:
+ *       - Contest
  *     summary: Cria uma nova competição.
  *     parameters:
  *       - $ref: '#/components/parameters/Authorization'
@@ -105,6 +115,8 @@ contestsRoutes.post(
  * @swagger
  * /api/contest/{id_c}:
  *   put:
+ *     tags:
+ *       - Contest
  *     summary: Atualiza uma competição existente.
  *     parameters:
  *       - $ref: '#/components/parameters/ContestId'
@@ -134,7 +146,9 @@ contestsRoutes.put(
 /**
  * @swagger
  * /api/contest/{id_c}:
- *   put:
+ *   delete:
+ *     tags:
+ *       - Contest
  *     summary: Deleta uma competição.
  *     parameters:
  *       - $ref: '#/components/parameters/ContestId'

@@ -4,6 +4,11 @@ import {
   createContestRequest,
   updateContestRequest,
 } from "./entities/Contest";
+import {
+  createSiteRequest,
+  siteResponseSchema,
+  updateSiteRequest,
+} from "./entities/Site";
 import { errorSchema } from "./errors/ApiError";
 
 const unauthorizedResponse = {
@@ -28,6 +33,14 @@ const contestId = {
   name: "id_c",
   in: "path",
   description: "O identificador da competição.",
+  required: true,
+  type: "string",
+};
+
+const siteId = {
+  name: "id_s",
+  in: "path",
+  description: "O identificador do site.",
   required: true,
   type: "string",
 };
@@ -80,11 +93,14 @@ const swaggerDefinition = {
     schemas: {
       Error: errorSchema,
       Contest: contestResponseSchema,
+      Site: siteResponseSchema,
       Token: tokenSchema,
     },
     requestBodies: {
       CreateContest: createContestRequest,
       UpdateContest: updateContestRequest,
+      CreateSite: createSiteRequest,
+      UpdateSite: updateSiteRequest,
       GetToken: getTokenRequest,
     },
     responses: {
@@ -93,6 +109,7 @@ const swaggerDefinition = {
     },
     parameters: {
       ContestId: contestId,
+      SiteId: siteId,
       Authorization: authorization,
     },
   },
@@ -101,6 +118,10 @@ const swaggerDefinition = {
 const swaggerOptions = swaggerJSDoc({
   swaggerDefinition,
   apis: ["./src/routes/*.ts"],
+  tags: [
+    { name: "Contest", description: "Operações relacionadas à competições." },
+    { name: "Site", description: "Operações relacionadas à sites." },
+  ],
 });
 
 export { swaggerOptions };

@@ -1,41 +1,9 @@
 import { injectable } from "tsyringe";
+import {
+  createRequiredProperties,
+  updateRequiredProperties,
+} from "../../../entities/Site";
 import { RequestValidator } from "./RequestValidator";
-
-const createRequiredProperties = [
-  "siteip",
-  "sitename",
-  "siteactive",
-  "sitepermitlogins",
-  "siteglobalscore",
-  "sitescorelevel",
-  "sitenextuser",
-  "sitenextclar",
-  "sitenextrun",
-  "sitenexttask",
-  "sitemaxtask",
-  "sitechiefname",
-  "siteautojudge",
-  "sitemaxruntime",
-  "sitemaxjudgewaittime",
-];
-
-const updateRequiredProperties = [
-  "siteip",
-  "sitename",
-  "siteactive",
-  "sitepermitlogins",
-  "siteglobalscore",
-  "sitescorelevel",
-  "sitenextuser",
-  "sitenextclar",
-  "sitenextrun",
-  "sitenexttask",
-  "sitemaxtask",
-  "sitechiefname",
-  "siteautojudge",
-  "sitemaxruntime",
-  "sitemaxjudgewaittime",
-];
 
 @injectable()
 class SiteRequestValidator extends RequestValidator {
